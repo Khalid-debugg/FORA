@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 const quotes: string[] = [
-  "Dive into the football frenzy. Hunt down matches nearby, teamup, and own the pitch!",
-  "Dive into the football fervor. Hunt down nearby matches, unite, and claim the pitch!",
-  "Immerse yourself in the football frenzy. Explore nearby matches, team up, and dominate the field!",
-  "Plunge into the football passion. Discover nearby matches, join forces, and seize the pitch!",
-  "Indulge in the football frenzy. Uncover nearby matches, collaborate, and conquer the field!",
+  "Feel the adrenaline rush as you step onto the football pitch. Every match is a chance to make history.",
+  "In the game of football, every pass, every tackle, every goal, is a moment that defines greatness.",
+  "The roar of the crowd, the thrill of the game - football is more than just a sport, it's a way of life.",
+  "On the football field, legends are born. Every player has the opportunity to write their own story.",
+  "From grassroots to glory, the journey of football is one of passion, dedication, and endless possibilities.",
 ];
 const generateQuote = (): string => {
   const quoteIndex = Math.round(Math.random() * 5) - 1;

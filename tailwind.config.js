@@ -21,7 +21,6 @@ export const theme = {
       "primary-600": "#5D5FEF",
       "secondary-500": "#FFB620",
       "off-white": "#D0DFFF",
-      red: "#FF5A5A",
       "dark-1": "#000000",
       "dark-2": "#09090A",
       "dark-3": "#101012",

@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createUser } from "@/lib/appwrite/api";
+import { useToast } from "@/components/ui/use-toast";
 
 const SignUpForm: React.FC = () => {
   // const [isLoading, setIsLoading] = useState(false);
-
+  const { toast } = useToast();
   const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
@@ -28,9 +30,26 @@ const SignUpForm: React.FC = () => {
       confirmPassword: "",
     },
   });
+
   async function onSubmit(values: z.infer<typeof SignupValidation>) {
-    await createUser(values);
-    navigate("/");
+    try {
+      const userStatus = await createUser(values);
+      if (userStatus instanceof Error) throw new Error(userStatus.message);
+      toast({
+        variant: "default",
+        title: "Your account is created successfully!",
+        description: "Redirecting to home page...",
+      });
+      navigate("/");
+    } catch (error) {
+      let errorMessage = "Error";
+      if (error instanceof Error) errorMessage = error.message;
+      toast({
+        variant: "error",
+        title: "Uh oh! something wrong happened",
+        description: errorMessage,
+      });
+    }
   }
   return (
     <Form {...form}>

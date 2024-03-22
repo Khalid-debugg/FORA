@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createLoginSession } from "@/lib/appwrite/api";
+// import { createLoginSession } from "@/lib/appwrite/api";
 
 const SignInForm = () => {
   // const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +28,8 @@ const SignInForm = () => {
   async function onSubmit(values: z.infer<typeof SigninValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    const newUser = await createLoginSession(values);
-    console.log(newUser);
+    // const newUser = await createLoginSession(values);
+    console.log(values);
   }
   return (
     <Form {...form}>
