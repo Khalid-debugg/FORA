@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./globals.css";
 import SignInForm from "./_auth/forms/SignInForm";
 import { Home } from "./_root/pages";
@@ -10,20 +10,18 @@ import { Toaster } from "@/components/ui/toaster";
 const App = () => {
   return (
     <main>
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route element={<AuthLayout />}>
-            <Route path="/signin" element={<SignInForm />} />
-            <Route path="/signup" element={<SignUpForm />} />
-          </Route>
-          {/* Guarded routes */}
-          <Route element={<RootLayout />}>
-            <Route index path="/" element={<Home />} />
-          </Route>
-        </Routes>
-        <Toaster />
-      </BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        <Route element={<AuthLayout />}>
+          <Route path="/signin" element={<SignInForm />} />
+          <Route path="/signup" element={<SignUpForm />} />
+        </Route>
+        {/* Guarded routes */}
+        <Route element={<RootLayout />}>
+          <Route index path="/" element={<Home />} />
+        </Route>
+      </Routes>
+      <Toaster />
     </main>
   );
 };

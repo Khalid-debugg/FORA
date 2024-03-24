@@ -13,13 +13,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createUser } from "@/lib/appwrite/api";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  useCreateNewAccount,
+  useCreateNewSession,
+} from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 
 const SignUpForm: React.FC = () => {
   // const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { checkAuthUser } = useUserContext();
+  const { mutateAsync: createUserAccount, isPending: isSigningUp } =
+    useCreateNewAccount();
+  const { mutateAsync: createLoginSession } = useCreateNewSession();
 
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
@@ -33,21 +41,34 @@ const SignUpForm: React.FC = () => {
 
   async function onSubmit(values: z.infer<typeof SignupValidation>) {
     try {
-      const userStatus = await createUser(values);
-      if (userStatus instanceof Error) throw new Error(userStatus.message);
+      const accountStatus = await createUserAccount(values);
+      if (accountStatus instanceof Error)
+        throw new Error(accountStatus.message);
       toast({
         variant: "default",
         title: "Your account is created successfully!",
-        description: "Redirecting to home page...",
       });
-      navigate("/");
+      const sessionStatus = await createLoginSession({
+        email: values.email,
+        password: values.password,
+      });
+      if (sessionStatus instanceof Error)
+        throw new Error(sessionStatus.message);
+      else {
+        const isLoggedIn = await checkAuthUser();
+        if (isLoggedIn) {
+          form.reset();
+          navigate("/");
+        }
+      }
     } catch (error) {
-      let errorMessage = "Error";
+      form.reset();
+      let errorMessage = "Sign up failed, please try again";
       if (error instanceof Error) errorMessage = error.message;
       toast({
         variant: "error",
         title: "Uh oh! something wrong happened",
-        description: errorMessage,
+        description: errorMessage || "",
       });
     }
   }
@@ -139,7 +160,8 @@ const SignUpForm: React.FC = () => {
             type="submit"
             className="shad-button_primary hover:shad-button_ghost"
           >
-            Sign Up
+            <p>Sign Up</p>
+            {isSigningUp && <div className=" animate-spin">⚽</div>}
           </Button>
         </form>
         <p>

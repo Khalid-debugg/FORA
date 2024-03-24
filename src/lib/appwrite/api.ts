@@ -1,16 +1,17 @@
-import { INewUser } from "@/types";
-import { ID } from "appwrite";
+import { INewUser, IRegisteredUser } from "@/types";
+import { ID, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases } from "./config";
 
-export async function createUser(user: INewUser) {
+export async function createUserAccount(user: INewUser) {
   try {
     const newUser = await account.create(
       ID.unique(),
       user.email,
       user.password,
     );
+    if (!newUser) throw new Error();
     const avatarURL = avatars.getInitials();
-    return await createNewUserDocument({
+    return await createUserInDB({
       accountID: newUser.$id,
       email: user.email,
       username: user.username,
@@ -21,7 +22,7 @@ export async function createUser(user: INewUser) {
   }
 }
 
-export async function createNewUserDocument(user: {
+export async function createUserInDB(user: {
   accountID: string;
   email: string;
   username: string;
@@ -36,22 +37,33 @@ export async function createNewUserDocument(user: {
     );
     return document;
   } catch (err) {
-    console.log(err);
     return err;
   }
 }
-// export async function createLoginSession(user: IRegisteredUser) {
-//   try {
-//     const newUser = await account.createEmailPasswordSession(
-//       user.email,
-//       user.password,
-//     );
-//     return newUser;
-//   } catch (err) {
-//     console.log(err);
-//     return err;
-//   }
-// }
+export async function createLoginSession(user: IRegisteredUser) {
+  try {
+    const newUser = await account.createEmailSession(user.email, user.password);
+    return newUser;
+  } catch (err) {
+    return err;
+  }
+}
+export async function getCurrentUser() {
+  try {
+    const currentAccount = await account.get();
+    if (!currentAccount) throw new Error();
+
+    const currentUser = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.usersID,
+      [Query.equal("accountID", currentAccount.$id)],
+    );
+    if (!currentUser) throw new Error();
+    return currentUser.documents[0];
+  } catch (err) {
+    console.log(err);
+  }
+}
 // export async function verifyUser() {
 //   try {
 //     const promise = await account.createVerification(

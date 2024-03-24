@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { SigninValidation } from "@/lib/validation";
 import { z } from "zod";
@@ -13,10 +13,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-// import { createLoginSession } from "@/lib/appwrite/api";
-
+import { useToast } from "@/components/ui/use-toast";
+import { useCreateNewSession } from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 const SignInForm = () => {
-  // const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { checkAuthUser } = useUserContext();
+  const { mutateAsync: createLoginSession, isPending: isLoggingIn } =
+    useCreateNewSession();
 
   const form = useForm<z.infer<typeof SigninValidation>>({
     resolver: zodResolver(SigninValidation),
@@ -26,10 +31,35 @@ const SignInForm = () => {
     },
   });
   async function onSubmit(values: z.infer<typeof SigninValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    // const newUser = await createLoginSession(values);
-    console.log(values);
+    try {
+      const sessionStatus = await createLoginSession({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (sessionStatus instanceof Error)
+        throw new Error(sessionStatus.message);
+      else {
+        toast({
+          variant: "default",
+          title: "Your account is logged in successfully!",
+        });
+      }
+      const isLoggedIn = await checkAuthUser();
+      if (isLoggedIn) {
+        form.reset();
+        navigate("/");
+      }
+    } catch (error) {
+      form.reset();
+      let errorMessage = "Sign up failed, please try again";
+      if (error instanceof Error) errorMessage = error.message;
+      toast({
+        variant: "error",
+        title: "Uh oh! something wrong happened",
+        description: errorMessage || "",
+      });
+    }
   }
   return (
     <Form {...form}>
@@ -75,7 +105,8 @@ const SignInForm = () => {
             type="submit"
             className="shad-button_primary hover:shad-button_ghost"
           >
-            Sign in
+            <p>Sign in</p>
+            {isLoggingIn && <div className=" animate-spin">⚽</div>}
           </Button>
         </form>
         <p>
