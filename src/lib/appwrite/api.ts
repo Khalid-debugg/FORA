@@ -10,7 +10,12 @@ export async function createUserAccount(user: INewUser) {
       user.password,
     );
     if (!newUser) throw new Error();
-    const avatarURL = avatars.getInitials();
+    const avatarURL = avatars.getInitials(
+      user.username,
+      undefined,
+      undefined,
+      "30cc42",
+    );
     return await createUserInDB({
       accountID: newUser.$id,
       email: user.email,
@@ -44,6 +49,14 @@ export async function createLoginSession(user: IRegisteredUser) {
   try {
     const newUser = await account.createEmailSession(user.email, user.password);
     return newUser;
+  } catch (err) {
+    return err;
+  }
+}
+export async function deleteSession() {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
   } catch (err) {
     return err;
   }

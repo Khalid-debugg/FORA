@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import "./globals.css";
 import SignInForm from "./_auth/forms/SignInForm";
-import { Home } from "./_root/pages";
+import { Home, CreatePost } from "./_root/pages";
 import SignUpForm from "./_auth/forms/SignUpForm";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
@@ -18,7 +18,9 @@ const App = () => {
         </Route>
         {/* Guarded routes */}
         <Route element={<RootLayout />}>
-          <Route index path="/" element={<Home />} />
+          <Route path="/" element={<Home />}>
+            <Route path="create-post" element={<CreatePost />} />
+          </Route>
         </Route>
       </Routes>
       <Toaster />

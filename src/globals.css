@@ -272,6 +272,6 @@
   }
 
   .shad-button_ghost {
-    @apply border-2 border-primary-500 bg-white text-primary-500 !important;
+    @apply outline outline-primary-500 bg-white text-primary-500 !important;
   }
 }

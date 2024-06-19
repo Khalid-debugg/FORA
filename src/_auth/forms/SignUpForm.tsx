@@ -134,6 +134,7 @@ const SignUpForm: React.FC = () => {
                     placeholder="Example1@"
                     type="password"
                     className="shad-input"
+                    autoComplete="on"
                     {...field}
                   />
                 </FormControl>
@@ -149,7 +150,12 @@ const SignUpForm: React.FC = () => {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type="password" className="shad-input" {...field} />
+                  <Input
+                    type="password"
+                    className="shad-input"
+                    autoComplete="on"
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />

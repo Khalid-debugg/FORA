@@ -94,7 +94,12 @@ const SignInForm = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" className="shad-input" {...field} />
+                  <Input
+                    type="password"
+                    className="shad-input"
+                    autoComplete="on"
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />

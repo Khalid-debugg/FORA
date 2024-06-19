@@ -1,4 +1,4 @@
-import { useGetCurrentUser } from "@/lib/react-query/queriesAndMutations";
+import { getCurrentUser } from "@/lib/appwrite/api";
 import { IContextType, IUser } from "@/types";
 import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -23,12 +23,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { data: currentAcc } = useGetCurrentUser();
 
   const currentRoute = useLocation();
   const navigate = useNavigate();
   const checkAuthUser = async () => {
     try {
+      const currentAcc = await getCurrentUser();
       if (currentAcc) {
         setUser({
           id: currentAcc.$id,
