@@ -16,9 +16,12 @@ export type IUpdateUser = {
 export type INewPost = {
   userId: string;
   caption: string;
-  file: File[];
-  location?: string;
-  tags?: string;
+  file?: File[];
+  privacy: string;
+  playersNumber?: number;
+  governorate?: string;
+  city?: string;
+  playgroundName?: string;
 };
 
 export type IUpdatePost = {

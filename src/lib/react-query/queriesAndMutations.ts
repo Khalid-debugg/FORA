@@ -4,8 +4,9 @@ import {
   createLoginSession,
   getCurrentUser,
   deleteSession,
+  createPost,
 } from "../appwrite/api";
-import { INewUser, IRegisteredUser } from "@/types";
+import { INewPost, INewUser, IRegisteredUser } from "@/types";
 
 export const useCreateNewAccount = () => {
   return useMutation({
@@ -45,5 +46,15 @@ export const useGetCities = () => {
         console.log(error);
       }
     },
+  });
+};
+interface CreatePostVariables {
+  post: INewPost;
+  postType: string;
+}
+
+export const useCreatePost = () => {
+  return useMutation({
+    mutationFn: ({post, postType}: CreatePostVariables ) => createPost(post, postType),
   });
 };

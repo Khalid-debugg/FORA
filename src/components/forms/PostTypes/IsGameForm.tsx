@@ -15,15 +15,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "../../ui/input";
-import { useGetCities } from "@/lib/react-query/queriesAndMutations";
+import {
+  useCreatePost,
+  useGetCities,
+} from "@/lib/react-query/queriesAndMutations";
 import { gameValidation } from "@/lib/validation";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
+import { useUserContext } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const IsGameForm = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user } = useUserContext();
   const { data: governorates } = useGetCities();
+  const { mutateAsync: createPost, isPending: postIsPending } = useCreatePost();
   const [cities, setCities] = useState([]);
   const form = useForm<z.infer<typeof gameValidation>>({
     resolver: zodResolver(gameValidation),
@@ -37,11 +47,34 @@ const IsGameForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof gameValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log("wtf");
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof gameValidation>) {
+    try {
+      const postVariables = {
+        post: {
+          userId: user.id,
+          ...values,
+        },
+        postType: "game",
+      };
+      const newPost = await createPost(postVariables);
+      if (!newPost) {
+        toast({
+          variant: "error",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+        form.reset();
+        console.log(form.getValues());
+      } else {
+        toast({
+          variant: "default",
+          title: "Your game is shared successfully!",
+        });
+        navigate("/");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
   return (
     <>
@@ -94,6 +127,7 @@ const IsGameForm = () => {
                 <FormItem>
                   <FormLabel>Governorate</FormLabel>
                   <Select
+                    value={form.watch("governorate")}
                     onValueChange={(value: string) => {
                       form.setValue("city", "");
                       form.setValue("governorate", value);
@@ -135,6 +169,7 @@ const IsGameForm = () => {
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <Select
+                    value={form.watch("city")}
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     disabled={cities.length === 0}
@@ -211,7 +246,8 @@ const IsGameForm = () => {
             type="submit"
             className="self-center w-1/2 p-4 my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
           >
-            Post
+            <p>Post</p>
+            {postIsPending && <div className=" animate-spin">⚽</div>}
           </Button>
         </form>
       </Form>
