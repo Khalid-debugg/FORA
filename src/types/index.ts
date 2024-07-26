@@ -59,3 +59,20 @@ export type IContextType = {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
 };
+export type ICreatedPost = {
+  $collectionId: string;
+  $createdAt: string;
+  $databaseId: string;
+  $id: string;
+  $permissions: string;
+  $updatedAt: string;
+  caption: string;
+  creator: any;
+  isGame: boolean;
+  likes: any;
+  location: string;
+  media: string[];
+  mediaIds: string[];
+  players: number;
+  privacy: string;
+};

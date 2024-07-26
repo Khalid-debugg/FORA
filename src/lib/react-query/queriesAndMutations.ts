@@ -1,13 +1,15 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import {
   createUserAccount,
   createLoginSession,
   getCurrentUser,
   deleteSession,
   createPost,
+  getRecentPosts,
 } from "../appwrite/api";
 import { INewPost, INewUser, IRegisteredUser } from "@/types";
-
+import { QueryKeys } from "./queryKeys";
+const queryClient = new QueryClient();
 export const useCreateNewAccount = () => {
   return useMutation({
     mutationFn: (user: INewUser) => createUserAccount(user),
@@ -25,13 +27,13 @@ export const useDeleteSession = () => {
 };
 export const useGetCurrentUser = () => {
   return useQuery({
-    queryKey: ["User"],
+    queryKey: [QueryKeys.Users],
     queryFn: () => getCurrentUser(),
   });
 };
 export const useGetCities = () => {
   return useQuery({
-    queryKey: ["Cities"],
+    queryKey: [QueryKeys.Cities],
     queryFn: async () => {
       try {
         const response = await fetch(
@@ -55,6 +57,16 @@ interface CreatePostVariables {
 
 export const useCreatePost = () => {
   return useMutation({
-    mutationFn: ({post, postType}: CreatePostVariables ) => createPost(post, postType),
+    mutationFn: ({ post, postType }: CreatePostVariables) =>
+      createPost(post, postType),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.RecentPosts] });
+    },
+  });
+};
+export const useGetRecentPosts = () => {
+  return useQuery({
+    queryKey: [QueryKeys.RecentPosts],
+    queryFn: () => getRecentPosts(),
   });
 };

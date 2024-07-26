@@ -77,6 +77,19 @@ export async function getCurrentUser() {
     console.log(err);
   }
 }
+export async function getRecentPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      [Query.orderDesc("$createdAt"), Query.limit(20)],
+    );
+    if (!posts) throw new Error();
+    return posts;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export async function createPost(post: INewPost, postType: string) {
   if (postType === "game") return await createGamePost(post);
   else return await createNormalPost(post);
@@ -111,9 +124,11 @@ export async function createNormalPost(post: INewPost) {
   try {
     const uploadedFiles = await uploadFiles(post.file || []);
     if (!uploadedFiles) throw new Error();
-    const filesUrls = getFilePreview(uploadedFiles);
+    const filesUrls = await getFilePreview(uploadedFiles);
+    console.log(filesUrls);
+
     if (!filesUrls) {
-      deleteFiles(uploadedFiles);
+      await deleteFiles(uploadedFiles);
       throw new Error();
     }
     const newPost = await databases.createDocument(
