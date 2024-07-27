@@ -125,7 +125,6 @@ export async function createNormalPost(post: INewPost) {
     const uploadedFiles = await uploadFiles(post.file || []);
     if (!uploadedFiles) throw new Error();
     const filesUrls = await getFilePreview(uploadedFiles);
-    console.log(filesUrls);
 
     if (!filesUrls) {
       await deleteFiles(uploadedFiles);
@@ -191,6 +190,8 @@ export async function getFilePreview(files: Models.File[]) {
   try {
     const filesURls = [];
     for (const file of files) {
+      console.log(files);
+
       const fileUrl = storage.getFilePreview(
         appwriteConfig.storageID,
         file.$id,

@@ -37,6 +37,7 @@ export const gameValidation = z.object({
 export const postValidation = z.object({
   caption: z
     .string()
+    .nonempty("Caption is required")
     .max(2200, { message: "That's too much, maximum 2200 characters" }),
   privacy: z.string(),
   file: z.custom<File[]>(),

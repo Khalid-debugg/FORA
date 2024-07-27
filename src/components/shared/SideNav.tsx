@@ -8,7 +8,7 @@ const sideLinks = [
   { logoUrl: "mygames", label: "My Games" },
   { logoUrl: "search", label: "Explore" },
   { logoUrl: "chat", label: "Messages" },
-  { logoUrl: "add-post", label: "Create Post", path: "/create-post" },
+  { logoUrl: "add-post", label: "Create Post", path: "/create-post/normal" },
 ];
 const SideNav = () => {
   const { pathname } = useLocation();

@@ -18,6 +18,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.5",
     "@tanstack/react-query": "^5.28.6",
+    "@vidstack/react": "^1.11.30",
     "appwrite": "^13.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -32,6 +33,7 @@
     "react-dropzone": "^14.2.3",
     "react-filepond": "^7.1.2",
     "react-hook-form": "^7.51.0",
+    "react-icons": "^5.2.1",
     "react-router-dom": "^6.22.2",
     "tailwind-merge": "^2.2.1",
     "zod": "^3.22.4"

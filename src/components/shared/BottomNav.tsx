@@ -18,7 +18,10 @@ const BottomNav = () => {
           className="h-10 mx-auto"
         />
       </button>
-      <button className="flex-1 p-5" onClick={() => navigate("/create-post")}>
+      <button
+        className="flex-1 p-5"
+        onClick={() => navigate("/create-post/normal")}
+      >
         <img
           src="/assets/icons/add-post.svg"
           alt="Add post icon"
