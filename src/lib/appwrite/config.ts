@@ -5,7 +5,7 @@ export const appwriteConfig = {
   url: import.meta.env.VITE_APPWRITE_URL,
   storageID: import.meta.env.VITE_APPWRITE_STORAGE_ID,
   databaseID: import.meta.env.VITE_APPWRITE_DATABASE_ID,
-  mygamesID: import.meta.env.VITE_APPWRITE_MYGAMES_ID,
+  gamesID: import.meta.env.VITE_APPWRITE_GAMES_ID,
   usersID: import.meta.env.VITE_APPWRITE_USERS_ID,
   postsID: import.meta.env.VITE_APPWRITE_POSTS_ID,
 };

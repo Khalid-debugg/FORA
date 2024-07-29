@@ -68,7 +68,9 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           </MediaPlayer>
         )}
         {media.mimeType !== "video/mp4" && media.mimeType !== "image/jpeg" && (
-          <div className="text-red-500 p-10">Media type is not supported</div>
+          <p className="text-red-500 p-10 flex justify-center items-center font-bold">
+            Media type is not supported
+          </p>
         )}
       </CarouselItem>
     ));
@@ -86,8 +88,8 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           <p className="text-xl font-medium">{post.creator.username}</p>
         </div>
         <div className="flex items-center gap-2">
+          <BsCalendar2DateFill fill="green" size={20} />
           <p>{formatDate()}</p>
-          <BsCalendar2DateFill fill="green" />
         </div>
       </div>
       <div className="h-[0.125rem] bg-black mx-2"></div>

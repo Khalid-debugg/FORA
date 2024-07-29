@@ -7,13 +7,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useState } from "react";
 import { postValidation } from "@/lib/validation";
 import { useForm } from "react-hook-form";
@@ -42,7 +35,6 @@ const IsPostForm = ({ post }: any) => {
     resolver: zodResolver(postValidation),
     defaultValues: {
       caption: post ? post.caption : "",
-      privacy: post ? post.privacy : "public",
       file: [],
     },
   });
@@ -61,11 +53,8 @@ const IsPostForm = ({ post }: any) => {
     // ✅ This will be type-safe and validated.
     try {
       const postVariables = {
-        post: {
-          userId: user.id,
-          ...values,
-        },
-        postType: "normal",
+        userId: user.id,
+        ...values,
       };
       const newPost = await createPost(postVariables);
       if (!newPost) {
@@ -133,34 +122,7 @@ const IsPostForm = ({ post }: any) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="privacy"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Privacy</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={field.value} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem key={1} value={"public"}>
-                      Public
-                    </SelectItem>
-                    <SelectItem key={2} value={"friends only"}>
-                      Friends Only
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <Button
             type="submit"
             className="self-center w-1/2 p-4 my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"

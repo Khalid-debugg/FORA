@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "../../ui/input";
 import {
-  useCreatePost,
+  useCreateGame,
   useGetCities,
 } from "@/lib/react-query/queriesAndMutations";
 import { gameValidation } from "@/lib/validation";
@@ -27,13 +27,12 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useUserContext } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+
 const IsGameForm = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const { user } = useUserContext();
   const { data: governorates } = useGetCities();
-  const { mutateAsync: createPost, isPending: postIsPending } = useCreatePost();
+  const { mutateAsync: createGame, isPending: postIsPending } = useCreateGame();
   const [cities, setCities] = useState([]);
   const form = useForm<z.infer<typeof gameValidation>>({
     resolver: zodResolver(gameValidation),
@@ -43,20 +42,19 @@ const IsGameForm = () => {
       governorate: "",
       city: "",
       playgroundName: "",
-      privacy: "public",
+      dateTime: "",
     },
   });
-
   async function onSubmit(values: z.infer<typeof gameValidation>) {
+    console.log(values);
+
     try {
       const postVariables = {
-        post: {
-          userId: user.id,
-          ...values,
-        },
-        postType: "game",
+        userId: user.id,
+        ...values,
       };
-      const newPost = await createPost(postVariables);
+
+      const newPost = await createGame(postVariables);
       if (!newPost) {
         toast({
           variant: "error",
@@ -70,12 +68,18 @@ const IsGameForm = () => {
           variant: "default",
           title: "Your game is shared successfully!",
         });
-        navigate("/");
+        window.location.href = "/";
       }
     } catch (err) {
       console.log(err);
     }
   }
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+  };
+
   return (
     <>
       <Form {...form}>
@@ -196,52 +200,43 @@ const IsGameForm = () => {
                 </FormItem>
               )}
             />
+          </div>
+          <div className="flex md:justify-start flex-wrap gap-3">
             <FormField
               control={form.control}
-              name="privacy"
+              name="playgroundName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Privacy</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={field.value} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem key={1} value={"public"}>
-                        Public
-                      </SelectItem>
-                      <SelectItem key={2} value={"friends only"}>
-                        Friends Only
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Playground's name</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="outline outline-1 outline-primary-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dateTime" // Added new form field for dateTime
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date and Time</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="datetime-local"
+                      className="outline outline-1 outline-primary-500"
+                      min={getCurrentDateTime()}
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name="playgroundName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Playground's name</FormLabel>
-                <FormControl>
-                  <Input
-                    className="outline outline-1 outline-primary-500"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <Button
             type="submit"
             className="self-center w-1/2 p-4 my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"

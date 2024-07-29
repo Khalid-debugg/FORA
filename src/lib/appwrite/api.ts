@@ -1,4 +1,4 @@
-import { INewPost, INewUser, IRegisteredUser } from "@/types";
+import { INewGame, INewPost, INewUser, IRegisteredUser } from "@/types";
 import { ID, Models, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
@@ -82,32 +82,43 @@ export async function getRecentPosts() {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
-      [Query.orderDesc("$createdAt"), Query.limit(20)],
+      [Query.limit(20)],
     );
     if (!posts) throw new Error();
-    return posts;
+    const games = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      [Query.limit(20)],
+    );
+    if (!games) throw new Error();
+    console.log(posts);
+    console.log(games);
+
+    const allPosts = [...posts.documents, ...games.documents].sort(
+      (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt),
+    );
+    console.log(allPosts);
+    return allPosts;
   } catch (err) {
     console.log(err);
   }
 }
-export async function createPost(post: INewPost, postType: string) {
-  if (postType === "game") return await createGamePost(post);
-  else return await createNormalPost(post);
-}
-export async function createGamePost(post: INewPost) {
+
+export async function createGame(post: INewGame) {
+  console.log(post);
+
   try {
     const newPost = await databases.createDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.postsID,
+      appwriteConfig.gamesID,
       ID.unique(),
       {
         creator: post.userId,
         caption: post.caption,
-        players: post.playersNumber,
+        playersNumber: post.playersNumber,
         location:
           post.governorate + " - " + post.city + " - " + post.playgroundName,
-        privacy: post.privacy,
-        isGame: true,
+        date: post.dateTime.replace("T", " | "),
       },
     );
     if (!newPost) {
@@ -118,7 +129,7 @@ export async function createGamePost(post: INewPost) {
     console.log(err);
   }
 }
-export async function createNormalPost(post: INewPost) {
+export async function createPost(post: INewPost) {
   console.log(post);
 
   try {
@@ -139,8 +150,6 @@ export async function createNormalPost(post: INewPost) {
         caption: post.caption,
         media: filesUrls,
         mediaIds: uploadedFiles.map((file) => file.$id),
-        privacy: post.privacy,
-        isGame: false,
       },
     );
     if (!newPost) {
@@ -192,14 +201,7 @@ export async function getFilePreview(files: Models.File[]) {
     for (const file of files) {
       console.log(files);
 
-      const fileUrl = storage.getFilePreview(
-        appwriteConfig.storageID,
-        file.$id,
-        2000,
-        2000,
-        "top",
-        100,
-      );
+      const fileUrl = storage.getFileView(appwriteConfig.storageID, file.$id);
       if (!fileUrl) return null;
       filesURls.push(fileUrl);
     }

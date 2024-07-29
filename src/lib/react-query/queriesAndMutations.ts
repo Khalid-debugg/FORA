@@ -4,10 +4,11 @@ import {
   createLoginSession,
   getCurrentUser,
   deleteSession,
-  createPost,
   getRecentPosts,
+  createGame,
+  createPost,
 } from "../appwrite/api";
-import { INewPost, INewUser, IRegisteredUser } from "@/types";
+import { INewGame, INewPost, INewUser, IRegisteredUser } from "@/types";
 import { QueryKeys } from "./queryKeys";
 const queryClient = new QueryClient();
 export const useCreateNewAccount = () => {
@@ -50,15 +51,18 @@ export const useGetCities = () => {
     },
   });
 };
-interface CreatePostVariables {
-  post: INewPost;
-  postType: string;
-}
 
+export const useCreateGame = () => {
+  return useMutation({
+    mutationFn: (post: INewGame) => createGame(post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.RecentPosts] });
+    },
+  });
+};
 export const useCreatePost = () => {
   return useMutation({
-    mutationFn: ({ post, postType }: CreatePostVariables) =>
-      createPost(post, postType),
+    mutationFn: (post: INewPost) => createPost(post),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.RecentPosts] });
     },

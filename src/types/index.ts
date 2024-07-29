@@ -17,11 +17,15 @@ export type INewPost = {
   userId: string;
   caption: string;
   file?: File[];
-  privacy: string;
+};
+export type INewGame = {
+  userId: string;
+  caption: string;
   playersNumber?: number;
   governorate?: string;
   city?: string;
   playgroundName?: string;
+  dateTime: string;
 };
 
 export type IUpdatePost = {
