@@ -124,6 +124,30 @@ export async function createGame(post: INewGame) {
     if (!newPost) {
       throw new Error();
     }
+    const newWaitingList = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      ID.unique(),
+      {
+        gameId: newPost.$id,
+        waitingPlayers: [],
+      },
+    );
+    if (!newWaitingList) {
+      throw new Error();
+    }
+    const newJoinedList = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      ID.unique(),
+      {
+        gameId: newPost.$id,
+        joinedPlayers: [],
+      },
+    );
+    if (!newJoinedList) {
+      throw new Error();
+    }
     return newPost;
   } catch (err) {
     console.log(err);
@@ -210,6 +234,76 @@ export async function getFilePreview(files: Models.File[]) {
     console.log(err);
   }
 }
+export async function leaveGame({
+  userId,
+  postId,
+}: {
+  userId: string;
+  postId: string;
+}) {
+  try {
+    const waitingGame = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      [Query.equal("gameId", [postId])],
+    );
+    if (
+      !waitingGame.documents[0].waitingPlayers.some(
+        (player) => player.$id === userId,
+      )
+    ) {
+      return new Error("Already left the game");
+    }
+    const waitingPlayers = waitingGame.documents[0].waitingPlayers.filter(
+      (player) => player.$id !== userId,
+    );
+    const updatedPost = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      waitingGame.documents[0].$id,
+      {
+        waitingPlayers,
+      },
+    );
+    if (!updatedPost) return new Error();
+    return updatedPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function joinGame({
+  userId,
+  postId,
+}: {
+  userId: string;
+  postId: string;
+}) {
+  try {
+    const waitingGame = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      [Query.equal("gameId", [postId])],
+    );
+
+    const waitingPlayers = waitingGame.documents[0].waitingPlayers;
+
+    if (!waitingPlayers.some((player) => player.$id === userId)) {
+      const updatedPost = await databases.updateDocument(
+        appwriteConfig.databaseID,
+        appwriteConfig.waitingGamesID,
+        waitingGame.documents[0].$id,
+        {
+          waitingPlayers: [...waitingPlayers, userId],
+        },
+      );
+      return updatedPost;
+    } else {
+      return new Error("Already joined the game");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 // export async function verifyUser() {
 //   try {
@@ -229,3 +323,19 @@ export async function getFilePreview(files: Models.File[]) {
 //     console.log(err);
 //   }
 // }
+export async function getWaitingPlayers(gameId: string) {
+  console.log(gameId);
+
+  try {
+    const game = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      [Query.equal("gameId", gameId)],
+    );
+    if (!game) throw new Error();
+    console.log(game.documents[0].waitingPlayers);
+    return game.documents[0].waitingPlayers;
+  } catch (err) {
+    console.log(err);
+  }
+}
