@@ -4,41 +4,51 @@ import { FaLocationDot } from "react-icons/fa6";
 import { FaClock } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 import {
+  useGetJoinedPlayers,
   useGetWaitingPlayers,
   useJoinGame,
   useLeaveGame,
 } from "@/lib/react-query/queriesAndMutations";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "../ui/use-toast";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { toast } from "../../ui/use-toast";
+import { useEffect, useState } from "react";
+import WaitingList from "./WaitingList";
+import JoinedList from "./JoinedList";
 
 const GamePost = ({ post }) => {
   const { user } = useUserContext();
-  const { data: waitingPlayers } = useGetWaitingPlayers(post.$id);
+  const {
+    data: waitingPlayers,
+    refetch: refetchWaiting,
+    isPending: isLoadingWaiting,
+  } = useGetWaitingPlayers(post.$id);
+  const { data: joinedPlayers, isPending: isLoadingJoined } =
+    useGetJoinedPlayers(post.$id);
   const { mutateAsync: joinGame, isPending: isJoining } = useJoinGame(post.$id);
   const { mutateAsync: leaveGame, isPending: isLeaving } = useLeaveGame(
     post.$id,
   );
-  const isJoined =
-    user && waitingPlayers?.some((player) => player.$id === user.id);
 
+  const [isJoined, setisJoined] = useState(false);
+
+  useEffect(() => {
+    if (waitingPlayers) {
+      setisJoined(waitingPlayers.some((player) => player.$id === user?.id));
+    }
+  }, [waitingPlayers, user]);
   const handleJoin = async () => {
     try {
       const res = await joinGame({
         userId: user.id,
         postId: post.$id,
+        playersNumber: post.playersNumber,
       });
       if (res instanceof Error) throw new Error(res.message);
       toast({
         variant: "default",
         title: "Joined the waiting list successfully!",
       });
+      await refetchWaiting();
+      setisJoined(true);
     } catch (error) {
       toast({
         variant: `${error.message.split(" ")[0] === "Already" ? "warning" : "error"}`,
@@ -57,6 +67,8 @@ const GamePost = ({ post }) => {
         variant: "default",
         title: "Left successfully!",
       });
+      await refetchWaiting();
+      setisJoined(false);
     } catch (error) {
       toast({
         variant: `${error.message.split(" ")[0] === "Already" ? "warning" : "error"}`,
@@ -88,47 +100,23 @@ const GamePost = ({ post }) => {
         </div>
       </div>
       <div className="flex flex-1">
-        <div className="relative overflow-hidden w-1/2">
-          <img
-            className="object-cover h-full scale-y-[1.15] scale-x-[1.25]"
-            src="./assets/images/football-pitch.svg"
-            alt=""
-          />
-          {post.playersNumber}
-        </div>
-        <div className="w-1/2 flex flex-col max-h-[27rem]">
+        <JoinedList
+          joinedPlayers={joinedPlayers}
+          isLoadingJoined={isLoadingJoined}
+          restPlayers={post.playersNumber - joinedPlayers?.length}
+        />
+
+        <div className="w-1/2 flex flex-col max-h-[27rem] ">
           <p className="text-center text-lg font-semibold py-2 border-b-2 border-black">
             Waiting room 🪑&nbsp;
             {waitingPlayers &&
               waitingPlayers.length > 0 &&
               waitingPlayers.length + " player(s)"}
           </p>
-          <div className="flex flex-wrap h-full justify-center items-center overflow-auto max-h-[25rem]">
-            {waitingPlayers &&
-              waitingPlayers.map((player, i) => (
-                <HoverCard key={i}>
-                  <HoverCardTrigger className="flex items-center">
-                    <Avatar className="h-12 w-12 hover:cursor-pointer">
-                      <AvatarImage src={player.imageURL} />
-                      <AvatarFallback>{player.username[0]}</AvatarFallback>
-                    </Avatar>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="border border-primary-500 bg-white absolute top-0 left-0">
-                    <div className="underline font-bold flex gap-2 items-center">
-                      <img
-                        src={player.imageURL}
-                        alt="profile pic"
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <Link to={`/profile/${player.$id}`}>
-                        {player.username}
-                      </Link>
-                    </div>
-                    <p>{player.bio}</p>
-                  </HoverCardContent>
-                </HoverCard>
-              ))}
-          </div>
+          <WaitingList
+            waitingPlayers={waitingPlayers}
+            isLoadingWaiting={isLoadingWaiting}
+          />
         </div>
       </div>
       {user.id !== post.creator.$id && !isJoined && (
@@ -156,4 +144,5 @@ const GamePost = ({ post }) => {
     </div>
   );
 };
+
 export default GamePost;

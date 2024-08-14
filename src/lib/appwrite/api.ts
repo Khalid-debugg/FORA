@@ -274,9 +274,11 @@ export async function leaveGame({
 export async function joinGame({
   userId,
   postId,
+  playersNumber,
 }: {
   userId: string;
   postId: string;
+  playersNumber: number;
 }) {
   try {
     const waitingGame = await databases.listDocuments(
@@ -286,7 +288,8 @@ export async function joinGame({
     );
 
     const waitingPlayers = waitingGame.documents[0].waitingPlayers;
-
+    if (waitingPlayers.length === playersNumber)
+      return new Error("Game is full");
     if (!waitingPlayers.some((player) => player.$id === userId)) {
       const updatedPost = await databases.updateDocument(
         appwriteConfig.databaseID,
@@ -324,8 +327,6 @@ export async function joinGame({
 //   }
 // }
 export async function getWaitingPlayers(gameId: string) {
-  console.log(gameId);
-
   try {
     const game = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -333,8 +334,20 @@ export async function getWaitingPlayers(gameId: string) {
       [Query.equal("gameId", gameId)],
     );
     if (!game) throw new Error();
-    console.log(game.documents[0].waitingPlayers);
     return game.documents[0].waitingPlayers;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getJoinedPlayers(gameId: string) {
+  try {
+    const game = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      [Query.equal("gameId", gameId)],
+    );
+    if (!game) throw new Error();
+    return game.documents[0].joinedPlayers;
   } catch (err) {
     console.log(err);
   }

@@ -3,4 +3,5 @@ export enum QueryKeys {
   Cities = "getCities",
   Users = "getUsers",
   WaitingPlayers = "getWaitingPlayers",
+  JoinedPlayers = "getJoinedPlayers",
 }

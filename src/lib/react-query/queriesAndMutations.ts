@@ -10,6 +10,7 @@ import {
   joinGame,
   getWaitingPlayers,
   leaveGame,
+  getJoinedPlayers,
 } from "../appwrite/api";
 import { INewGame, INewPost, INewUser, IRegisteredUser } from "@/types";
 import { QueryKeys } from "./queryKeys";
@@ -79,8 +80,15 @@ export const useGetRecentPosts = () => {
 };
 export const useJoinGame = (gameId: string) => {
   return useMutation({
-    mutationFn: ({ userId, postId }: { userId: string; postId: string }) =>
-      joinGame({ userId, postId }),
+    mutationFn: ({
+      userId,
+      postId,
+      playersNumber,
+    }: {
+      userId: string;
+      postId: string;
+      playersNumber: number;
+    }) => joinGame({ userId, postId, playersNumber }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
@@ -106,5 +114,11 @@ export const useGetWaitingPlayers = (gameId: string) => {
   return useQuery({
     queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
     queryFn: async () => await getWaitingPlayers(gameId),
+  });
+};
+export const useGetJoinedPlayers = (gameId: string) => {
+  return useQuery({
+    queryKey: [`${gameId + QueryKeys.JoinedPlayers}`],
+    queryFn: async () => await getJoinedPlayers(gameId),
   });
 };
