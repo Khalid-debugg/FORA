@@ -1,4 +1,10 @@
-import { INewGame, INewPost, INewUser, IRegisteredUser } from "@/types";
+import {
+  INewComment,
+  INewGame,
+  INewPost,
+  INewUser,
+  IRegisteredUser,
+} from "@/types";
 import { ID, Models, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
@@ -103,6 +109,24 @@ export async function getRecentPosts() {
     console.log(err);
   }
 }
+export async function getComments(postId: string, pageParam: number) {
+  try {
+    const comments = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      [
+        Query.equal("post", postId),
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+      ],
+    );
+
+    if (!comments) throw new Error("Something went wrong");
+    return comments.documents;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export async function createGame(post: INewGame) {
   console.log(post);
@@ -154,17 +178,13 @@ export async function createGame(post: INewGame) {
   }
 }
 export async function createPost(post: INewPost) {
-  console.log(post);
-
   try {
-    const uploadedFiles = await uploadFiles(post.file || []);
-    if (!uploadedFiles) throw new Error();
-    const filesUrls = await getFilePreview(uploadedFiles);
+    const uploadedFiles = await handleFileOperation(
+      uploadFiles,
+      post.file || [],
+    );
+    const filesUrls = await handleFileOperation(getFilePreview, uploadedFiles);
 
-    if (!filesUrls) {
-      await deleteFiles(uploadedFiles);
-      throw new Error();
-    }
     const newPost = await databases.createDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
@@ -173,67 +193,119 @@ export async function createPost(post: INewPost) {
         creator: post.userId,
         caption: post.caption,
         media: filesUrls,
-        mediaIds: uploadedFiles.map((file) => file.$id),
+        mediaIds: uploadedFiles.map((file) => file?.$id),
       },
     );
+
     if (!newPost) {
-      deleteFiles(uploadedFiles);
-      throw new Error();
+      await handleFileOperation(deleteFiles, uploadedFiles);
+      throw new Error("Failed to create the post.");
     }
+
     return newPost;
   } catch (err) {
-    console.log(err);
+    console.error("Error creating post:", err);
+    throw err;
   }
 }
-export async function uploadFiles(files: File[]) {
-  console.log(files);
 
+export async function createComment(comment: INewComment) {
   try {
-    const uploadedFiles = [];
-    for (const file of files) {
-      const uploadedFile = await storage.createFile(
-        appwriteConfig.storageID,
-        ID.unique(),
-        file,
-      );
-      if (!uploadedFile) return null;
-      uploadedFiles.push(uploadedFile);
+    const uploadedFile = await handleFileOperation(uploadFiles, comment.media);
+    const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
+    console.log(fileUrl, uploadedFile);
+
+    const newComment = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      ID.unique(),
+      {
+        creator: comment.userId,
+        content: comment.comment,
+        post: comment.postId,
+        mediaUrl: fileUrl,
+        mediaId: uploadedFile?.$id || null,
+      },
+    );
+
+    if (!newComment) {
+      await handleFileOperation(deleteFiles, uploadedFile);
+      throw new Error("Failed to create the comment.");
     }
 
-    return uploadedFiles;
+    return newComment;
   } catch (err) {
-    console.log(err);
+    console.error("Error creating comment:", err);
+    throw err;
   }
 }
-export async function deleteFiles(files: Models.File[]) {
+
+async function handleFileOperation(
+  operation: Function,
+  fileOrFiles?: File | Models.File | File[] | Models.File[],
+) {
+  if (!fileOrFiles) return null;
+
   try {
-    for (const file of files) {
-      const deletedFile = await storage.deleteFile(
-        appwriteConfig.storageID,
-        file.$id,
-      );
-      if (!deletedFile) throw new Error();
-    }
+    return await operation(fileOrFiles);
+  } catch (err) {
+    console.error("File operation failed:", err);
+    throw err;
+  }
+}
+
+export async function uploadFiles(fileOrFiles?: File | File[]) {
+  if (!fileOrFiles) return null;
+  try {
+    const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
+    console.log(files);
+
+    const uploadedFiles = await Promise.all(
+      files.map((file) =>
+        storage.createFile(appwriteConfig.storageID, ID.unique(), file),
+      ),
+    );
+    if (uploadedFiles.some((file) => !file))
+      throw new Error("File upload failed.");
+    return Array.isArray(fileOrFiles) ? uploadedFiles : uploadedFiles[0];
+  } catch (err) {
+    console.error("Error uploading files:", err);
+    throw err;
+  }
+}
+
+export async function deleteFiles(fileOrFiles?: Models.File | Models.File[]) {
+  if (!fileOrFiles) return null;
+  try {
+    const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
+    await Promise.all(
+      files.map((file) =>
+        storage.deleteFile(appwriteConfig.storageID, file.$id),
+      ),
+    );
     return { status: "ok" };
   } catch (err) {
-    console.log(err);
+    console.error("Error deleting files:", err);
+    throw err;
   }
 }
-export async function getFilePreview(files: Models.File[]) {
-  try {
-    const filesURls = [];
-    for (const file of files) {
-      console.log(files);
 
-      const fileUrl = storage.getFileView(appwriteConfig.storageID, file.$id);
-      if (!fileUrl) return null;
-      filesURls.push(fileUrl);
-    }
-    return filesURls;
+export async function getFilePreview(
+  fileOrFiles?: Models.File | Models.File[],
+) {
+  if (!fileOrFiles) return null;
+  try {
+    const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
+    const fileUrls = files.map((file) =>
+      storage.getFileView(appwriteConfig.storageID, file.$id),
+    );
+    return Array.isArray(fileOrFiles) ? fileUrls : fileUrls[0];
   } catch (err) {
-    console.log(err);
+    console.error("Error getting file preview:", err);
+    throw err;
   }
 }
+
 export async function leaveGame({
   userId,
   postId,

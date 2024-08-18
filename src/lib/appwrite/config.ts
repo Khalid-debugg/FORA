@@ -10,6 +10,7 @@ export const appwriteConfig = {
   waitingGamesID: import.meta.env.VITE_APPWRITE_WAITING_GAMES_ID,
   usersID: import.meta.env.VITE_APPWRITE_USERS_ID,
   postsID: import.meta.env.VITE_APPWRITE_POSTS_ID,
+  commentsID: import.meta.env.VITE_APPWRITE_COMMENTS_ID,
 };
 export const client = new Client();
 

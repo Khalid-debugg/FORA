@@ -1,4 +1,9 @@
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import {
   createUserAccount,
   createLoginSession,
@@ -11,8 +16,16 @@ import {
   getWaitingPlayers,
   leaveGame,
   getJoinedPlayers,
+  createComment,
+  getComments,
 } from "../appwrite/api";
-import { INewGame, INewPost, INewUser, IRegisteredUser } from "@/types";
+import {
+  INewComment,
+  INewGame,
+  INewPost,
+  INewUser,
+  IRegisteredUser,
+} from "@/types";
 import { QueryKeys } from "./queryKeys";
 const queryClient = new QueryClient();
 export const useCreateNewAccount = () => {
@@ -78,6 +91,27 @@ export const useGetRecentPosts = () => {
     queryFn: () => getRecentPosts(),
   });
 };
+export const useCreateComment = (postId: string) => {
+  return useMutation({
+    mutationFn: (comment: INewComment) => createComment(comment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Comments + postId],
+      });
+    },
+  });
+};
+export const useGetComments = (postId: string) => {
+  return useInfiniteQuery({
+    queryKey: [QueryKeys.Comments, postId],
+    queryFn: ({ pageParam = 0 }) => getComments(postId, pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length < 10) return undefined; // No more pages to load
+      return allPages.length; // Return the current number of loaded pages
+    },
+  });
+};
+
 export const useJoinGame = (gameId: string) => {
   return useMutation({
     mutationFn: ({
@@ -97,9 +131,6 @@ export const useJoinGame = (gameId: string) => {
   });
 };
 export const useLeaveGame = (gameId: string) => {
-  console.log(`${gameId + QueryKeys.WaitingPlayers}`);
-  console.log(queryClient.getQueriesData({}));
-
   return useMutation({
     mutationFn: ({ userId, postId }: { userId: string; postId: string }) =>
       leaveGame({ userId, postId }),

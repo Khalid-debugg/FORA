@@ -66,7 +66,7 @@ const SideNav = () => {
         onClick={logout}
         className="group flex justify-between w-56 p-4 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
       >
-        <p className="group-hover:text-black">Logout</p>
+        <p>Logout</p>
         <img
           src="/assets/icons/logout-white.svg"
           alt="logout"

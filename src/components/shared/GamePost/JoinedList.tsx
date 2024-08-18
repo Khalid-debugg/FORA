@@ -6,14 +6,19 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { AiFillQuestionCircle } from "react-icons/ai";
+import { useUserContext } from "@/context/AuthContext";
 
-const JoinedList = ({ joinedPlayers, isLoadingJoined, restPlayers }) => {
+const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
+  const { user } = useUserContext();
+  const restPlayers = post.playersNumber - joinedPlayers?.length;
   const restPlayerPlaceholders = Array.from({ length: restPlayers });
 
   return (
-    <div className="relative gap-4 w-1/2 overflow-hidden">
+    <div
+      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post.creator.$id ? "rounded-bl-[1.125rem]" : ""}`}
+    >
       <img
-        className="object-cover h-full w-full scale-y-[1.15] scale-x-[1.25]"
+        className={`object-cover h-full w-full scale-y-[1.15] scale-x-[1.25] `}
         src="./assets/images/football-pitch.svg"
         alt=""
       />
@@ -22,7 +27,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, restPlayers }) => {
           {joinedPlayers &&
             joinedPlayers.map((player, i) => (
               <HoverCard key={i}>
-                <HoverCardTrigger className="flex items-center h-12 w-12 justify-center bg-white rounded-full">
+                <HoverCardTrigger className="flex items-center h-12 w-12 justify-center outline outline-slate-300 bg-white rounded-full">
                   <Avatar className="h-12 w-12 hover:cursor-pointer">
                     <AvatarImage src={player.imageURL} />
                     <AvatarFallback>{player.username[0]}</AvatarFallback>
@@ -45,7 +50,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, restPlayers }) => {
           {restPlayerPlaceholders.map((_, i) => (
             <div
               key={i}
-              className="h-12 w-12 flex justify-center items-center bg-white rounded-full"
+              className="h-12 w-12 flex justify-center items-center outline outline-slate-300 bg-white rounded-full"
             >
               <AiFillQuestionCircle fill="green" size={50} className="" />
             </div>

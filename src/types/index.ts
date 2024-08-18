@@ -18,6 +18,12 @@ export type INewPost = {
   caption: string;
   file?: File[];
 };
+export type INewComment = {
+  userId: string;
+  postId: string;
+  comment: string;
+  media?: File;
+};
 export type INewGame = {
   userId: string;
   caption: string;

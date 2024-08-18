@@ -3,6 +3,7 @@ import { IoMdAdd } from "react-icons/io";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaClock } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
+import { GiSoccerKick } from "react-icons/gi";
 import {
   useGetJoinedPlayers,
   useGetWaitingPlayers,
@@ -88,7 +89,7 @@ const GamePost = ({ post }) => {
           />
           <p className="text-xl font-medium">{post.creator.username}</p>
         </div>
-        <div className="w-1/2">
+        <div className="flex flex-col w-1/2">
           <div className="flex items-center gap-2">
             <FaLocationDot fill="green" size={20} />
             <p>{post.location}</p>
@@ -97,13 +98,18 @@ const GamePost = ({ post }) => {
             <FaClock fill="green" size={20} />
             <p>{post.date}</p>
           </div>
+          <div className="flex items-center gap-2">
+            <GiSoccerKick fill="green" size={20} />
+            <p>Players needed: </p>
+            <p>{post.playersNumber}</p>
+          </div>
         </div>
       </div>
       <div className="flex flex-1">
         <JoinedList
           joinedPlayers={joinedPlayers}
           isLoadingJoined={isLoadingJoined}
-          restPlayers={post.playersNumber - joinedPlayers?.length}
+          post={post}
         />
 
         <div className="w-1/2 flex flex-col max-h-[27rem] ">

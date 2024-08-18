@@ -1,5 +1,5 @@
 import GamePost from "@/components/shared/GamePost/GamePost";
-import NormalPost from "@/components/shared/NormalPost";
+import NormalPost from "@/components/shared/NormalPost/NormalPost";
 import { useGetRecentPosts } from "@/lib/react-query/queriesAndMutations";
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";

@@ -41,3 +41,10 @@ export const postValidation = z.object({
     .max(2200, { message: "That's too much, maximum 2200 characters" }),
   file: z.custom<File[]>(),
 });
+export const commentValidation = z.object({
+  comment: z
+    .string()
+    .nonempty("text is required")
+    .max(2200, { message: "That's too much, maximum 2200 characters" }),
+  media: z.custom<File>(),
+});

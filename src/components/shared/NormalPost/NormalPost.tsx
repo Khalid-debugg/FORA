@@ -17,12 +17,39 @@ import {
   DefaultVideoLayout,
   defaultLayoutIcons,
 } from "@vidstack/react/player/layouts/default";
+import { BiLike } from "react-icons/bi";
+import { BiSolidLike } from "react-icons/bi";
+import { FaRegCommentDots } from "react-icons/fa";
+import { useUserContext } from "@/context/AuthContext";
+import { toast } from "../../ui/use-toast";
+import CommentSection from "./CommentSection/CommentSection";
 
 const NormalPost = ({ post }: { post: ICreatedPost }) => {
+  const { user } = useUserContext();
   const [mediaFiles, setMediaFiles] = useState<
     { mimeType: string; ref: string }[]
   >([]);
   const date = new Date(post.$createdAt);
+  const [isCommentClicked, setIsCommentClicked] = useState(false);
+  const [isLiked, setIsLiked] = useState(
+    post.likes.some((likedUser) => likedUser.$id === user?.id) || false,
+  );
+
+  const handleLike = async () => {
+    try {
+      if (isLiked) {
+        await deleteLike();
+      } else {
+        await createLike();
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      toast({
+        variant: "error",
+        title: error.message,
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchMediaFiles = async () => {
@@ -77,8 +104,8 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
   };
 
   return (
-    <div className="flex flex-col w-full p-4 rounded-3xl gap-1 border-2 border-primary-500">
-      <div className="flex py-1 justify-between items-center">
+    <div className="flex flex-col w-full rounded-3xl gap-1 border-2 border-primary-500 divide-y-2 divide-primary-500 overflow-hidden">
+      <div className="flex p-4 justify-between items-center">
         <div className="flex gap-3 items-center">
           <img
             src={post.creator.imageURL}
@@ -92,17 +119,34 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           <p>{formatDate()}</p>
         </div>
       </div>
-      <div className="h-[0.125rem] bg-black mx-2"></div>
-      <div className="p-2">{post.caption}</div>
-      <div className="p-2">
+      <div className="px-4">
+        <div className="p-2">{post.caption}</div>
         <Carousel
-          className={`flex justify-center items-center px-8 ${mediaFiles.length > 0 ? "border" : ""}`}
+          className={`flex justify-center items-center ${mediaFiles.length > 0 ? "border" : ""}`}
         >
           <CarouselContent>{renderCarousel()}</CarouselContent>
           {mediaFiles.length > 1 && <CarouselPrevious className="" />}
           {mediaFiles.length > 1 && <CarouselNext />}
         </Carousel>
       </div>
+      <div className="flex mb-[-0.25rem] divide-x-2 divide-primary-500 justify-between items-center">
+        <button
+          onClick={handleLike}
+          className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
+        >
+          {isLiked && <BiSolidLike size={25} fill="green" />}
+          {!isLiked && <BiLike size={25} fill="green" />}
+          <p className="text-center">Like</p>
+        </button>
+        <button
+          onClick={() => setIsCommentClicked(!isCommentClicked)}
+          className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
+        >
+          <FaRegCommentDots size={25} fill="green" />
+          <p className="text-center">Comment</p>
+        </button>
+      </div>
+      <CommentSection post={post} isCommentClicked={isCommentClicked} />
     </div>
   );
 };
