@@ -20,34 +20,48 @@ import {
 import { BiLike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
 import { FaRegCommentDots } from "react-icons/fa";
+import { FaCommentDots } from "react-icons/fa6";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../../ui/use-toast";
 import CommentSection from "./CommentSection/CommentSection";
-
+import {
+  useCreateLike,
+  useDeleteLike,
+} from "@/lib/react-query/queriesAndMutations";
 const NormalPost = ({ post }: { post: ICreatedPost }) => {
   const { user } = useUserContext();
   const [mediaFiles, setMediaFiles] = useState<
     { mimeType: string; ref: string }[]
   >([]);
   const date = new Date(post.$createdAt);
+  const { mutateAsync: createLike, isPending: isLiking } = useCreateLike(
+    post,
+    user?.id,
+  );
+  const { mutateAsync: deleteLike, isPending: isDisliking } = useDeleteLike(
+    post,
+    user?.id,
+  );
   const [isCommentClicked, setIsCommentClicked] = useState(false);
   const [isLiked, setIsLiked] = useState(
     post.likes.some((likedUser) => likedUser.$id === user?.id) || false,
   );
+  console.log(post);
 
   const handleLike = async () => {
     try {
+      setIsLiked((prev) => !prev);
       if (isLiked) {
         await deleteLike();
       } else {
         await createLike();
       }
-      setIsLiked(!isLiked);
     } catch (error) {
       toast({
         variant: "error",
         title: error.message,
       });
+      setIsLiked((prev) => !prev);
     }
   };
 
@@ -117,7 +131,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           <p>{formatDate()}</p>
         </div>
       </div>
-      <div className="px-4">
+      <div className="px-4 flex flex-col">
         <div className="p-2">{post.caption}</div>
         <Carousel
           className={`flex justify-center items-center ${mediaFiles.length > 0 ? "border" : ""}`}
@@ -126,9 +140,13 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           {mediaFiles.length > 1 && <CarouselPrevious className="" />}
           {mediaFiles.length > 1 && <CarouselNext />}
         </Carousel>
+        <p className="self-end py-2">
+          {post.likes.length > 0 && post.likes.length} Like(s)
+        </p>
       </div>
       <div className="flex mb-[-0.25rem] divide-x-2 divide-primary-500 justify-between items-center">
         <button
+          disabled={isLiking || isDisliking}
           onClick={handleLike}
           className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
         >
@@ -140,7 +158,11 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           onClick={() => setIsCommentClicked(!isCommentClicked)}
           className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
         >
-          <FaRegCommentDots size={25} fill="green" />
+          {isCommentClicked ? (
+            <FaCommentDots size={25} fill="green" />
+          ) : (
+            <FaRegCommentDots size={25} fill="green" />
+          )}
           <p className="text-center">Comment</p>
         </button>
       </div>

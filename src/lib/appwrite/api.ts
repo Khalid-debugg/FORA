@@ -1,4 +1,5 @@
 import {
+  ICreatedPost,
   INewComment,
   INewGame,
   INewPost,
@@ -97,13 +98,10 @@ export async function getRecentPosts() {
       [Query.limit(20)],
     );
     if (!games) throw new Error();
-    console.log(posts);
-    console.log(games);
 
     const allPosts = [...posts.documents, ...games.documents].sort(
       (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt),
     );
-    console.log(allPosts);
     return allPosts;
   } catch (err) {
     console.log(err);
@@ -130,8 +128,6 @@ export async function getComments(postId: string, pageParam: number) {
 }
 
 export async function createGame(post: INewGame) {
-  console.log(post);
-
   try {
     const newPost = await databases.createDocument(
       appwriteConfig.databaseID,
@@ -214,7 +210,6 @@ export async function createComment(comment: INewComment) {
   try {
     const uploadedFile = await handleFileOperation(uploadFiles, comment.media);
     const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
-    console.log(fileUrl, uploadedFile);
 
     const newComment = await databases.createDocument(
       appwriteConfig.databaseID,
@@ -259,7 +254,6 @@ export async function uploadFiles(fileOrFiles?: File | File[]) {
   if (!fileOrFiles) return null;
   try {
     const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
-    console.log(files);
 
     const uploadedFiles = await Promise.all(
       files.map((file) =>
@@ -380,7 +374,52 @@ export async function joinGame({
     console.log(err);
   }
 }
+export async function createLike(post: ICreatedPost, userId: string) {
+  try {
+    const currentLikes = post?.likes;
+    const updatedPost = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      post.$id,
+      {
+        likes: [...currentLikes, userId],
+      },
+    );
 
+    if (!updatedPost) {
+      throw new Error("Failed to like the post.");
+    }
+
+    return updatedPost;
+  } catch (err) {
+    console.error("Error creating like:", err);
+    throw err;
+  }
+}
+export async function deleteLike(post: ICreatedPost, userId: string) {
+  try {
+    const currentLikes = post?.likes;
+    console.log(currentLikes);
+
+    const updatedPost = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      post.$id,
+      {
+        likes: currentLikes.filter((like) => like !== userId),
+      },
+    );
+
+    if (!updatedPost) {
+      throw new Error("Failed to like the post.");
+    }
+
+    return updatedPost;
+  } catch (err) {
+    console.error("Error creating like:", err);
+    throw err;
+  }
+}
 // export async function verifyUser() {
 //   try {
 //     const promise = await account.createVerification(

@@ -66,9 +66,9 @@ const CommentSection = ({ post, isCommentClicked }) => {
 
   return (
     <div
-      className={`px-4 overflow-hidden transition-all ease-in-out duration-500 ${
+      className={`px-4 overflow-auto transition-all ease-in-out duration-[500ms] ${
         isCommentClicked
-          ? "max-h-auto opacity-100 py-2"
+          ? "max-h-[10000px] opacity-100 py-2"
           : "max-h-[0px] opacity-0 py-0"
       }`}
     >

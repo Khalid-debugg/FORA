@@ -18,8 +18,11 @@ import {
   getJoinedPlayers,
   createComment,
   getComments,
+  createLike,
+  deleteLike,
 } from "../appwrite/api";
 import {
+  ICreatedPost,
   INewComment,
   INewGame,
   INewPost,
@@ -111,7 +114,16 @@ export const useGetComments = (postId: string) => {
     },
   });
 };
-
+export const useCreateLike = (post: ICreatedPost, userId: string) => {
+  return useMutation({
+    mutationFn: () => createLike(post, userId),
+  });
+};
+export const useDeleteLike = (post: ICreatedPost, userId: string) => {
+  return useMutation({
+    mutationFn: () => deleteLike(post, userId),
+  });
+};
 export const useJoinGame = (gameId: string) => {
   return useMutation({
     mutationFn: ({

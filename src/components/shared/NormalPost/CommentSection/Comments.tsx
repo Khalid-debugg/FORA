@@ -48,7 +48,6 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   }, [refetchComments, setRefetchComments, refetch]);
 
   const allComments = pages.slice(0, visiblePageCount).flat();
-  console.log(allComments);
 
   const handleViewLess = () => {
     setVisiblePageCount((prev) => Math.max(prev - 1, 1));
