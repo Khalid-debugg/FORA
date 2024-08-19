@@ -74,14 +74,13 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
     if (mediaFiles.length === 0) return null;
     return mediaFiles.map((media, i) => (
       <CarouselItem key={i}>
-        {media.mimeType === "image/jpeg" && (
+        {media.mimeType.startsWith("image/") ? (
           <img
             className="max-h-[500px] object-cover w-full min-h-[25rem]"
             src={media.ref}
             alt={`photo ${i}`}
           />
-        )}
-        {media.mimeType === "video/mp4" && (
+        ) : media.mimeType.startsWith("video/") ? (
           <MediaPlayer
             src={media.ref}
             viewType="video"
@@ -93,8 +92,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
             <MediaProvider></MediaProvider>
             <DefaultVideoLayout icons={defaultLayoutIcons} />
           </MediaPlayer>
-        )}
-        {media.mimeType !== "video/mp4" && media.mimeType !== "image/jpeg" && (
+        ) : (
           <p className="text-red-500 p-10 flex justify-center items-center font-bold">
             Media type is not supported
           </p>

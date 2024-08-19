@@ -18,7 +18,8 @@ const CommentSection = ({ post, isCommentClicked }) => {
   const { user } = useUserContext();
   const { toast } = useToast();
   const [file, setFile] = useState(undefined);
-  const { mutateAsync: createComment } = useCreateComment(post.$id);
+  const { mutateAsync: createComment, isPending: isCommenting } =
+    useCreateComment(post.$id);
   const [refetchComments, setRefetchComments] = useState(false);
 
   const form = useForm<z.infer<typeof commentValidation>>({
@@ -112,6 +113,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
                       accept="image/*,video/*"
                       className="hidden"
                       onChange={handleFileChange}
+                      onClick={(e) => (e.target.value = null)}
                     />
                   </FormControl>
                   <label
@@ -130,7 +132,11 @@ const CommentSection = ({ post, isCommentClicked }) => {
               type="submit"
               className="self-center my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
             >
-              <IoSend size={25} />
+              {!isCommenting ? (
+                <IoSend size={25} />
+              ) : (
+                <div className="animate-spin">⚽</div>
+              )}
             </Button>
           </form>
         </Form>

@@ -48,6 +48,7 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   }, [refetchComments, setRefetchComments, refetch]);
 
   const allComments = pages.slice(0, visiblePageCount).flat();
+  console.log(allComments);
 
   const handleViewLess = () => {
     setVisiblePageCount((prev) => Math.max(prev - 1, 1));
@@ -65,7 +66,7 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
     <>
       <div className="flex flex-col gap-4">
         {allComments.map((comment, idx) => (
-          <div key={idx} className="flex gap-4 items-center">
+          <div key={comment.$id} className="flex gap-4 items-center">
             <Avatar className="hover:cursor-pointer self-start">
               <AvatarImage
                 className="h-12 w-12 rounded-full outline outline-slate-200"
@@ -95,9 +96,15 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
         ))}
       </div>
       <div className="flex justify-between p-2">
-        <p>
-          {allComments.length} out of {post?.comments.length} comment(s)
-        </p>
+        {allComments.length > 0 && (
+          <p>
+            {allComments.length} out of{" "}
+            {post?.comments.length >= allComments.length
+              ? post?.comments.length
+              : allComments.length}{" "}
+            comment(s)
+          </p>
+        )}
         <div className="flex gap-2">
           {hasNextPage || visiblePageCount < pages.length ? (
             <button
