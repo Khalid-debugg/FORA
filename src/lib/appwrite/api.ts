@@ -118,6 +118,7 @@ export async function getComments(postId: string, pageParam: number) {
         Query.equal("post", postId),
         Query.limit(10),
         Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
       ],
     );
 

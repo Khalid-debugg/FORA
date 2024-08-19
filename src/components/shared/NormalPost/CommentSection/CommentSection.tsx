@@ -108,13 +108,16 @@ const CommentSection = ({ post, isCommentClicked }) => {
                   <FormControl>
                     <input
                       type="file"
-                      id="file-input"
+                      id={`file-input-${post.$id}`}
                       accept="image/*,video/*"
                       className="hidden"
                       onChange={handleFileChange}
                     />
                   </FormControl>
-                  <label htmlFor="file-input" className="cursor-pointer ">
+                  <label
+                    htmlFor={`file-input-${post.$id}`}
+                    className="cursor-pointer "
+                  >
                     <IoCamera
                       size={40}
                       className="text-gray-600 p-2 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
@@ -133,7 +136,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
         </Form>
       </div>
       {file && (
-        <div className="flex gap-2 mt-4 flex-wrap bg-slate-100 p-4">
+        <div className="flex gap-2 my-4 flex-wrap bg-slate-100 p-4">
           <div className="relative">
             <button
               type="button"
