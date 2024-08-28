@@ -52,9 +52,15 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
     try {
       setIsLiked((prev) => !prev);
       if (isLiked) {
-        await deleteLike();
+        const response = await deleteLike();
+        if (response instanceof Error) {
+          throw new Error(response.message);
+        }
       } else {
-        await createLike();
+        const response = await createLike();
+        if (response instanceof Error) {
+          throw new Error(response.message);
+        }
       }
     } catch (error) {
       toast({

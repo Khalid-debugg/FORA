@@ -376,7 +376,7 @@ export async function joinGame({
 }
 export async function createLike(post: ICreatedPost, userId: string) {
   try {
-    const currentLikes = post?.likes;
+    const currentLikes = post?.likes.map((like) => like.$id) || [];
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
@@ -387,7 +387,7 @@ export async function createLike(post: ICreatedPost, userId: string) {
     );
 
     if (!updatedPost) {
-      throw new Error("Failed to like the post.");
+      return new Error("Failed to like the post.");
     }
 
     return updatedPost;
@@ -406,12 +406,12 @@ export async function deleteLike(post: ICreatedPost, userId: string) {
       appwriteConfig.postsID,
       post.$id,
       {
-        likes: currentLikes.filter((like) => like !== userId),
+        likes: currentLikes.filter((like) => like.$id !== userId) || [],
       },
     );
 
     if (!updatedPost) {
-      throw new Error("Failed to like the post.");
+      return new Error("Failed to like the post.");
     }
 
     return updatedPost;
