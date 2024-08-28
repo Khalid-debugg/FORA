@@ -398,7 +398,7 @@ export async function createLike(post: ICreatedPost, userId: string) {
 }
 export async function deleteLike(post: ICreatedPost, userId: string) {
   try {
-    const currentLikes = post?.likes;
+    const currentLikes = post?.likes.map((like) => like.$id);
     console.log(currentLikes);
 
     const updatedPost = await databases.updateDocument(
@@ -406,7 +406,7 @@ export async function deleteLike(post: ICreatedPost, userId: string) {
       appwriteConfig.postsID,
       post.$id,
       {
-        likes: currentLikes.filter((like) => like.$id !== userId) || [],
+        likes: currentLikes.filter((like) => like !== userId) || [],
       },
     );
 
