@@ -411,7 +411,7 @@ export async function deleteLike(post: ICreatedPost, userId: string) {
     );
 
     if (!updatedPost) {
-      return new Error("Failed to like the post.");
+      return new Error("Failed to dislike the post.");
     }
 
     return updatedPost;

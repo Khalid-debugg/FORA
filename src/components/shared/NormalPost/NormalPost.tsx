@@ -33,6 +33,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
   const [mediaFiles, setMediaFiles] = useState<
     { mimeType: string; ref: string }[]
   >([]);
+  const [totalLikes, setTotalLikes] = useState(post?.likes.length);
   const date = new Date(post.$createdAt);
   const { mutateAsync: createLike, isPending: isLiking } = useCreateLike(
     post,
@@ -52,11 +53,13 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
     try {
       setIsLiked((prev) => !prev);
       if (isLiked) {
+        setTotalLikes((prev) => prev - 1);
         const response = await deleteLike();
         if (response instanceof Error) {
           throw new Error(response.message);
         }
       } else {
+        setTotalLikes((prev) => prev + 1);
         const response = await createLike();
         if (response instanceof Error) {
           throw new Error(response.message);
@@ -68,6 +71,9 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
         title: error.message,
       });
       setIsLiked((prev) => !prev);
+      setTotalLikes((prev) =>
+        error.message.includes("dislike") ? prev + 1 : prev - 1,
+      );
     }
   };
 
@@ -146,9 +152,9 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           {mediaFiles.length > 1 && <CarouselPrevious className="" />}
           {mediaFiles.length > 1 && <CarouselNext />}
         </Carousel>
-        <p className="self-end py-2">
-          {post.likes.length > 0 && post.likes.length} Like(s)
-        </p>
+        {totalLikes > 0 && (
+          <p className="self-end py-2">{totalLikes} Like(s)</p>
+        )}
       </div>
       <div className="flex mb-[-0.25rem] divide-x-2 divide-primary-500 justify-between items-center">
         <button
