@@ -48,6 +48,7 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   }, [refetchComments, setRefetchComments, refetch]);
 
   const allComments = pages.slice(0, visiblePageCount).flat();
+  console.log(allComments);
 
   const handleViewLess = () => {
     setVisiblePageCount((prev) => Math.max(prev - 1, 1));
@@ -69,9 +70,9 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
             <Avatar className="hover:cursor-pointer self-start">
               <AvatarImage
                 className="h-12 w-12 rounded-full outline outline-slate-200"
-                src={user.imageURL}
+                src={comment.creator?.imageURL}
               />
-              <AvatarFallback>{user.username}</AvatarFallback>
+              <AvatarFallback>{comment.creator?.username}</AvatarFallback>
             </Avatar>
             <div className="bg-slate-100 flex-1 p-2 rounded-lg">
               <p>{comment.content}</p>

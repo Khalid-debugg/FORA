@@ -28,6 +28,7 @@ import {
   useCreateLike,
   useDeleteLike,
 } from "@/lib/react-query/queriesAndMutations";
+import UsersList from "../UsersList";
 const NormalPost = ({ post }: { post: ICreatedPost }) => {
   const { user } = useUserContext();
   const [mediaFiles, setMediaFiles] = useState<
@@ -153,7 +154,13 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           {mediaFiles.length > 1 && <CarouselNext />}
         </Carousel>
         {totalLikes > 0 && (
-          <p className="self-end py-2">{totalLikes} Like(s)</p>
+          <div className="self-end p-2">
+            <UsersList
+              listTitle="Likes"
+              buttonTitle={`${totalLikes} ${totalLikes === 1 ? "Like" : "Likes"}`}
+              listItems={post.likes}
+            />
+          </div>
         )}
       </div>
       <div className="flex mb-[-0.25rem] divide-x-2 divide-primary-500 justify-between items-center">
