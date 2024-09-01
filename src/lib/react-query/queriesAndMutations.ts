@@ -18,14 +18,19 @@ import {
   getJoinedPlayers,
   createComment,
   getComments,
-  createLike,
-  deleteLike,
+  createReply,
+  getReplies,
+  likeComment,
+  unlikeComment,
+  likePost,
+  unlikePost,
 } from "../appwrite/api";
 import {
   ICreatedPost,
   INewComment,
   INewGame,
   INewPost,
+  INewReply,
   INewUser,
   IRegisteredUser,
 } from "@/types";
@@ -105,23 +110,49 @@ export const useCreateComment = (postId: string) => {
   });
 };
 export const useGetComments = (postId: string) => {
-  return useInfiniteQuery({
-    queryKey: [QueryKeys.Comments, postId],
+  return useInfiniteQuery<Comment[]>({
+    queryKey: [QueryKeys.Comments + postId],
     queryFn: ({ pageParam = 0 }) => getComments(postId, pageParam),
-    getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.length < 10) return undefined; // No more pages to load
-      return allPages.length; // Return the current number of loaded pages
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === 5 ? allPages.length : undefined,
+  });
+};
+export const useCreateReply = (commentId: string) => {
+  return useMutation({
+    mutationFn: (reply: INewReply) => createReply(reply),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Replies + commentId],
+      });
     },
   });
 };
-export const useCreateLike = (post: ICreatedPost, userId: string) => {
-  return useMutation({
-    mutationFn: () => createLike(post, userId),
+export const useGetReplies = (commentId: string) => {
+  return useInfiniteQuery<Comment[]>({
+    queryKey: [QueryKeys.Replies + commentId],
+    queryFn: ({ pageParam = 0 }) => getReplies(commentId, pageParam),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === 5 ? allPages.length : undefined,
   });
 };
-export const useDeleteLike = (post: ICreatedPost, userId: string) => {
+export const useLikePost = (post: ICreatedPost, userId: string) => {
   return useMutation({
-    mutationFn: () => deleteLike(post, userId),
+    mutationFn: () => likePost(post, userId),
+  });
+};
+export const useUnlikePost = (post: ICreatedPost, userId: string) => {
+  return useMutation({
+    mutationFn: () => unlikePost(post, userId),
+  });
+};
+export const useLikeComment = (comment: INewComment, userId: string) => {
+  return useMutation({
+    mutationFn: () => likeComment(comment, userId),
+  });
+};
+export const useUnlikeComment = (comment: INewComment, userId: string) => {
+  return useMutation({
+    mutationFn: () => unlikeComment(comment, userId),
   });
 };
 export const useJoinGame = (gameId: string) => {

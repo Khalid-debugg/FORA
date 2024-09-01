@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUserContext } from "@/context/AuthContext";
-import { commentValidation } from "@/lib/validation";
+import { replyValidation } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useState } from "react";
@@ -10,22 +10,23 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { IoSend, IoCamera } from "react-icons/io5";
 import { AiOutlineClose } from "react-icons/ai";
-import { useCreateComment } from "@/lib/react-query/queriesAndMutations";
+import { useCreateReply } from "@/lib/react-query/queriesAndMutations";
 import { useToast } from "@/components/ui/use-toast";
-import Comments from "./Comments";
+import Replies from "./Replies";
 
-const CommentSection = ({ post, isCommentClicked }) => {
+const RepliesSection = ({ comment, isRepliesClicked }) => {
   const { user } = useUserContext();
   const { toast } = useToast();
   const [file, setFile] = useState(undefined);
-  const { mutateAsync: createComment, isPending: isCommenting } =
-    useCreateComment(post.$id);
-  const [refetchComments, setRefetchComments] = useState(false);
+  const { mutateAsync: createReply, isPending: isReplying } = useCreateReply(
+    comment?.$id,
+  );
+  const [refetchReplies, setRefetchReplies] = useState(false);
 
-  const form = useForm<z.infer<typeof commentValidation>>({
-    resolver: zodResolver(commentValidation),
+  const form = useForm<z.infer<typeof replyValidation>>({
+    resolver: zodResolver(replyValidation),
     defaultValues: {
-      comment: "",
+      reply: "",
       media: undefined,
     },
   });
@@ -39,17 +40,17 @@ const CommentSection = ({ post, isCommentClicked }) => {
     setFile(undefined);
   };
 
-  async function onSubmit(values: z.infer<typeof commentValidation>) {
+  async function onSubmit(values: z.infer<typeof replyValidation>) {
     try {
       const postVariables = {
         userId: user.id,
-        postId: post.$id,
+        commentId: comment.$id,
         ...values,
       };
-      const newComment = await createComment(postVariables);
+      const newComment = await createReply(postVariables);
 
       if (newComment) {
-        setRefetchComments(true);
+        setRefetchReplies(true);
         form.reset();
         setFile(undefined);
       } else {
@@ -67,7 +68,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
   return (
     <div
       className={`px-4 overflow-auto transition-all ease-in-out duration-[500ms] ${
-        isCommentClicked
+        isRepliesClicked
           ? "max-h-[10000px] opacity-100 py-2"
           : "max-h-[0px] opacity-0 py-0"
       }`}
@@ -76,7 +77,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex gap-2 items-center w-full"
+            className="flex gap-2 items-center w-full py-2"
           >
             <Avatar className="hover:cursor-pointer">
               <AvatarImage
@@ -87,13 +88,13 @@ const CommentSection = ({ post, isCommentClicked }) => {
             </Avatar>
             <FormField
               control={form.control}
-              name="comment"
+              name="reply"
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <FormControl>
                     <Input
                       type="text"
-                      placeholder="Write a comment..."
+                      placeholder="Write a reply..."
                       className="outline outline-1 outline-primary-500"
                       {...field}
                     />
@@ -109,7 +110,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
                   <FormControl>
                     <input
                       type="file"
-                      id={`file-input-${post.$id}`}
+                      id={`file-input-${comment?.$id}`}
                       accept="image/*,video/*"
                       className="hidden"
                       onChange={handleFileChange}
@@ -117,7 +118,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
                     />
                   </FormControl>
                   <label
-                    htmlFor={`file-input-${post.$id}`}
+                    htmlFor={`file-input-${comment?.$id}`}
                     className="cursor-pointer "
                   >
                     <IoCamera
@@ -130,10 +131,9 @@ const CommentSection = ({ post, isCommentClicked }) => {
             />
             <Button
               type="submit"
-              disabled={isCommenting}
               className="self-center my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
             >
-              {!isCommenting ? (
+              {!isReplying ? (
                 <IoSend size={25} />
               ) : (
                 <div className="animate-spin">⚽</div>
@@ -168,13 +168,13 @@ const CommentSection = ({ post, isCommentClicked }) => {
           </div>
         </div>
       )}
-      <Comments
-        post={post}
-        refetchComments={refetchComments}
-        setRefetchComments={setRefetchComments}
+      <Replies
+        comment={comment}
+        refetchReplies={refetchReplies}
+        setRefetchReplies={setRefetchReplies}
       />
     </div>
   );
 };
 
-export default CommentSection;
+export default RepliesSection;

@@ -24,6 +24,12 @@ export type INewComment = {
   comment: string;
   media?: File;
 };
+export type INewReply = {
+  userId: string;
+  commentId: string;
+  reply: string;
+  media?: File;
+};
 export type INewGame = {
   userId: string;
   caption: string;

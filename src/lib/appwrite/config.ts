@@ -11,6 +11,7 @@ export const appwriteConfig = {
   usersID: import.meta.env.VITE_APPWRITE_USERS_ID,
   postsID: import.meta.env.VITE_APPWRITE_POSTS_ID,
   commentsID: import.meta.env.VITE_APPWRITE_COMMENTS_ID,
+  repliesID: import.meta.env.VITE_APPWRITE_REPLIES_ID,
 };
 export const client = new Client();
 

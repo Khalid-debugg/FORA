@@ -1,12 +1,12 @@
 import { useUserContext } from "@/context/AuthContext";
 import { appwriteConfig, storage } from "@/lib/appwrite/config";
-import { useGetComments } from "@/lib/react-query/queriesAndMutations";
+import { useGetReplies } from "@/lib/react-query/queriesAndMutations";
 import { useEffect, useState } from "react";
-import Comment from "./Comment";
-const Comments = ({ post, refetchComments, setRefetchComments }) => {
+import Reply from "./Reply";
+const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
   const { user } = useUserContext();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useGetComments(post.$id);
+    useGetReplies(comment?.$id);
 
   const [pages, setPages] = useState([]);
   const [visiblePageCount, setVisiblePageCount] = useState(1);
@@ -21,8 +21,8 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
 
   useEffect(() => {
     const fetchMediaFiles = async () => {
-      const allComments = pages.slice(0, visiblePageCount).flat();
-      const mediaIds = allComments.map((comment) => comment.mediaId);
+      const allReplies = pages.slice(0, visiblePageCount).flat();
+      const mediaIds = allReplies.map((reply) => reply.mediaId);
 
       if (mediaIds.length > 0) {
         const fetchedMediaFiles = await Promise.all(
@@ -40,14 +40,14 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   }, [pages, visiblePageCount]);
 
   useEffect(() => {
-    if (refetchComments) {
+    if (refetchReplies) {
       refetch();
-      setRefetchComments(false);
+      setRefetchReplies(false);
     }
-  }, [refetchComments, setRefetchComments, refetch]);
+  }, [refetchReplies, setRefetchReplies, refetch]);
 
-  const allComments = pages.slice(0, visiblePageCount).flat();
-  console.log(allComments);
+  const allReplies = pages.slice(0, visiblePageCount).flat();
+  console.log(allReplies);
 
   const handleViewLess = () => {
     setVisiblePageCount((prev) => Math.max(prev - 1, 1));
@@ -64,22 +64,18 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        {allComments.map((comment, idx) => (
-          <Comment
-            key={comment.$id}
-            comment={comment}
-            mimeType={mimeTypes[idx]}
-          />
+        {allReplies.map((reply, idx) => (
+          <Reply key={reply?.$id} reply={reply} mimeType={mimeTypes[idx]} />
         ))}
       </div>
       <div className="flex justify-between p-2">
-        {allComments.length > 0 && (
+        {allReplies.length > 0 && (
           <p>
-            {allComments.length} out of{" "}
-            {post?.comments.length >= allComments.length
-              ? post?.comments.length
-              : allComments.length}{" "}
-            comment(s)
+            {allReplies.length} out of{" "}
+            {comment?.replies.length >= allReplies.length
+              ? comment?.replies.length
+              : allReplies.length}{" "}
+            reply(ies)
           </p>
         )}
         <div className="flex gap-2">
@@ -107,4 +103,4 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   );
 };
 
-export default Comments;
+export default Replies;

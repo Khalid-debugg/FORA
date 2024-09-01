@@ -25,8 +25,8 @@ import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../../ui/use-toast";
 import CommentSection from "./CommentSection/CommentSection";
 import {
-  useCreateLike,
-  useDeleteLike,
+  useLikePost,
+  useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations";
 import UsersList from "../UsersList";
 const NormalPost = ({ post }: { post: ICreatedPost }) => {
@@ -36,11 +36,11 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
   >([]);
   const [totalLikes, setTotalLikes] = useState(post?.likes.length);
   const date = new Date(post.$createdAt);
-  const { mutateAsync: createLike, isPending: isLiking } = useCreateLike(
+  const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
     post,
     user?.id,
   );
-  const { mutateAsync: deleteLike, isPending: isDisliking } = useDeleteLike(
+  const { mutateAsync: deleteLike, isPending: isDisliking } = useUnlikePost(
     post,
     user?.id,
   );

@@ -3,11 +3,13 @@ import {
   INewComment,
   INewGame,
   INewPost,
+  INewReply,
   INewUser,
   IRegisteredUser,
 } from "@/types";
 import { ID, Models, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
+import { log } from "node:console";
 
 export async function createUserAccount(user: INewUser) {
   try {
@@ -114,8 +116,27 @@ export async function getComments(postId: string, pageParam: number) {
       appwriteConfig.commentsID,
       [
         Query.equal("post", postId),
-        Query.limit(10),
-        Query.offset(pageParam * 10),
+        Query.limit(5),
+        Query.offset(pageParam * 5),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+
+    if (!comments) throw new Error("Something went wrong");
+    return comments.documents;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getReplies(commentId: string, pageParam: number) {
+  try {
+    const comments = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.repliesID,
+      [
+        Query.equal("comment", commentId),
+        Query.limit(5),
+        Query.offset(pageParam * 5),
         Query.orderDesc("$createdAt"),
       ],
     );
@@ -235,7 +256,35 @@ export async function createComment(comment: INewComment) {
     throw err;
   }
 }
+export async function createReply(reply: INewReply) {
+  try {
+    const uploadedFile = await handleFileOperation(uploadFiles, reply.media);
+    const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
 
+    const newReply = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.repliesID,
+      ID.unique(),
+      {
+        creator: reply.userId,
+        content: reply.reply,
+        comment: reply.commentId,
+        mediaUrl: fileUrl,
+        mediaId: uploadedFile?.$id || null,
+      },
+    );
+
+    if (!newReply) {
+      await handleFileOperation(deleteFiles, uploadedFile);
+      throw new Error("Failed to create the comment.");
+    }
+
+    return newReply;
+  } catch (err) {
+    console.error("Error creating comment:", err);
+    throw err;
+  }
+}
 async function handleFileOperation(
   operation: Function,
   fileOrFiles?: File | Models.File | File[] | Models.File[],
@@ -374,7 +423,7 @@ export async function joinGame({
     console.log(err);
   }
 }
-export async function createLike(post: ICreatedPost, userId: string) {
+export async function likePost(post: ICreatedPost, userId: string) {
   try {
     const currentLikes = post?.likes.map((like) => like.$id) || [];
     const updatedPost = await databases.updateDocument(
@@ -396,7 +445,7 @@ export async function createLike(post: ICreatedPost, userId: string) {
     throw err;
   }
 }
-export async function deleteLike(post: ICreatedPost, userId: string) {
+export async function unlikePost(post: ICreatedPost, userId: string) {
   try {
     const currentLikes = post?.likes.map((like) => like.$id);
     console.log(currentLikes);
@@ -412,6 +461,53 @@ export async function deleteLike(post: ICreatedPost, userId: string) {
 
     if (!updatedPost) {
       return new Error("Failed to dislike the post.");
+    }
+
+    return updatedPost;
+  } catch (err) {
+    console.error("Error creating like:", err);
+    throw err;
+  }
+}
+export async function likeComment(comment: INewComment, userId: string) {
+  try {
+    const currentLikes = comment?.likes?.map((like) => like.$id) || [];
+    console.log([...currentLikes, userId]);
+
+    const updatedComment = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      comment?.$id,
+      {
+        likes: [...currentLikes, userId],
+      },
+    );
+
+    if (!updatedComment) {
+      return new Error("Failed to like the comment.");
+    }
+
+    return updatedComment;
+  } catch (err) {
+    console.error("Error creating like:", err);
+    throw err;
+  }
+}
+export async function unlikeComment(comment: INewComment, userId: string) {
+  try {
+    const currentLikes = comment?.likes.map((like) => like.$id);
+
+    const updatedPost = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      comment.$id,
+      {
+        likes: currentLikes.filter((like) => like !== userId) || [],
+      },
+    );
+
+    if (!updatedPost) {
+      return new Error("Failed to dislike the comment.");
     }
 
     return updatedPost;
