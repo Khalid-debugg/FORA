@@ -24,6 +24,7 @@ import {
   unlikeComment,
   likePost,
   unlikePost,
+  getNormalPost,
 } from "../appwrite/api";
 import {
   ICreatedPost,
@@ -97,6 +98,12 @@ export const useGetRecentPosts = () => {
   return useQuery({
     queryKey: [QueryKeys.RecentPosts],
     queryFn: () => getRecentPosts(),
+  });
+};
+export const useGetNormalPost = (postId: string) => {
+  return useQuery({
+    queryKey: [postId],
+    queryFn: () => getNormalPost(postId),
   });
 };
 export const useCreateComment = (postId: string) => {

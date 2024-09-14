@@ -14,6 +14,7 @@ import { toast } from "../../ui/use-toast";
 import { useEffect, useState } from "react";
 import WaitingList from "./WaitingList";
 import JoinedList from "./JoinedList";
+import { useNavigate } from "react-router-dom";
 
 const GamePost = ({ post }) => {
   const { user } = useUserContext();
@@ -30,7 +31,7 @@ const GamePost = ({ post }) => {
   );
 
   const [isJoined, setisJoined] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (waitingPlayers) {
       setisJoined(waitingPlayers.some((player) => player.$id === user?.id));
@@ -80,7 +81,10 @@ const GamePost = ({ post }) => {
 
   return (
     <div className="flex flex-col border-2 border-primary-500 w-full rounded-3xl divide-y-2 divide-primary-500 min-h-[30rem]">
-      <div className="flex p-4 justify-between items-center">
+      <button
+        onClick={() => navigate(`/game-post/${post.$id}`)}
+        className="flex p-4 justify-between items-center"
+      >
         <div className="flex gap-3 items-center">
           <img
             src={post.creator.imageURL}
@@ -104,7 +108,7 @@ const GamePost = ({ post }) => {
             <p>{post.playersNumber}</p>
           </div>
         </div>
-      </div>
+      </button>
       <div className="flex flex-1">
         <JoinedList
           joinedPlayers={joinedPlayers}

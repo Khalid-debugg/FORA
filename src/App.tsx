@@ -6,6 +6,8 @@ import SignUpForm from "./_auth/forms/SignUpForm";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
 import { Toaster } from "@/components/ui/toaster";
+import OneNormalPost from "./_root/pages/NormalPost/OneNormalPost";
+import OneGamePost from "./_root/pages/GamePost/OneGamePost";
 
 const App = () => {
   return (
@@ -19,8 +21,10 @@ const App = () => {
         {/* Guarded routes */}
         <Route element={<RootLayout />}>
           <Route path="/" element={<Home />}>
-            <Route path="create-post/:type" element={<CreatePost />} />
+            <Route path="/create-post/:type" element={<CreatePost />} />
           </Route>
+          <Route path="/normal-post/:id" element={<OneNormalPost />} />
+          <Route path="/game-post/:id" element={<OneGamePost />} />
         </Route>
       </Routes>
       <Toaster />

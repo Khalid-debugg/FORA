@@ -86,6 +86,19 @@ export async function getCurrentUser() {
     console.log(err);
   }
 }
+export async function getNormalPost(postId: string) {
+  try {
+    const normalPost = await databases.getDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      postId,
+    );
+    if (!normalPost) throw new Error("Post not found");
+    return normalPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export async function getRecentPosts() {
   try {
     const posts = await databases.listDocuments(

@@ -29,6 +29,7 @@ import {
   useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations";
 import UsersList from "../UsersList";
+import { useNavigate } from "react-router-dom";
 const NormalPost = ({ post }: { post: ICreatedPost }) => {
   const { user } = useUserContext();
   const [mediaFiles, setMediaFiles] = useState<
@@ -44,6 +45,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
     post,
     user?.id,
   );
+  const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(false);
   const [isLiked, setIsLiked] = useState(
     post.likes.some((likedUser) => likedUser.$id === user?.id) || false,
@@ -130,7 +132,10 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
 
   return (
     <div className="flex flex-col w-full rounded-3xl gap-1 border-2 border-primary-500 divide-y-2 divide-primary-500 overflow-hidden">
-      <div className="flex p-4 justify-between items-center">
+      <button
+        onClick={() => navigate(`/normal-post/${post.$id}`)}
+        className="flex p-4 justify-between items-center hover:bg-slate-100"
+      >
         <div className="flex gap-3 items-center">
           <img
             src={post.creator.imageURL}
@@ -143,7 +148,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           <BsCalendar2DateFill fill="green" size={20} />
           <p>{formatDate()}</p>
         </div>
-      </div>
+      </button>
       <div className="px-4 flex flex-col">
         <div className="p-2">{post.caption}</div>
         <Carousel
