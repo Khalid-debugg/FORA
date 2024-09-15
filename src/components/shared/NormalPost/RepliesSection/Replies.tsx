@@ -22,7 +22,7 @@ const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
   useEffect(() => {
     const fetchMediaFiles = async () => {
       const allReplies = pages.slice(0, visiblePageCount).flat();
-      const mediaIds = allReplies.map((reply) => reply.mediaId);
+      const mediaIds = allReplies.map((reply) => reply?.mediaId);
 
       if (mediaIds.length > 0) {
         const fetchedMediaFiles = await Promise.all(
@@ -65,7 +65,11 @@ const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
     <>
       <div className="flex flex-col gap-4">
         {allReplies.map((reply, idx) => (
-          <Reply key={reply?.$id} reply={reply} mimeType={mimeTypes[idx]} />
+          <Reply
+            key={reply?.$id || idx}
+            reply={reply}
+            mimeType={mimeTypes[idx]}
+          />
         ))}
       </div>
       <div className="flex justify-between p-2">

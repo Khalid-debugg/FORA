@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const BottomNav = () => {
   const navigate = useNavigate();
   return (
-    <nav className="border-t-2 bg-white border-primary-500 flex items-center justify-center w-full md:hidden divide-x sticky bottom-0 z-10">
+    <nav className="border-t-2 bg-white border-primary-500 flex items-center justify-center w-full md:hidden divide-x fixed bottom-0 z-50">
       <button className="flex-1 p-5">
         <img
           src="/assets/icons/mygames.svg"

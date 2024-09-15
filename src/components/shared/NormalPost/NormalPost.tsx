@@ -30,13 +30,19 @@ import {
 } from "@/lib/react-query/queriesAndMutations";
 import UsersList from "../UsersList";
 import { useNavigate } from "react-router-dom";
-const NormalPost = ({ post }: { post: ICreatedPost }) => {
+const NormalPost = ({
+  post,
+  isOne,
+}: {
+  post: ICreatedPost;
+  isOne?: boolean;
+}) => {
   const { user } = useUserContext();
   const [mediaFiles, setMediaFiles] = useState<
     { mimeType: string; ref: string }[]
   >([]);
   const [totalLikes, setTotalLikes] = useState(post?.likes.length);
-  const date = new Date(post.$createdAt);
+  const date = new Date(post?.$createdAt);
   const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
     post,
     user?.id,
@@ -46,9 +52,9 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
     user?.id,
   );
   const navigate = useNavigate();
-  const [isCommentClicked, setIsCommentClicked] = useState(false);
+  const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
   const [isLiked, setIsLiked] = useState(
-    post.likes.some((likedUser) => likedUser.$id === user?.id) || false,
+    post?.likes.some((likedUser) => likedUser.$id === user?.id) || false,
   );
   console.log(post);
 
@@ -83,7 +89,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
   useEffect(() => {
     const fetchMediaFiles = async () => {
       const fetchedMediaFiles = await Promise.all(
-        post.mediaIds.map(async (id) => {
+        post?.mediaIds.map(async (id) => {
           const file = await storage.getFile(appwriteConfig.storageID, id);
           const fileView = storage.getFileView(appwriteConfig.storageID, id);
           return { mimeType: file.mimeType, ref: fileView.href };
@@ -93,7 +99,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
     };
 
     fetchMediaFiles();
-  }, [post.mediaIds]);
+  }, [post?.mediaIds]);
 
   const formatDate = () => {
     return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
@@ -131,18 +137,20 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
   };
 
   return (
-    <div className="flex flex-col w-full rounded-3xl gap-1 border-2 border-primary-500 divide-y-2 divide-primary-500 overflow-hidden">
+    <div
+      className={`flex flex-col w-full gap-1 divide-y-2 divide-primary-500 overflow-hidden ${!isOne ? " border-2 border-primary-500 rounded-3xl" : ""}`}
+    >
       <button
-        onClick={() => navigate(`/normal-post/${post.$id}`)}
+        onClick={() => navigate(`/normal-post/${post?.$id}`)}
         className="flex p-4 justify-between items-center hover:bg-slate-100"
       >
         <div className="flex gap-3 items-center">
           <img
-            src={post.creator.imageURL}
+            src={post?.creator.imageURL}
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />
-          <p className="text-xl font-medium">{post.creator.username}</p>
+          <p className="text-xl font-medium">{post?.creator.username}</p>
         </div>
         <div className="flex items-center gap-2">
           <BsCalendar2DateFill fill="green" size={20} />
@@ -150,7 +158,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
         </div>
       </button>
       <div className="px-4 flex flex-col">
-        <div className="p-2">{post.caption}</div>
+        <div className="p-2">{post?.caption}</div>
         <Carousel
           className={`flex justify-center items-center ${mediaFiles.length > 0 ? "border" : ""}`}
         >
@@ -163,7 +171,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
             <UsersList
               listTitle="Likes"
               buttonTitle={`${totalLikes} ${totalLikes === 1 ? "Like" : "Likes"}`}
-              listItems={post.likes}
+              listItems={post?.likes}
             />
           </div>
         )}
@@ -179,6 +187,7 @@ const NormalPost = ({ post }: { post: ICreatedPost }) => {
           <p className="text-center">Like</p>
         </button>
         <button
+          disabled={isOne}
           onClick={() => setIsCommentClicked(!isCommentClicked)}
           className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
         >

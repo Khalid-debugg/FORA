@@ -19,7 +19,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
   const { toast } = useToast();
   const [file, setFile] = useState(undefined);
   const { mutateAsync: createComment, isPending: isCommenting } =
-    useCreateComment(post.$id);
+    useCreateComment(post?.$id);
   const [refetchComments, setRefetchComments] = useState(false);
 
   const form = useForm<z.infer<typeof commentValidation>>({
@@ -43,7 +43,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
     try {
       const postVariables = {
         userId: user.id,
-        postId: post.$id,
+        postId: post?.$id,
         ...values,
       };
       const newComment = await createComment(postVariables);
@@ -109,7 +109,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
                   <FormControl>
                     <input
                       type="file"
-                      id={`file-input-${post.$id}`}
+                      id={`file-input-${post?.$id}`}
                       accept="image/*,video/*"
                       className="hidden"
                       onChange={handleFileChange}
@@ -117,7 +117,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
                     />
                   </FormControl>
                   <label
-                    htmlFor={`file-input-${post.$id}`}
+                    htmlFor={`file-input-${post?.$id}`}
                     className="cursor-pointer "
                   >
                     <IoCamera

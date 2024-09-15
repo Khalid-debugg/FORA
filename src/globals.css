@@ -275,3 +275,6 @@
     @apply outline outline-primary-500 bg-white text-primary-500 !important;
   }
 }
+html {
+  overflow-y: scroll;
+}

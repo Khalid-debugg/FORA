@@ -10,16 +10,16 @@ import { useUserContext } from "@/context/AuthContext";
 
 const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
   const { user } = useUserContext();
-  const restPlayers = post.playersNumber - joinedPlayers?.length;
+  const restPlayers = post?.playersNumber - joinedPlayers?.length;
   const restPlayerPlaceholders = Array.from({ length: restPlayers });
 
   return (
     <div
-      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post.creator.$id ? "rounded-bl-[1.125rem]" : ""}`}
+      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post?.creator.$id ? "rounded-bl-[1.125rem]" : ""}`}
     >
       <img
         className={`object-cover h-full w-full scale-y-[1.15] scale-x-[1.25] `}
-        src="./assets/images/football-pitch.svg"
+        src="../../assets/images/football-pitch.svg"
         alt=""
       />
       {!isLoadingJoined && (

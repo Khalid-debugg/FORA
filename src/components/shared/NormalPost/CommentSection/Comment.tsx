@@ -23,7 +23,7 @@ const Comment = ({ comment, mimeType }) => {
     user.id,
   );
   const [isLiked, setIsLiked] = useState(
-    comment.likes.some((likedUser) => likedUser === user.id) || false,
+    comment?.likes.some((likedUser) => likedUser === user.id) || false,
   );
   const handleLikeComment = async () => {
     const response = await createLike();
@@ -37,35 +37,35 @@ const Comment = ({ comment, mimeType }) => {
   };
   return (
     <div className="flex flex-col">
-      <div key={comment.$id} className="flex gap-4 items-center">
+      <div key={comment?.$id} className="flex gap-4 items-center">
         <Avatar className="hover:cursor-pointer self-start">
           <AvatarImage
             className="h-12 w-12 rounded-full outline outline-slate-200"
-            src={comment.creator?.imageURL}
+            src={comment?.creator?.imageURL}
           />
-          <AvatarFallback>{comment.creator?.username}</AvatarFallback>
+          <AvatarFallback>{comment?.creator?.username}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="bg-slate-100 flex-1 p-2 rounded-lg">
-            <p>{comment.content}</p>
-            {comment.mediaUrl && mimeType?.mimeType?.includes("image") ? (
+            <p>{comment?.content}</p>
+            {comment?.mediaUrl && mimeType?.mimeType?.includes("image") ? (
               <img
-                src={comment.mediaUrl}
+                src={comment?.mediaUrl}
                 alt="comment"
                 className="w-32 h-32 object-cover rounded-lg"
               />
-            ) : comment.mediaUrl && mimeType?.mimeType?.includes("video") ? (
+            ) : comment?.mediaUrl && mimeType?.mimeType?.includes("video") ? (
               <video
-                src={comment.mediaUrl}
+                src={comment?.mediaUrl}
                 controls
                 className="w-32 h-32 object-cover rounded-lg"
               ></video>
             ) : null}
           </div>
         </div>
-        {comment.likes?.length > 0 && (
+        {comment?.likes?.length > 0 && (
           <div className="flex gap-1">
-            <p className="text-sm"> {comment.likes?.length}</p>
+            <p className="text-sm"> {comment?.likes?.length}</p>
             <BiSolidLike fill="green" size={20} />
           </div>
         )}
@@ -96,13 +96,13 @@ const Comment = ({ comment, mimeType }) => {
           </button>
         )}
       </div>
-      {comment.replies?.length > 0 && (
+      {comment?.replies?.length > 0 && (
         <button
           onClick={() => setIsRepliesClicked((prev) => !prev)}
           className="flex items-center gap-1 self-center"
         >
           View
-          <span>{comment.replies?.length === 1 ? " reply" : " replies"}</span>
+          <span>{comment?.replies?.length === 1 ? " reply" : " replies"}</span>
           {!isRepliesClicked && <IoIosArrowDown size={20} />}
           {isRepliesClicked && <IoIosArrowUp size={20} />}
         </button>

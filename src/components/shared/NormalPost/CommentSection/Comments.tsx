@@ -6,7 +6,7 @@ import Comment from "./Comment";
 const Comments = ({ post, refetchComments, setRefetchComments }) => {
   const { user } = useUserContext();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useGetComments(post.$id);
+    useGetComments(post?.$id);
 
   const [pages, setPages] = useState([]);
   const [visiblePageCount, setVisiblePageCount] = useState(1);
@@ -22,7 +22,7 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
   useEffect(() => {
     const fetchMediaFiles = async () => {
       const allComments = pages.slice(0, visiblePageCount).flat();
-      const mediaIds = allComments.map((comment) => comment.mediaId);
+      const mediaIds = allComments.map((comment) => comment?.mediaId);
 
       if (mediaIds.length > 0) {
         const fetchedMediaFiles = await Promise.all(
@@ -66,7 +66,7 @@ const Comments = ({ post, refetchComments, setRefetchComments }) => {
       <div className="flex flex-col gap-4">
         {allComments.map((comment, idx) => (
           <Comment
-            key={comment.$id}
+            key={comment?.$id}
             comment={comment}
             mimeType={mimeTypes[idx]}
           />

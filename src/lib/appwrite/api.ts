@@ -99,6 +99,19 @@ export async function getNormalPost(postId: string) {
     console.log(err);
   }
 }
+export async function getGame(postId: string) {
+  try {
+    const normalPost = await databases.getDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      postId,
+    );
+    if (!normalPost) throw new Error("Game not found");
+    return normalPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export async function getRecentPosts() {
   try {
     const posts = await databases.listDocuments(

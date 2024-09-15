@@ -21,7 +21,7 @@ const SideNav = () => {
     navigate("/signin");
   };
   return (
-    <nav className="fixed top-0 left-0 w-1/3 h-screen hidden md:flex flex-col justify-between items-end py-5 px-7">
+    <nav className="fixed top-0 left-0 w-1/3 max-w-1/3 h-screen hidden md:flex flex-col justify-between items-end py-5 px-7">
       <div className="flex flex-col gap-5">
         <button className="w-60 p-5">
           <header>

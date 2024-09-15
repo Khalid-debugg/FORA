@@ -44,7 +44,7 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
     try {
       const postVariables = {
         userId: user.id,
-        commentId: comment.$id,
+        commentId: comment?.$id,
         ...values,
       };
       const newComment = await createReply(postVariables);

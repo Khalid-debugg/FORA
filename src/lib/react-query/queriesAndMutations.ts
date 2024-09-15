@@ -25,6 +25,7 @@ import {
   likePost,
   unlikePost,
   getNormalPost,
+  getGame,
 } from "../appwrite/api";
 import {
   ICreatedPost,
@@ -106,6 +107,12 @@ export const useGetNormalPost = (postId: string) => {
     queryFn: () => getNormalPost(postId),
   });
 };
+export const useGetGame = (postId: string) => {
+  return useQuery({
+    queryKey: [postId],
+    queryFn: () => getGame(postId),
+  });
+};
 export const useCreateComment = (postId: string) => {
   return useMutation({
     mutationFn: (comment: INewComment) => createComment(comment),
@@ -121,7 +128,7 @@ export const useGetComments = (postId: string) => {
     queryKey: [QueryKeys.Comments + postId],
     queryFn: ({ pageParam = 0 }) => getComments(postId, pageParam),
     getNextPageParam: (lastPage, allPages) =>
-      lastPage.length === 5 ? allPages.length : undefined,
+      lastPage?.length === 5 ? allPages.length : undefined,
   });
 };
 export const useCreateReply = (commentId: string) => {
@@ -139,7 +146,7 @@ export const useGetReplies = (commentId: string) => {
     queryKey: [QueryKeys.Replies + commentId],
     queryFn: ({ pageParam = 0 }) => getReplies(commentId, pageParam),
     getNextPageParam: (lastPage, allPages) =>
-      lastPage.length === 5 ? allPages.length : undefined,
+      lastPage?.length === 5 ? allPages.length : undefined,
   });
 };
 export const useLikePost = (post: ICreatedPost, userId: string) => {
