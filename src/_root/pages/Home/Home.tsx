@@ -25,7 +25,11 @@ const Home = () => {
             </button>
           </div>
         )}
-        {isPostsPending && <div className="animate-spin text-[5rem]">⚽</div>}
+        {isPostsPending && (
+          <div className="flex w-full h-full items-center justify-center">
+            <div className="animate-spin text-[5rem]">⚽</div>
+          </div>
+        )}
         {posts &&
           posts.map((doc, i) => {
             return doc.hasOwnProperty("playersNumber") ? (

@@ -99,6 +99,54 @@ export async function getNormalPost(postId: string) {
     console.log(err);
   }
 }
+export async function deleteNormalPost(id: string) {
+  try {
+    const deletedPost = await databases.deleteDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      id,
+    );
+    if (!deletedPost) throw new Error("Post not found");
+    return deletedPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function editNormalPost(
+  id: string,
+  caption: string,
+  newfileOrFiles: File | File[],
+  mediaUrls: string[],
+  mediaIds: string[],
+) {
+  try {
+    const newUploadedFiles = newfileOrFiles
+      ? await handleFileOperation(uploadFiles, newfileOrFiles)
+      : [];
+    const newFilesUrls = newUploadedFiles
+      ? await handleFileOperation(getFilePreview, newUploadedFiles)
+      : [];
+    const finalMediaUrls = [...mediaUrls, ...newFilesUrls];
+    const finalMediaIds = [
+      ...mediaIds,
+      ...newUploadedFiles.map((file) => file?.$id),
+    ];
+    const normalPost = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      id,
+      {
+        caption: caption,
+        media: finalMediaUrls,
+        mediaIds: finalMediaIds,
+      },
+    );
+    if (!normalPost) throw new Error("Post not found");
+    return normalPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export async function getGame(postId: string) {
   try {
     const normalPost = await databases.getDocument(

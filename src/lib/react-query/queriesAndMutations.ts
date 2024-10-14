@@ -26,6 +26,8 @@ import {
   unlikePost,
   getNormalPost,
   getGame,
+  editNormalPost,
+  deleteNormalPost,
 } from "../appwrite/api";
 import {
   ICreatedPost,
@@ -105,6 +107,28 @@ export const useGetNormalPost = (postId: string) => {
   return useQuery({
     queryKey: [postId],
     queryFn: () => getNormalPost(postId),
+  });
+};
+export const useDeleteNormalPost = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteNormalPost(id),
+  });
+};
+export const useEditNormalPost = () => {
+  return useMutation({
+    mutationFn: ({
+      id,
+      caption,
+      fileOrFiles,
+      mediaUrls,
+      mediaIds,
+    }: {
+      id: string;
+      caption: string;
+      fileOrFiles: File | File[];
+      mediaUrls: string[];
+      mediaIds: string[];
+    }) => editNormalPost(id, caption, fileOrFiles, mediaUrls, mediaIds),
   });
 };
 export const useGetGame = (postId: string) => {

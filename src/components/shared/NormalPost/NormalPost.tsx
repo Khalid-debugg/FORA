@@ -163,7 +163,7 @@ const NormalPost = ({
           className={`flex justify-center items-center ${mediaFiles.length > 0 ? "border" : ""}`}
         >
           <CarouselContent>{renderCarousel()}</CarouselContent>
-          {mediaFiles.length > 1 && <CarouselPrevious className="" />}
+          {mediaFiles.length > 1 && <CarouselPrevious />}
           {mediaFiles.length > 1 && <CarouselNext />}
         </Carousel>
         {totalLikes > 0 && (
