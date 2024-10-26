@@ -31,8 +31,9 @@ export const gameValidation = z.object({
   city: z.string(),
   playgroundName: z
     .string()
-    .max(30, { message: "That's too much, maximum 30 characters" }),
-  dateTime: z.string(),
+    .max(30, { message: "That's too much, maximum 30 characters" })
+    .nonempty("Playground name is required"),
+  dateTime: z.string().nonempty("Date and time is required"),
 });
 export const postValidation = z.object({
   caption: z

@@ -12,6 +12,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
   const { user } = useUserContext();
   const restPlayers = post?.playersNumber - joinedPlayers?.length;
   const restPlayerPlaceholders = Array.from({ length: restPlayers });
+  console.log(joinedPlayers);
 
   return (
     <div
@@ -25,7 +26,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
       {!isLoadingJoined && (
         <div className="flex flex-wrap justify-center gap-8 px-3 py-8 items-center overflow-auto absolute top-0 left-0 z-20 w-full h-full">
           {joinedPlayers &&
-            joinedPlayers.map((player, i) => (
+            joinedPlayers?.map((player, i) => (
               <HoverCard key={i}>
                 <HoverCardTrigger className="flex items-center h-12 w-12 justify-center outline outline-slate-300 bg-white rounded-full">
                   <Avatar className="h-12 w-12 hover:cursor-pointer">

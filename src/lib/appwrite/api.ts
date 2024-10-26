@@ -10,6 +10,7 @@ import {
 import { ID, Models, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 import { log } from "node:console";
+import { join } from "node:path";
 
 export async function createUserAccount(user: INewUser) {
   try {
@@ -108,6 +109,55 @@ export async function deleteNormalPost(id: string) {
     );
     if (!deletedPost) throw new Error("Post not found");
     return deletedPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function deleteGame(id: string) {
+  try {
+    const deletedPost = await databases.deleteDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      id,
+    );
+    if (!deletedPost) throw new Error("Game not found");
+    return deletedPost;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function editGamePost(
+  emptySpots: number,
+  newJoinedPlayers: string[],
+  gameId: string,
+  joinedGameID: string,
+  newLocation: string,
+  newDate: string,
+) {
+  try {
+    const totalPLayers = emptySpots + newJoinedPlayers.length;
+    const updatedWaitingGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      joinedGameID,
+      {
+        gameId: gameId,
+        joinedPlayers: newJoinedPlayers,
+      },
+    );
+    if (!updatedWaitingGame) throw new Error("Game not found");
+    const updatedGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      gameId,
+      {
+        location: newLocation,
+        date: newDate,
+        playersNumber: totalPLayers,
+      },
+    );
+    if (!updatedGame) throw new Error("Game not found");
+    return updatedGame;
   } catch (err) {
     console.log(err);
   }
@@ -630,6 +680,19 @@ export async function getJoinedPlayers(gameId: string) {
     );
     if (!game) throw new Error();
     return game.documents[0].joinedPlayers;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getJoinedListAndGame(gameId: string) {
+  try {
+    const game = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      [Query.equal("gameId", gameId)],
+    );
+    if (!game) throw new Error();
+    return game.documents[0];
   } catch (err) {
     console.log(err);
   }

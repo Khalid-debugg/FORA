@@ -21,7 +21,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
+import { useUserContext } from "@/context/AuthContext";
 const OneNormalPost = () => {
+  const { user } = useUserContext();
   const { id } = useParams();
   const { data: post, isPending } = useGetNormalPost(id);
   const { mutateAsync: deletePost } = useDeleteNormalPost();
@@ -56,14 +58,16 @@ const OneNormalPost = () => {
           <h1 className="text-xl">Post</h1>
         </div>
         <AlertDialog>
-          <DropdownMenu label={<AiOutlineMenuFold size={25} color="green" />}>
-            <DropdownMenuItem onClick={() => setIsEditing(true)}>
-              Edit
-            </DropdownMenuItem>
-            <AlertDialogTrigger>
-              <DropdownMenuItem onClick={undefined}>Delete</DropdownMenuItem>
-            </AlertDialogTrigger>
-          </DropdownMenu>
+          {user.id === post?.creator.$id && (
+            <DropdownMenu label={<AiOutlineMenuFold size={25} color="green" />}>
+              <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                Edit
+              </DropdownMenuItem>
+              <AlertDialogTrigger>
+                <DropdownMenuItem onClick={undefined}>Delete</DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenu>
+          )}
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

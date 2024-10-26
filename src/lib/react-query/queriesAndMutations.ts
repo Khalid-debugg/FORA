@@ -28,6 +28,9 @@ import {
   getGame,
   editNormalPost,
   deleteNormalPost,
+  getJoinedListAndGame,
+  editGamePost,
+  deleteGame,
 } from "../appwrite/api";
 import {
   ICreatedPost,
@@ -114,6 +117,11 @@ export const useDeleteNormalPost = () => {
     mutationFn: (id: string) => deleteNormalPost(id),
   });
 };
+export const useDeleteGamePost = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteGame(id),
+  });
+};
 export const useEditNormalPost = () => {
   return useMutation({
     mutationFn: ({
@@ -129,6 +137,33 @@ export const useEditNormalPost = () => {
       mediaUrls: string[];
       mediaIds: string[];
     }) => editNormalPost(id, caption, fileOrFiles, mediaUrls, mediaIds),
+  });
+};
+export const useEditGamePost = () => {
+  return useMutation({
+    mutationFn: ({
+      emptySpots,
+      newJoinedPlayers,
+      gameId,
+      joinedGameID,
+      newLocation,
+      newDate,
+    }: {
+      emptySpots: number;
+      newJoinedPlayers: string[];
+      gameId: string;
+      joinedGameID: string;
+      newLocation: string;
+      newDate: string;
+    }) =>
+      editGamePost(
+        emptySpots,
+        newJoinedPlayers,
+        gameId,
+        joinedGameID,
+        newLocation,
+        newDate,
+      ),
   });
 };
 export const useGetGame = (postId: string) => {
@@ -232,5 +267,13 @@ export const useGetJoinedPlayers = (gameId: string) => {
   return useQuery({
     queryKey: [`${gameId + QueryKeys.JoinedPlayers}`],
     queryFn: async () => await getJoinedPlayers(gameId),
+  });
+};
+export const useGetJoinedListAndGame = (gameId: string) => {
+  return useQuery({
+    queryKey: [
+      `${gameId + QueryKeys.JoinedPlayers + QueryKeys.WaitingPlayers}`,
+    ],
+    queryFn: async () => await getJoinedListAndGame(gameId),
   });
 };
