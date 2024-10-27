@@ -656,7 +656,7 @@ export async function unlikeComment(comment: INewComment, userId: string) {
 //     console.log(err);
 //   }
 // }
-export async function getWaitingPlayers(gameId: string) {
+export async function getWaitingGame(gameId: string) {
   try {
     const game = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -664,25 +664,13 @@ export async function getWaitingPlayers(gameId: string) {
       [Query.equal("gameId", gameId)],
     );
     if (!game) throw new Error();
-    return game.documents[0].waitingPlayers;
+    return game.documents[0];
   } catch (err) {
     console.log(err);
   }
 }
-export async function getJoinedPlayers(gameId: string) {
-  try {
-    const game = await databases.listDocuments(
-      appwriteConfig.databaseID,
-      appwriteConfig.joinedGamesID,
-      [Query.equal("gameId", gameId)],
-    );
-    if (!game) throw new Error();
-    return game.documents[0].joinedPlayers;
-  } catch (err) {
-    console.log(err);
-  }
-}
-export async function getJoinedListAndGame(gameId: string) {
+
+export async function getJoinedGame(gameId: string) {
   try {
     const game = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -691,6 +679,77 @@ export async function getJoinedListAndGame(gameId: string) {
     );
     if (!game) throw new Error();
     return game.documents[0];
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function rejectPlayer({
+  waitingGameId,
+  userId,
+  waitingPlayers,
+}: {
+  waitingGameId: string;
+  userId: string;
+  waitingPlayers: any[];
+}) {
+  try {
+    if (!waitingPlayers.some((player) => player.$id === userId))
+      return new Error("Player is not in the waiting list anymore");
+    const updatedWaitingGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      waitingGameId,
+      {
+        waitingPlayers: waitingPlayers
+          .filter((player) => player.$id !== userId)
+          .map((player) => player.$id),
+      },
+    );
+    if (!updatedWaitingGame) throw new Error();
+    return updatedWaitingGame;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function acceptPlayer({
+  gameId,
+  userId,
+  waitingGameId,
+  waitingPlayers,
+}: {
+  userId: string;
+  gameId: string;
+  waitingGameId: string;
+  waitingPlayers: any[];
+}) {
+  try {
+    const joinedGame = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      [Query.equal("gameId", gameId)],
+    );
+    if (!joinedGame) throw new Error("Joined game not found");
+    const updatedWaitingGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      waitingGameId,
+      {
+        waitingPlayers: waitingPlayers
+          .filter((player) => player.$id !== userId)
+          .map((player) => player.$id),
+      },
+    );
+    if (!updatedWaitingGame) throw new Error("Waiting game not found");
+    const updatedJoinedGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      joinedGame.documents[0].$id,
+      {
+        joinedPlayers: [...joinedGame.documents[0].joinedPlayers, userId],
+      },
+    );
+    if (!updatedJoinedGame) throw new Error("Joined game not found");
+    return updatedJoinedGame;
   } catch (err) {
     console.log(err);
   }

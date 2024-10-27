@@ -6,13 +6,71 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import { IoCheckmarkCircle } from "react-icons/io5";
+import { FaCircleXmark } from "react-icons/fa6";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useUserContext } from "@/context/AuthContext";
+import {
+  useAcceptPlayer,
+  useRejectPlayer,
+} from "@/lib/react-query/queriesAndMutations";
+import { toast } from "@/components/ui/use-toast";
 
-const WaitingList = ({ waitingPlayers, isLoadingWaiting }) => {
+const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
   const [maxVisiblePlayers, setMaxVisiblePlayers] = useState(0);
+  const { mutateAsync: handleReject } = useRejectPlayer(post?.$id);
+  const { mutateAsync: handleAccept } = useAcceptPlayer();
   const waitingRoomRef = useRef();
-
+  const { user } = useUserContext();
+  const rejectPlayer = async (player) => {
+    const res = await handleReject({
+      waitingGameId: waitingGame.$id,
+      userId: player.$id,
+      waitingPlayers: waitingGame.waitingPlayers,
+    });
+    if (res instanceof Error) {
+      toast({
+        title: "Error",
+        description: `${res.message}`,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: `${player.username} has been removed from the waiting list`,
+      });
+    }
+  };
+  const acceptPlayer = async (player) => {
+    const res = await handleAccept({
+      gameId: post?.$id,
+      userId: player.$id,
+      waitingGameId: waitingGame.$id,
+      waitingPlayers: waitingGame.waitingPlayers,
+    });
+    if (res instanceof Error) {
+      toast({
+        title: "Error",
+        description: `${res.message}`,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: `${player.username} has been added to the game`,
+      });
+    }
+  };
   useEffect(() => {
-    if (waitingRoomRef.current && waitingPlayers) {
+    if (waitingRoomRef.current && waitingGame?.waitingPlayers) {
       const containerWidth = waitingRoomRef.current.offsetWidth;
       const containerHeight = waitingRoomRef.current.offsetHeight;
       const playerSize = 48;
@@ -24,44 +82,101 @@ const WaitingList = ({ waitingPlayers, isLoadingWaiting }) => {
       const maxPlayers = playersPerRow * rows;
       setMaxVisiblePlayers(maxPlayers);
     }
-  }, [waitingPlayers]);
+  }, [waitingGame]);
 
   return (
     <div
-      className="flex flex-wrap h-full justify-center items-center overflow-auto max-h-[25rem]"
+      className="flex flex-wrap gap-7 h-full justify-center items-center overflow-auto max-h-[25rem]"
       ref={waitingRoomRef}
     >
       {!isLoadingWaiting && (
         <>
-          {waitingPlayers &&
-            waitingPlayers.slice(0, maxVisiblePlayers).map((player, i) => (
-              <HoverCard key={i}>
-                <HoverCardTrigger className="flex items-center h-12 w-12 justify-center bg-white rounded-full">
-                  <Avatar className="h-12 w-12 hover:cursor-pointer">
-                    <AvatarImage src={player.imageURL} />
-                    <AvatarFallback>{player.username[0]}</AvatarFallback>
-                  </Avatar>
-                </HoverCardTrigger>
-                <HoverCardContent className="border border-primary-500 bg-white absolute top-0 left-0">
-                  <div className="underline font-bold flex gap-2 items-center">
-                    <img
-                      src={player.imageURL}
-                      alt="profile pic"
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <Link to={`/profile/${player.$id}`}>{player.username}</Link>
-                  </div>
-                  <p>{player.bio}</p>
-                </HoverCardContent>
-              </HoverCard>
-            ))}
-          {waitingPlayers && waitingPlayers.length > maxVisiblePlayers && (
-            <div className="h-12 w-12 flex justify-center items-center text-white bg-primary-500 rounded-full">
-              <button onClick={() => /* logic to show the rest */ null}>
-                +{waitingPlayers.length - maxVisiblePlayers}
-              </button>
-            </div>
-          )}
+          {waitingGame &&
+            waitingGame?.waitingPlayers
+              ?.slice(0, maxVisiblePlayers)
+              .map((player, i) => (
+                <HoverCard key={i}>
+                  <HoverCardTrigger className="flex relative items-center h-12 w-12 justify-center bg-white rounded-full">
+                    <Avatar className="h-12 w-12 hover:cursor-pointer">
+                      <AvatarImage src={player.imageURL} />
+                      <AvatarFallback>{player.username[0]}</AvatarFallback>
+                    </Avatar>
+                    {user?.id === post.creator.$id && (
+                      <>
+                        <AlertDialog>
+                          <AlertDialogTrigger className="absolute top-[-0.7rem] left-[-0.75rem] rounded-full">
+                            <FaCircleXmark color="red" size={22} />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action will remove {player.username} from
+                                the waiting list
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => rejectPlayer(player)}
+                              >
+                                Confirm
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger className="absolute top-[-0.8rem] right-[-0.75rem] rounded-full">
+                            <IoCheckmarkCircle color="green" size={25} />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action will add {player.username} to your
+                                game
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => acceptPlayer(player)}
+                              >
+                                Confirm
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
+                  </HoverCardTrigger>
+                  <HoverCardContent className="border border-primary-500 bg-white absolute top-0 left-0">
+                    <div className="underline font-bold flex gap-2 items-center">
+                      <img
+                        src={player.imageURL}
+                        alt="profile pic"
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <Link to={`/profile/${player.$id}`}>
+                        {player.username}
+                      </Link>
+                    </div>
+                    <p>{player.bio}</p>
+                  </HoverCardContent>
+                </HoverCard>
+              ))}
+          {waitingGame &&
+            waitingGame?.waitingPlayers?.length > maxVisiblePlayers && (
+              <div className="h-12 w-12 flex justify-center items-center text-white bg-primary-500 rounded-full">
+                <button onClick={() => /* logic to show the rest */ null}>
+                  +{waitingGame?.waitingPlayers?.length - maxVisiblePlayers}
+                </button>
+              </div>
+            )}
         </>
       )}
       {isLoadingWaiting && (

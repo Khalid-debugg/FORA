@@ -13,9 +13,7 @@ import {
   createGame,
   createPost,
   joinGame,
-  getWaitingPlayers,
   leaveGame,
-  getJoinedPlayers,
   createComment,
   getComments,
   createReply,
@@ -28,9 +26,12 @@ import {
   getGame,
   editNormalPost,
   deleteNormalPost,
-  getJoinedListAndGame,
   editGamePost,
   deleteGame,
+  getJoinedGame,
+  getWaitingGame,
+  rejectPlayer,
+  acceptPlayer,
 } from "../appwrite/api";
 import {
   ICreatedPost,
@@ -257,23 +258,50 @@ export const useLeaveGame = (gameId: string) => {
     },
   });
 };
-export const useGetWaitingPlayers = (gameId: string) => {
+export const useGetWaitingGame = (gameId: string) => {
   return useQuery({
     queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
-    queryFn: async () => await getWaitingPlayers(gameId),
+    queryFn: async () => await getWaitingGame(gameId),
   });
 };
-export const useGetJoinedPlayers = (gameId: string) => {
-  return useQuery({
-    queryKey: [`${gameId + QueryKeys.JoinedPlayers}`],
-    queryFn: async () => await getJoinedPlayers(gameId),
-  });
-};
-export const useGetJoinedListAndGame = (gameId: string) => {
+export const useGetJoinedGame = (gameId: string) => {
   return useQuery({
     queryKey: [
       `${gameId + QueryKeys.JoinedPlayers + QueryKeys.WaitingPlayers}`,
     ],
-    queryFn: async () => await getJoinedListAndGame(gameId),
+    queryFn: async () => await getJoinedGame(gameId),
+  });
+};
+export const useRejectPlayer = (gameId: string) => {
+  return useMutation({
+    mutationFn: ({
+      userId,
+      waitingGameId,
+      waitingPlayers,
+    }: {
+      userId: string;
+      waitingGameId: string;
+      waitingPlayers: string[];
+    }) => rejectPlayer({ userId, waitingGameId, waitingPlayers }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
+      });
+    },
+  });
+};
+export const useAcceptPlayer = () => {
+  return useMutation({
+    mutationFn: ({
+      gameId,
+      userId,
+      waitingGameId,
+      waitingPlayers,
+    }: {
+      gameId: string;
+      userId: string;
+      waitingGameId: string;
+      waitingPlayers: any[];
+    }) => acceptPlayer({ gameId, userId, waitingGameId, waitingPlayers }),
   });
 };

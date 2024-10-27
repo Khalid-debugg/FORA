@@ -5,8 +5,8 @@ import { FaClock } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 import { GiSoccerKick } from "react-icons/gi";
 import {
-  useGetJoinedPlayers,
-  useGetWaitingPlayers,
+  useGetWaitingGame,
+  useGetJoinedGame,
   useJoinGame,
   useLeaveGame,
 } from "@/lib/react-query/queriesAndMutations";
@@ -19,12 +19,13 @@ import { useNavigate } from "react-router-dom";
 const GamePost = ({ post, isOne }) => {
   const { user } = useUserContext();
   const {
-    data: waitingPlayers,
+    data: waitingGame,
     refetch: refetchWaiting,
     isPending: isLoadingWaiting,
-  } = useGetWaitingPlayers(post?.$id);
-  const { data: joinedPlayers, isPending: isLoadingJoined } =
-    useGetJoinedPlayers(post?.$id);
+  } = useGetWaitingGame(post?.$id);
+  const { data: joinedGame, isPending: isLoadingJoined } = useGetJoinedGame(
+    post?.$id,
+  );
   const { mutateAsync: joinGame, isPending: isJoining } = useJoinGame(
     post?.$id,
   );
@@ -35,10 +36,12 @@ const GamePost = ({ post, isOne }) => {
   const [isJoined, setisJoined] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    if (waitingPlayers) {
-      setisJoined(waitingPlayers.some((player) => player.$id === user?.id));
+    if (waitingGame) {
+      setisJoined(
+        waitingGame.waitingPlayers?.some((player) => player.$id === user?.id),
+      );
     }
-  }, [waitingPlayers, user]);
+  }, [waitingGame, user]);
   const handleJoin = async () => {
     try {
       const res = await joinGame({
@@ -109,13 +112,13 @@ const GamePost = ({ post, isOne }) => {
           <div className="flex items-center gap-2">
             <GiSoccerKick fill="green" size={20} />
             <p>Players needed: </p>
-            <p>{post?.playersNumber}</p>
+            <p>{post?.playersNumber - joinedGame?.joinedPlayers?.length}</p>
           </div>
         </div>
       </button>
       <div className="flex flex-1">
         <JoinedList
-          joinedPlayers={joinedPlayers}
+          joinedPlayers={joinedGame?.joinedPlayers}
           isLoadingJoined={isLoadingJoined}
           post={post}
         />
@@ -123,12 +126,13 @@ const GamePost = ({ post, isOne }) => {
         <div className="w-1/2 flex flex-col max-h-[27rem] ">
           <p className="text-center text-lg font-semibold py-2 border-b-2 border-black">
             Waiting room 🪑&nbsp;
-            {waitingPlayers &&
-              waitingPlayers.length > 0 &&
-              waitingPlayers.length + " player(s)"}
+            {waitingGame &&
+              waitingGame?.waitingPlayers?.length > 0 &&
+              waitingGame?.waitingPlayers?.length + " player(s)"}
           </p>
           <WaitingList
-            waitingPlayers={waitingPlayers}
+            post={post}
+            waitingGame={waitingGame}
             isLoadingWaiting={isLoadingWaiting}
           />
         </div>

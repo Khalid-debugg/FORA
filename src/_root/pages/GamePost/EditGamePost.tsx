@@ -1,7 +1,7 @@
 import {
   useEditGamePost,
   useGetCities,
-  useGetJoinedListAndGame,
+  useGetJoinedGame,
 } from "@/lib/react-query/queriesAndMutations";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
@@ -31,7 +31,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 
 const EditGamePost = ({ post, setIsEditing }) => {
-  const { data: joinedGame } = useGetJoinedListAndGame(post.$id);
+  const { data: joinedGame } = useGetJoinedGame(post.$id);
   const { mutateAsync: editGame } = useEditGamePost();
   const [newJoinedPlayers, setNewJoinedPlayers] = useState([]);
   const [emptySpots, setEmptySpots] = useState(0);
