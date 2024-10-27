@@ -182,6 +182,12 @@ const EditGamePost = ({ post, setIsEditing }) => {
             </div>
           ))}
         </div>
+        <button
+          onClick={() => setEmptySpots(emptySpots + 1)}
+          className="shad-button_primary hover:shad-button_ghost w-1/2 mx-auto rounded-md p-2"
+        >
+          Add Empty Spot
+        </button>
         <div className="flex flex-wrap gap-4 p-2">
           <div>
             <label htmlFor="governorate">Governorate</label>
