@@ -492,9 +492,10 @@ export async function leaveGame({
     ) {
       return new Error("Already left the game");
     }
-    const waitingPlayers = waitingGame.documents[0].waitingPlayers.filter(
-      (player) => player.$id !== userId,
-    );
+    const waitingPlayers = waitingGame.documents[0].waitingPlayers
+      .filter((player) => player.$id !== userId)
+      .map((player) => player.$id);
+
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
@@ -534,7 +535,10 @@ export async function joinGame({
         appwriteConfig.waitingGamesID,
         waitingGame.documents[0].$id,
         {
-          waitingPlayers: [...waitingPlayers, userId],
+          waitingPlayers: [
+            ...waitingPlayers.map((player) => player.$id),
+            userId,
+          ],
         },
       );
       return updatedPost;
@@ -739,15 +743,26 @@ export async function acceptPlayer({
           .map((player) => player.$id),
       },
     );
+    console.log(
+      waitingPlayers
+        .filter((player) => player.$id !== userId)
+        .map((player) => player.$id),
+    );
+
     if (!updatedWaitingGame) throw new Error("Waiting game not found");
     const updatedJoinedGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.joinedGamesID,
       joinedGame.documents[0].$id,
       {
-        joinedPlayers: [...joinedGame.documents[0].joinedPlayers, userId],
+        joinedPlayers: [
+          ...joinedGame.documents[0].joinedPlayers.map((player) => player.$id),
+          userId,
+        ],
       },
     );
+    console.log(joinedGame.documents[0].joinedPlayers, userId);
+
     if (!updatedJoinedGame) throw new Error("Joined game not found");
     return updatedJoinedGame;
   } catch (err) {

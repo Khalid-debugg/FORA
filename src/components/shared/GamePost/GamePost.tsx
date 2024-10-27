@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import WaitingList from "./WaitingList";
 import JoinedList from "./JoinedList";
 import { useNavigate } from "react-router-dom";
+import { set } from "date-fns";
 
 const GamePost = ({ post, isOne }) => {
   const { user } = useUserContext();
@@ -34,14 +35,19 @@ const GamePost = ({ post, isOne }) => {
   );
 
   const [isJoined, setisJoined] = useState(false);
+  const [isWaiting, setisWaiting] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if (waitingGame) {
       setisJoined(
-        waitingGame.waitingPlayers?.some((player) => player.$id === user?.id),
+        joinedGame?.joinedPlayers.some((player) => player.$id === user?.id),
+      );
+      setisWaiting(
+        waitingGame?.waitingPlayers.some((player) => player.$id === user?.id),
       );
     }
-  }, [waitingGame, user]);
+  }, [waitingGame, joinedGame, user]);
+
   const handleJoin = async () => {
     try {
       const res = await joinGame({
@@ -137,7 +143,7 @@ const GamePost = ({ post, isOne }) => {
           />
         </div>
       </div>
-      {user.id !== post?.creator.$id && !isJoined && (
+      {user.id !== post?.creator.$id && !isWaiting && !isJoined && (
         <button
           disabled={isJoining}
           onClick={handleJoin}
@@ -148,7 +154,7 @@ const GamePost = ({ post, isOne }) => {
           {isJoining && <div className=" animate-spin">⚽</div>}
         </button>
       )}
-      {user.id !== post?.creator.$id && isJoined && (
+      {user.id !== post?.creator.$id && isWaiting && (
         <button
           disabled={isLeaving}
           onClick={handleLeave}
