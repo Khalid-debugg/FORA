@@ -20,9 +20,7 @@ const App = () => {
         </Route>
         {/* Guarded routes */}
         <Route element={<RootLayout />}>
-          <Route path="/" element={<Home />}>
-            <Route path="/create-post/:type" element={<CreatePost />} />
-          </Route>
+          <Route path="/" element={<Home />} />
           <Route path="/normal-post/:id" element={<OneNormalPost />} />
           <Route path="/game-post/:id" element={<OneGamePost />} />
         </Route>

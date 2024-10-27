@@ -9,8 +9,6 @@ import {
 } from "@/types";
 import { ID, Models, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
-import { log } from "node:console";
-import { join } from "node:path";
 
 export async function createUserAccount(user: INewUser) {
   try {

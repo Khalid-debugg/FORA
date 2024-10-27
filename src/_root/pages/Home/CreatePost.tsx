@@ -3,10 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 import IsPostForm from "@/components/forms/PostTypes/IsPostForm";
 import IsGameForm from "@/components/forms/PostTypes/IsGameForm";
-import { useParams } from "react-router-dom";
-const CreatePost = () => {
+const CreatePost = ({
+  type = "post",
+  setType,
+}: {
+  type: string;
+  setType: any;
+}) => {
   const navigate = useNavigate();
-  const { type } = useParams();
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (event.target.classList.contains("content-wrapper")) {
@@ -27,21 +31,11 @@ const CreatePost = () => {
           <div className="flex justify-between items-center gap-3">
             <Switch
               onCheckedChange={() =>
-                navigate(`/create-post/${type === "game" ? "normal" : "game"}`)
+                type === "game" ? setType("post") : setType("game")
               }
             />
             <p>{type === "game" ? "Game" : "Post"}</p>
           </div>
-          <button
-            className="p-2 rounded-lg hover:bg-gray-100"
-            onClick={() => navigate("/")}
-          >
-            <img
-              src="/assets/icons/back.svg"
-              alt="back icon"
-              className="scale-x-[-1]"
-            />
-          </button>
         </div>
         {type === "game" ? <IsGameForm /> : <IsPostForm post={null} />}
       </div>
