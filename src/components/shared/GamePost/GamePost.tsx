@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import WaitingList from "./WaitingList";
 import JoinedList from "./JoinedList";
 import { useNavigate } from "react-router-dom";
-import { set } from "date-fns";
 
 const GamePost = ({ post, isOne }) => {
   const { user } = useUserContext();
@@ -40,10 +39,10 @@ const GamePost = ({ post, isOne }) => {
   useEffect(() => {
     if (waitingGame) {
       setisJoined(
-        joinedGame?.joinedPlayers.some((player) => player.$id === user?.id),
+        joinedGame?.joinedPlayers?.some((player) => player.$id === user?.id),
       );
       setisWaiting(
-        waitingGame?.waitingPlayers.some((player) => player.$id === user?.id),
+        waitingGame?.waitingPlayers?.some((player) => player.$id === user?.id),
       );
     }
   }, [waitingGame, joinedGame, user]);
@@ -60,7 +59,6 @@ const GamePost = ({ post, isOne }) => {
         variant: "default",
         title: "Joined the waiting list successfully!",
       });
-      await refetchWaiting();
       setisJoined(true);
     } catch (error) {
       toast({
@@ -80,7 +78,6 @@ const GamePost = ({ post, isOne }) => {
         variant: "default",
         title: "Left successfully!",
       });
-      await refetchWaiting();
       setisJoined(false);
     } catch (error) {
       toast({
@@ -109,7 +106,9 @@ const GamePost = ({ post, isOne }) => {
         <div className="flex flex-col w-1/2">
           <div className="flex items-center gap-2">
             <FaLocationDot fill="green" size={20} />
-            <p>{post?.location}</p>
+            <p className="truncate overflow-hidden whitespace-nowrap text-ellipsis hover:whitespace-normal hover:overflow-visible hover:bg-gray-100 hover:p-2 hover:z-10">
+              {post?.location}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <FaClock fill="green" size={20} />

@@ -4,6 +4,6 @@ export enum QueryKeys {
   Replies = "getReplies",
   Cities = "getCities",
   Users = "getUsers",
-  WaitingPlayers = "getWaitingPlayers",
-  JoinedPlayers = "getJoinedPlayers",
+  WaitingGame = "getWaitingGame",
+  JoinedGame = "getJoinedGame",
 }

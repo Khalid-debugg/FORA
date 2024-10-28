@@ -43,7 +43,7 @@ import {
   IRegisteredUser,
 } from "@/types";
 import { QueryKeys } from "./queryKeys";
-const queryClient = new QueryClient();
+import { queryClient } from "@/main";
 export const useCreateNewAccount = () => {
   return useMutation({
     mutationFn: (user: INewUser) => createUserAccount(user),
@@ -242,7 +242,7 @@ export const useJoinGame = (gameId: string) => {
     }) => joinGame({ userId, postId, playersNumber }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
+        queryKey: [`${gameId + QueryKeys.WaitingGame}`],
       });
     },
   });
@@ -253,22 +253,20 @@ export const useLeaveGame = (gameId: string) => {
       leaveGame({ userId, postId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
+        queryKey: [`${gameId + QueryKeys.WaitingGame}`],
       });
     },
   });
 };
 export const useGetWaitingGame = (gameId: string) => {
   return useQuery({
-    queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
+    queryKey: [`${gameId + QueryKeys.WaitingGame}`],
     queryFn: async () => await getWaitingGame(gameId),
   });
 };
 export const useGetJoinedGame = (gameId: string) => {
   return useQuery({
-    queryKey: [
-      `${gameId + QueryKeys.JoinedPlayers + QueryKeys.WaitingPlayers}`,
-    ],
+    queryKey: [`${gameId + QueryKeys.JoinedGame}`],
     queryFn: async () => await getJoinedGame(gameId),
   });
 };
@@ -285,12 +283,15 @@ export const useRejectPlayer = (gameId: string) => {
     }) => rejectPlayer({ userId, waitingGameId, waitingPlayers }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`${gameId + QueryKeys.WaitingPlayers}`],
+        queryKey: [`${gameId + QueryKeys.WaitingGame}`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`${gameId + QueryKeys.JoinedGame}`],
       });
     },
   });
 };
-export const useAcceptPlayer = () => {
+export const useAcceptPlayer = (gameId: string) => {
   return useMutation({
     mutationFn: ({
       gameId,
@@ -303,5 +304,13 @@ export const useAcceptPlayer = () => {
       waitingGameId: string;
       waitingPlayers: any[];
     }) => acceptPlayer({ gameId, userId, waitingGameId, waitingPlayers }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`${gameId + QueryKeys.WaitingGame}`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`${gameId + QueryKeys.JoinedGame}`],
+      });
+    },
   });
 };

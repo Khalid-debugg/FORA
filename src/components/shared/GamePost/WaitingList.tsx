@@ -29,7 +29,7 @@ import { toast } from "@/components/ui/use-toast";
 const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
   const [maxVisiblePlayers, setMaxVisiblePlayers] = useState(0);
   const { mutateAsync: handleReject } = useRejectPlayer(post?.$id);
-  const { mutateAsync: handleAccept } = useAcceptPlayer();
+  const { mutateAsync: handleAccept } = useAcceptPlayer(post?.$id);
   const waitingRoomRef = useRef();
   const { user } = useUserContext();
   const rejectPlayer = async (player) => {
