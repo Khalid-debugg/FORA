@@ -54,7 +54,7 @@ export type IUser = {
   id: string;
   username: string;
   email: string;
-  imageURL: string;
+  imageUrl: string;
   bio: string;
 };
 
@@ -85,7 +85,7 @@ export type ICreatedPost = {
   caption: string;
   creator: any;
   isGame: boolean;
-  likes: any;
+  postLikes: any;
   location: string;
   media: string[];
   mediaIds: string[];

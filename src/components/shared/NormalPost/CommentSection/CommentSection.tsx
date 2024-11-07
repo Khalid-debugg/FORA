@@ -81,7 +81,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
             <Avatar className="hover:cursor-pointer">
               <AvatarImage
                 className="h-12 w-12 rounded-full outline outline-slate-200"
-                src={user.imageURL}
+                src={user?.imageUrl}
               />
               <AvatarFallback>{user.username}</AvatarFallback>
             </Avatar>

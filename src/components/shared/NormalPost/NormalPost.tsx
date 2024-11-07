@@ -41,7 +41,7 @@ const NormalPost = ({
   const [mediaFiles, setMediaFiles] = useState<
     { mimeType: string; ref: string }[]
   >([]);
-  const [totalLikes, setTotalLikes] = useState(post?.likes.length);
+  const [totalLikes, setTotalLikes] = useState(post?.likes?.length);
   const date = new Date(post?.$createdAt);
   const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
     post,
@@ -54,7 +54,7 @@ const NormalPost = ({
   const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
   const [isLiked, setIsLiked] = useState(
-    post?.likes.some((likedUser) => likedUser.$id === user?.id) || false,
+    post?.likes?.some((likedUser) => likedUser.$id === user?.id) || false,
   );
   console.log(post);
 
@@ -146,7 +146,7 @@ const NormalPost = ({
       >
         <div className="flex gap-3 items-center">
           <img
-            src={post?.creator.imageURL}
+            src={post?.creator.imageUrl}
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />

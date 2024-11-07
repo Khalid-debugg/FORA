@@ -13,6 +13,8 @@ const SideNav = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user } = useUserContext();
+  console.log(user);
+
   const { mutateAsync: deleteSession, isPending } = useDeleteSession();
   const logout = () => {
     deleteSession();
@@ -32,10 +34,10 @@ const SideNav = () => {
           </header>
         </button>
         <button className="w-56 flex items-center gap-3 p-4 ">
-          {user.imageURL ? (
+          {user?.imageUrl ? (
             <>
               <img
-                src={user.imageURL}
+                src={user.imageUrl}
                 alt="profile picture"
                 className="h-12 w-12 rounded-full border border-black"
               />

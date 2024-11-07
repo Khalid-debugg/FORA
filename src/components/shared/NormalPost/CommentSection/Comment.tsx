@@ -23,7 +23,7 @@ const Comment = ({ comment, mimeType }) => {
     user.id,
   );
   const [isLiked, setIsLiked] = useState(
-    comment?.likes.some((likedUser) => likedUser === user.id) || false,
+    comment?.likes?.some((likedUser) => likedUser === user.id) || false,
   );
   const handleLikeComment = async () => {
     const response = await createLike();
@@ -41,7 +41,7 @@ const Comment = ({ comment, mimeType }) => {
         <Avatar className="hover:cursor-pointer self-start">
           <AvatarImage
             className="h-12 w-12 rounded-full outline outline-slate-200"
-            src={comment?.creator?.imageURL}
+            src={comment?.creator?.imageUrl}
           />
           <AvatarFallback>{comment?.creator?.username}</AvatarFallback>
         </Avatar>
@@ -108,7 +108,7 @@ const Comment = ({ comment, mimeType }) => {
         </button>
       )}
 
-      <RepliesSection comment={comment} isRepliesClicked={isRepliesClicked} />
+      {/* <RepliesSection comment={comment} isRepliesClicked={isRepliesClicked} /> */}
     </div>
   );
 };

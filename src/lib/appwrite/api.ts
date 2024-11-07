@@ -28,7 +28,7 @@ export async function createUserAccount(user: INewUser) {
       accountID: newUser.$id,
       email: user.email,
       username: user.username,
-      imageURL: avatarURL,
+      imageUrl: avatarURL,
     });
   } catch (error) {
     return error;
@@ -39,7 +39,7 @@ export async function createUserInDB(user: {
   accountID: string;
   email: string;
   username: string;
-  imageURL: URL;
+  imageUrl: URL;
 }) {
   try {
     const document = await databases.createDocument(
@@ -551,13 +551,13 @@ export async function joinGame({
 }
 export async function likePost(post: ICreatedPost, userId: string) {
   try {
-    const currentLikes = post?.likes.map((like) => like.$id) || [];
+    const currentLikes = post?.postLikes?.map((like) => like.$id) || [];
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
       post.$id,
       {
-        likes: [...currentLikes, userId],
+        postLikes: [...currentLikes, userId],
       },
     );
 
@@ -573,7 +573,7 @@ export async function likePost(post: ICreatedPost, userId: string) {
 }
 export async function unlikePost(post: ICreatedPost, userId: string) {
   try {
-    const currentLikes = post?.likes.map((like) => like.$id);
+    const currentLikes = post?.postLikes?.map((like) => like.$id);
     console.log(currentLikes);
 
     const updatedPost = await databases.updateDocument(
@@ -581,7 +581,7 @@ export async function unlikePost(post: ICreatedPost, userId: string) {
       appwriteConfig.postsID,
       post.$id,
       {
-        likes: currentLikes.filter((like) => like !== userId) || [],
+        postLikes: currentLikes.filter((like) => like !== userId) || [],
       },
     );
 
@@ -597,7 +597,7 @@ export async function unlikePost(post: ICreatedPost, userId: string) {
 }
 export async function likeComment(comment: INewComment, userId: string) {
   try {
-    const currentLikes = comment?.likes?.map((like) => like.$id) || [];
+    const currentLikes = comment?.commentLikes?.map((like) => like.$id) || [];
     console.log([...currentLikes, userId]);
 
     const updatedComment = await databases.updateDocument(
@@ -605,7 +605,7 @@ export async function likeComment(comment: INewComment, userId: string) {
       appwriteConfig.commentsID,
       comment?.$id,
       {
-        likes: [...currentLikes, userId],
+        commentLikes: [...currentLikes, userId],
       },
     );
 
@@ -621,14 +621,14 @@ export async function likeComment(comment: INewComment, userId: string) {
 }
 export async function unlikeComment(comment: INewComment, userId: string) {
   try {
-    const currentLikes = comment?.likes.map((like) => like.$id);
+    const currentLikes = comment?.commentLikes?.map((like) => like.$id);
 
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.commentsID,
       comment.$id,
       {
-        likes: currentLikes.filter((like) => like !== userId) || [],
+        commentLikes: currentLikes.filter((like) => like !== userId) || [],
       },
     );
 
