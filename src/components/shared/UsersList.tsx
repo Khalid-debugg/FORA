@@ -36,7 +36,7 @@ const UsersList = ({
                 <Avatar className="hover:cursor-pointer">
                   <AvatarImage
                     className="h-12 w-12 rounded-full outline outline-slate-200"
-                    src={user.imageURL}
+                    src={user.imageUrl}
                   />
                 </Avatar>
                 <p className="text-lg font-medium hover:underline hover:cursor-pointer">

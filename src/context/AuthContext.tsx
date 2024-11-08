@@ -7,7 +7,7 @@ export const INITIAL_USER = {
   id: "",
   username: "",
   email: "",
-  imageURL: "",
+  imageUrl: "",
   bio: "",
 };
 const INITIAL_STATE = {

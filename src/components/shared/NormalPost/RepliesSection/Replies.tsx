@@ -1,13 +1,10 @@
-import { useUserContext } from "@/context/AuthContext";
 import { appwriteConfig, storage } from "@/lib/appwrite/config";
 import { useGetReplies } from "@/lib/react-query/queriesAndMutations";
 import { useEffect, useState } from "react";
 import Reply from "./Reply";
-const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
-  const { user } = useUserContext();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+const Replies = ({ comment, replyRef }) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetReplies(comment?.$id);
-
   const [pages, setPages] = useState([]);
   const [visiblePageCount, setVisiblePageCount] = useState(1);
   const [mimeTypes, setMimeTypes] = useState([]);
@@ -39,13 +36,6 @@ const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
     fetchMediaFiles();
   }, [pages, visiblePageCount]);
 
-  useEffect(() => {
-    if (refetchReplies) {
-      refetch();
-      setRefetchReplies(false);
-    }
-  }, [refetchReplies, setRefetchReplies, refetch]);
-
   const allReplies = pages.slice(0, visiblePageCount).flat();
   console.log(allReplies);
 
@@ -66,6 +56,7 @@ const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
       <div className="flex flex-col gap-4">
         {allReplies.map((reply, idx) => (
           <Reply
+            replyRef={replyRef}
             key={reply?.$id || idx}
             reply={reply}
             mimeType={mimeTypes[idx]}
@@ -76,8 +67,8 @@ const Replies = ({ comment, refetchReplies, setRefetchReplies }) => {
         {allReplies.length > 0 && (
           <p>
             {allReplies.length} out of{" "}
-            {comment?.replies.length >= allReplies.length
-              ? comment?.replies.length
+            {comment?.replies?.length >= allReplies.length
+              ? comment?.replies?.length
               : allReplies.length}{" "}
             reply(ies)
           </p>

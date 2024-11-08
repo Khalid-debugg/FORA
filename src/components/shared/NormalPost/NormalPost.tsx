@@ -41,7 +41,7 @@ const NormalPost = ({
   const [mediaFiles, setMediaFiles] = useState<
     { mimeType: string; ref: string }[]
   >([]);
-  const [totalLikes, setTotalLikes] = useState(post?.likes?.length);
+  const [totalLikes, setTotalLikes] = useState(post?.postLikes?.length);
   const date = new Date(post?.$createdAt);
   const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
     post,
@@ -53,9 +53,7 @@ const NormalPost = ({
   );
   const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
-  const [isLiked, setIsLiked] = useState(
-    post?.likes?.some((likedUser) => likedUser.$id === user?.id) || false,
-  );
+  const [isLiked, setIsLiked] = useState(false);
   console.log(post);
 
   const handleLike = async () => {
@@ -99,7 +97,10 @@ const NormalPost = ({
     };
 
     fetchMediaFiles();
-  }, [post?.mediaIds]);
+    setIsLiked(
+      post?.postLikes?.some((likedUser) => likedUser.$id === user?.id),
+    );
+  }, [post, user]);
 
   const formatDate = () => {
     return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
@@ -171,7 +172,7 @@ const NormalPost = ({
             <UsersList
               listTitle="Likes"
               buttonTitle={`${totalLikes} ${totalLikes === 1 ? "Like" : "Likes"}`}
-              listItems={post?.likes}
+              listItems={post?.postLikes}
             />
           </div>
         )}

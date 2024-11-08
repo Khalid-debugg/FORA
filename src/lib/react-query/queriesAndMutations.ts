@@ -32,6 +32,8 @@ import {
   getWaitingGame,
   rejectPlayer,
   acceptPlayer,
+  likeReply,
+  unlikeReply,
 } from "../appwrite/api";
 import {
   ICreatedPost,
@@ -227,6 +229,16 @@ export const useLikeComment = (comment: INewComment, userId: string) => {
 export const useUnlikeComment = (comment: INewComment, userId: string) => {
   return useMutation({
     mutationFn: () => unlikeComment(comment, userId),
+  });
+};
+export const useLikeReply = (reply: INewComment, userId: string) => {
+  return useMutation({
+    mutationFn: () => likeReply(reply, userId),
+  });
+};
+export const useUnlikeReply = (reply: INewComment, userId: string) => {
+  return useMutation({
+    mutationFn: () => unlikeReply(reply, userId),
   });
 };
 export const useJoinGame = (gameId: string) => {

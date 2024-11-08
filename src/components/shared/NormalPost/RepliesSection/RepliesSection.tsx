@@ -5,7 +5,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { replyValidation } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { IoSend, IoCamera } from "react-icons/io5";
@@ -21,8 +21,7 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
   const { mutateAsync: createReply, isPending: isReplying } = useCreateReply(
     comment?.$id,
   );
-  const [refetchReplies, setRefetchReplies] = useState(false);
-
+  const replyRef = useRef(null);
   const form = useForm<z.infer<typeof replyValidation>>({
     resolver: zodResolver(replyValidation),
     defaultValues: {
@@ -50,7 +49,6 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
       const newComment = await createReply(postVariables);
 
       if (newComment) {
-        setRefetchReplies(true);
         form.reset();
         setFile(undefined);
       } else {
@@ -82,7 +80,7 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
             <Avatar className="hover:cursor-pointer">
               <AvatarImage
                 className="h-12 w-12 rounded-full outline outline-slate-200"
-                src={user.imageURL}
+                src={user.imageUrl}
               />
               <AvatarFallback>{user.username}</AvatarFallback>
             </Avatar>
@@ -90,7 +88,7 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
               control={form.control}
               name="reply"
               render={({ field }) => (
-                <FormItem className="flex-1">
+                <FormItem className="flex-1" ref={replyRef}>
                   <FormControl>
                     <Input
                       type="text"
@@ -168,11 +166,7 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
           </div>
         </div>
       )}
-      <Replies
-        comment={comment}
-        refetchReplies={refetchReplies}
-        setRefetchReplies={setRefetchReplies}
-      />
+      <Replies comment={comment} replyRef={replyRef} />
     </div>
   );
 };

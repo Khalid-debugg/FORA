@@ -18,11 +18,9 @@ import { useNavigate } from "react-router-dom";
 
 const GamePost = ({ post, isOne }) => {
   const { user } = useUserContext();
-  const {
-    data: waitingGame,
-    refetch: refetchWaiting,
-    isPending: isLoadingWaiting,
-  } = useGetWaitingGame(post?.$id);
+  const { data: waitingGame, isPending: isLoadingWaiting } = useGetWaitingGame(
+    post?.$id,
+  );
   const { data: joinedGame, isPending: isLoadingJoined } = useGetJoinedGame(
     post?.$id,
   );
@@ -97,7 +95,7 @@ const GamePost = ({ post, isOne }) => {
       >
         <div className="flex gap-3 items-center">
           <img
-            src={post?.creator.imageURL}
+            src={post?.creator.imageUrl}
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />

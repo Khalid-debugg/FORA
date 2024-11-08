@@ -551,7 +551,7 @@ export async function joinGame({
 }
 export async function likePost(post: ICreatedPost, userId: string) {
   try {
-    const currentLikes = post?.postLikes?.map((like) => like.$id) || [];
+    const currentLikes = post?.postLikes?.map((like) => like.$id);
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
@@ -639,6 +639,53 @@ export async function unlikeComment(comment: INewComment, userId: string) {
     return updatedPost;
   } catch (err) {
     console.error("Error creating like:", err);
+    throw err;
+  }
+}
+export async function likeReply(reply, userId) {
+  try {
+    const currentLikes = reply?.replyLikes?.map((like) => like.$id) || [];
+    console.log([...currentLikes, userId]);
+
+    const updatedReply = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.repliesID,
+      reply?.$id,
+      {
+        replyLikes: [...currentLikes, userId],
+      },
+    );
+
+    if (!updatedReply) {
+      return new Error("Failed to like the reply.");
+    }
+
+    return updatedReply;
+  } catch (err) {
+    console.error("Error creating reply:", err);
+    throw err;
+  }
+}
+export async function unlikeReply(reply: INewComment, userId: string) {
+  try {
+    const currentLikes = reply?.replyLikes?.map((like) => like.$id);
+
+    const updatedReply = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.repliesID,
+      reply.$id,
+      {
+        replyLikes: currentLikes.filter((like) => like !== userId) || [],
+      },
+    );
+
+    if (!updatedReply) {
+      return new Error("Failed to dislike the reply.");
+    }
+
+    return updatedReply;
+  } catch (err) {
+    console.error("Error creating reply:", err);
     throw err;
   }
 }

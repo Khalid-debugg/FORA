@@ -1,14 +1,41 @@
+import { useUserContext } from "@/context/AuthContext";
+import {
+  useLikeReply,
+  useUnlikeReply,
+} from "@/lib/react-query/queriesAndMutations";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { useEffect, useState } from "react";
 import { BiSolidLike } from "react-icons/bi";
 
-const Reply = ({ reply, mimeType }) => {
+const Reply = ({ reply, mimeType, replyRef }) => {
+  const { user } = useUserContext();
+  const { mutate: likeReply } = useLikeReply(reply, user?.id);
+  const { mutate: unikeReply } = useUnlikeReply(reply, user?.id);
+  const [isLiked, setIsLiked] = useState(false);
+  console.log(reply);
+
+  const handleLike = () => {
+    const res = likeReply();
+    if (res instanceof Error) return;
+    setIsLiked(true);
+  };
+  const handleUnlike = () => {
+    const res = unikeReply();
+    if (res instanceof Error) return;
+    setIsLiked(false);
+  };
+  useEffect(() => {
+    if (reply?.replyLikes?.some((likedUser) => likedUser.$id === user?.id)) {
+      setIsLiked(true);
+    }
+  }, [reply, user]);
   return (
     <div className="flex flex-col">
       <div key={reply?.$id} className="flex gap-4 items-center">
         <Avatar className="hover:cursor-pointer self-start">
           <AvatarImage
             className="h-12 w-12 rounded-full outline outline-slate-200"
-            src={reply?.creator?.imageURL}
+            src={reply?.creator?.imageUrl}
           />
           <AvatarFallback>{reply?.creator?.username}</AvatarFallback>
         </Avatar>
@@ -38,10 +65,27 @@ const Reply = ({ reply, mimeType }) => {
         )}
       </div>
       <div className="flex gap-8 pl-16">
-        <button className="text-sm" onClick={() => {}}>
+        <button
+          className="text-sm"
+          onClick={() => {
+            replyRef.current.scrollIntoView({ behavior: "smooth" });
+            replyRef.current.children[0].focus();
+            replyRef.current.children[0].value =
+              "@" + reply?.creator?.username + " ";
+          }}
+        >
           Reply
         </button>
-        <button className="text-sm">Like</button>
+
+        {!isLiked ? (
+          <button className="text-sm" onClick={handleLike}>
+            Like
+          </button>
+        ) : (
+          <button className="text-sm" onClick={handleUnlike}>
+            Unlike
+          </button>
+        )}
       </div>
     </div>
   );

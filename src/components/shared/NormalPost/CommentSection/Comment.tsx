@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiSolidLike } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
@@ -22,9 +22,7 @@ const Comment = ({ comment, mimeType }) => {
     comment,
     user.id,
   );
-  const [isLiked, setIsLiked] = useState(
-    comment?.likes?.some((likedUser) => likedUser === user.id) || false,
-  );
+  const [isLiked, setIsLiked] = useState(false);
   const handleLikeComment = async () => {
     const response = await createLike();
     if (response instanceof Error) return;
@@ -35,6 +33,13 @@ const Comment = ({ comment, mimeType }) => {
     if (response instanceof Error) return;
     setIsLiked(false);
   };
+  useEffect(() => {
+    if (
+      comment?.commentLikes?.some((likedUser) => likedUser.$id === user?.id)
+    ) {
+      setIsLiked(true);
+    }
+  }, [comment, user]);
   return (
     <div className="flex flex-col">
       <div key={comment?.$id} className="flex gap-4 items-center">
@@ -108,7 +113,7 @@ const Comment = ({ comment, mimeType }) => {
         </button>
       )}
 
-      {/* <RepliesSection comment={comment} isRepliesClicked={isRepliesClicked} /> */}
+      <RepliesSection comment={comment} isRepliesClicked={isRepliesClicked} />
     </div>
   );
 };
