@@ -1,5 +1,5 @@
 import { ID, Query } from "appwrite";
-import { appwriteConfig, databases } from "./config";
+import { appwriteConfig, databases } from "../config";
 import { INewReply } from "@/types";
 import {
   deleteFiles,

@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import MenuItem from "./MenuItem";
 import { useUserContext } from "@/context/AuthContext";
 import { Skeleton } from "../ui/skeleton";
-import { useDeleteSession } from "@/lib/react-query/queriesAndMutations";
+import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
 const sideLinks = [
   { logoUrl: "home", label: "Home", path: "/" },
   { logoUrl: "mygames", label: "My Games" },

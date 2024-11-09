@@ -2,7 +2,7 @@ import { useUserContext } from "@/context/AuthContext";
 import {
   useLikeReply,
   useUnlikeReply,
-} from "@/lib/react-query/queriesAndMutations";
+} from "@/lib/react-query/queriesAndMutations/replies";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useEffect, useState } from "react";
 import { BiSolidLike } from "react-icons/bi";

@@ -1,10 +1,4 @@
-import {
-  useEditGamePost,
-  useGetCities,
-  useGetJoinedGame,
-} from "@/lib/react-query/queriesAndMutations";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-
 import { useEffect, useState } from "react";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
@@ -29,6 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import {
+  useEditGamePost,
+  useGetCities,
+  useGetJoinedGame,
+} from "@/lib/react-query/queriesAndMutations/games";
 
 const EditGamePost = ({ post, setIsEditing }) => {
   const { data: joinedGame } = useGetJoinedGame(post.$id);

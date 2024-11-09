@@ -1,16 +1,14 @@
 import GamePost from "@/components/shared/GamePost/GamePost";
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
-import { useGetRecentPosts } from "@/lib/react-query/queriesAndMutations";
 import { Outlet } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import VideoHover from "@/components/ui/video-hover";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CreatePost from "./CreatePost";
 import { useState } from "react";
+import { useGetRecentPosts } from "@/lib/react-query/queriesAndMutations/posts";
 const Home = () => {
   const { data: posts, isPending: isPostsPending } = useGetRecentPosts();
   const [postType, setPostType] = useState("post");
-  const navigate = useNavigate();
   return (
     <>
       <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto items-center">

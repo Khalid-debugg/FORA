@@ -14,12 +14,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { useUserContext } from "@/context/AuthContext";
 import {
   useCreateNewAccount,
   useCreateNewSession,
-} from "@/lib/react-query/queriesAndMutations";
-import { useUserContext } from "@/context/AuthContext";
-
+} from "@/lib/react-query/queriesAndMutations/users";
 const SignUpForm: React.FC = () => {
   // const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();

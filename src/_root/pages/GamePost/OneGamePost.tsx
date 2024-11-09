@@ -5,10 +5,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  useDeleteGamePost,
-  useGetGame,
-} from "@/lib/react-query/queriesAndMutations";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +22,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import EditGamePost from "./EditGamePost";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+import {
+  useDeleteGamePost,
+  useGetGame,
+} from "@/lib/react-query/queriesAndMutations/games";
 
 const OneGamePost = () => {
   const { user } = useUserContext();

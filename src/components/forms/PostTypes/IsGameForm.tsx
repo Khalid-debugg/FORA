@@ -15,10 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "../../ui/input";
-import {
-  useCreateGame,
-  useGetCities,
-} from "@/lib/react-query/queriesAndMutations";
 import { gameValidation } from "@/lib/validation";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,6 +23,10 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useUserContext } from "@/context/AuthContext";
+import {
+  useCreateGame,
+  useGetCities,
+} from "@/lib/react-query/queriesAndMutations/games";
 
 const IsGameForm = () => {
   const { toast } = useToast();

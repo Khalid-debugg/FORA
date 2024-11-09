@@ -1,8 +1,4 @@
 import { useState } from "react";
-import {
-  useDeleteNormalPost,
-  useGetNormalPost,
-} from "@/lib/react-query/queriesAndMutations";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
@@ -22,6 +18,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/context/AuthContext";
+import {
+  useDeleteNormalPost,
+  useGetNormalPost,
+} from "@/lib/react-query/queriesAndMutations/posts";
 const OneNormalPost = () => {
   const { user } = useUserContext();
   const { id } = useParams();

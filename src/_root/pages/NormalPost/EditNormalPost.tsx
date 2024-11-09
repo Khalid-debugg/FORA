@@ -13,7 +13,6 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { useEditNormalPost } from "@/lib/react-query/queriesAndMutations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useEditNormalPost } from "@/lib/react-query/queriesAndMutations/posts";
 
 const EditNormalPost = ({ post, setIsEditing }) => {
   const { mutateAsync: editPost, isPending } = useEditNormalPost();

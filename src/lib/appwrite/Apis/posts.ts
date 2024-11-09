@@ -169,53 +169,6 @@ export async function unlikePost(post: ICreatedPost, userId: string) {
     throw err;
   }
 }
-export async function likeComment(comment: INewComment, userId: string) {
-  try {
-    const currentLikes = comment?.commentLikes?.map((like) => like.$id) || [];
-    console.log([...currentLikes, userId]);
-
-    const updatedComment = await databases.updateDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.commentsID,
-      comment?.$id,
-      {
-        commentLikes: [...currentLikes, userId],
-      },
-    );
-
-    if (!updatedComment) {
-      return new Error("Failed to like the comment.");
-    }
-
-    return updatedComment;
-  } catch (err) {
-    console.error("Error creating like:", err);
-    throw err;
-  }
-}
-export async function unlikeComment(comment: INewComment, userId: string) {
-  try {
-    const currentLikes = comment?.commentLikes?.map((like) => like.$id);
-
-    const updatedPost = await databases.updateDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.commentsID,
-      comment.$id,
-      {
-        commentLikes: currentLikes.filter((like) => like !== userId) || [],
-      },
-    );
-
-    if (!updatedPost) {
-      return new Error("Failed to dislike the comment.");
-    }
-
-    return updatedPost;
-  } catch (err) {
-    console.error("Error creating like:", err);
-    throw err;
-  }
-}
 export async function likeReply(reply, userId) {
   try {
     const currentLikes = reply?.replyLikes?.map((like) => like.$id) || [];

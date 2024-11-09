@@ -10,9 +10,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { IoSend, IoCamera } from "react-icons/io5";
 import { AiOutlineClose } from "react-icons/ai";
-import { useCreateReply } from "@/lib/react-query/queriesAndMutations";
 import { useToast } from "@/components/ui/use-toast";
 import Replies from "./Replies";
+import { useCreateReply } from "@/lib/react-query/queriesAndMutations/replies";
 
 const RepliesSection = ({ comment, isRepliesClicked }) => {
   const { user } = useUserContext();

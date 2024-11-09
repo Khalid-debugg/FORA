@@ -20,11 +20,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useUserContext } from "@/context/AuthContext";
-import {
-  useAcceptPlayer,
-  useRejectPlayer,
-} from "@/lib/react-query/queriesAndMutations";
 import { toast } from "@/components/ui/use-toast";
+import {
+  useRejectPlayer,
+  useAcceptPlayer,
+} from "@/lib/react-query/queriesAndMutations/games";
 
 const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
   const [maxVisiblePlayers, setMaxVisiblePlayers] = useState(0);

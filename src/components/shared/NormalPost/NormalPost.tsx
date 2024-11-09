@@ -24,12 +24,12 @@ import { FaCommentDots } from "react-icons/fa6";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../../ui/use-toast";
 import CommentSection from "./CommentSection/CommentSection";
+import UsersList from "../UsersList";
+import { useNavigate } from "react-router-dom";
 import {
   useLikePost,
   useUnlikePost,
-} from "@/lib/react-query/queriesAndMutations";
-import UsersList from "../UsersList";
-import { useNavigate } from "react-router-dom";
+} from "@/lib/react-query/queriesAndMutations/posts";
 const NormalPost = ({
   post,
   isOne,

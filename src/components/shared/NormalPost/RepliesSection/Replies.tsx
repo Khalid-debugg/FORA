@@ -1,7 +1,7 @@
 import { appwriteConfig, storage } from "@/lib/appwrite/config";
-import { useGetReplies } from "@/lib/react-query/queriesAndMutations";
 import { useEffect, useState } from "react";
 import Reply from "./Reply";
+import { useGetReplies } from "@/lib/react-query/queriesAndMutations/replies";
 const Replies = ({ comment, replyRef }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetReplies(comment?.$id);

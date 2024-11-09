@@ -10,9 +10,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { IoSend, IoCamera } from "react-icons/io5";
 import { AiOutlineClose } from "react-icons/ai";
-import { useCreateComment } from "@/lib/react-query/queriesAndMutations";
 import { useToast } from "@/components/ui/use-toast";
 import Comments from "./Comments";
+import { useCreateComment } from "@/lib/react-query/queriesAndMutations/comments";
 
 const CommentSection = ({ post, isCommentClicked }) => {
   const { user } = useUserContext();

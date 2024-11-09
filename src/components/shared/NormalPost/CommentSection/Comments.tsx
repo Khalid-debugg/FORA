@@ -1,10 +1,8 @@
-import { useUserContext } from "@/context/AuthContext";
 import { appwriteConfig, storage } from "@/lib/appwrite/config";
-import { useGetComments } from "@/lib/react-query/queriesAndMutations";
 import { useEffect, useState } from "react";
 import Comment from "./Comment";
+import { useGetComments } from "@/lib/react-query/queriesAndMutations/comments";
 const Comments = ({ post, refetchComments, setRefetchComments }) => {
-  const { user } = useUserContext();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useGetComments(post?.$id);
 

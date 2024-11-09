@@ -4,17 +4,17 @@ import { FaLocationDot } from "react-icons/fa6";
 import { FaClock } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 import { GiSoccerKick } from "react-icons/gi";
-import {
-  useGetWaitingGame,
-  useGetJoinedGame,
-  useJoinGame,
-  useLeaveGame,
-} from "@/lib/react-query/queriesAndMutations";
 import { toast } from "../../ui/use-toast";
 import { useEffect, useState } from "react";
 import WaitingList from "./WaitingList";
 import JoinedList from "./JoinedList";
 import { useNavigate } from "react-router-dom";
+import {
+  useGetJoinedGame,
+  useGetWaitingGame,
+  useJoinGame,
+  useLeaveGame,
+} from "@/lib/react-query/queriesAndMutations/games";
 
 const GamePost = ({ post, isOne }) => {
   const { user } = useUserContext();

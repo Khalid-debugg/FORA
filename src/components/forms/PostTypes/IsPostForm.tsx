@@ -21,8 +21,8 @@ import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
+import { useCreatePost } from "@/lib/react-query/queriesAndMutations/posts";
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 const IsPostForm = ({ post }: any) => {

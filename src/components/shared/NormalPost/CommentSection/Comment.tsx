@@ -4,11 +4,11 @@ import { BiSolidLike } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import RepliesSection from "../RepliesSection/RepliesSection";
+import { useUserContext } from "@/context/AuthContext";
 import {
   useLikeComment,
   useUnlikeComment,
-} from "@/lib/react-query/queriesAndMutations";
-import { useUserContext } from "@/context/AuthContext";
+} from "@/lib/react-query/queriesAndMutations/comments";
 const Comment = ({ comment, mimeType }) => {
   const { user } = useUserContext();
   console.log(user.id, comment);
