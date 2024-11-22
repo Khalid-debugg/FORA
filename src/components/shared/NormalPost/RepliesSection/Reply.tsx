@@ -78,13 +78,15 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
     if (reply.mediaId) {
       fetchMediaType();
     }
+  }, [reply, user]);
+  useEffect(() => {
     if (reply) {
       setContent(reply?.content);
     }
     if (reply?.replyLikes?.some((likedUser) => likedUser.$id === user?.id)) {
       setIsLiked(true);
     }
-  }, [reply, user]);
+  }, [reply]);
   return (
     <>
       {isEditing ? (
