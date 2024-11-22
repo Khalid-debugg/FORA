@@ -55,3 +55,41 @@ export async function createReply(reply: INewReply) {
     throw err;
   }
 }
+export async function editReply(
+  id: string,
+  content: string,
+  file: File | null,
+  mediaUrl: string,
+  mediaId: string,
+) {
+  try {
+    console.log("id", id);
+    console.log("content", content);
+    console.log("file", file);
+    console.log("mediaUrl", mediaUrl);
+    console.log("mediaId", mediaId);
+    const newUploadedFile = file
+      ? await handleFileOperation(uploadFiles, file)
+      : null;
+    const newFilesUrl = file
+      ? await handleFileOperation(getFilePreview, newUploadedFile)
+      : null;
+    console.log("newFilesUrl", newFilesUrl);
+    console.log("newUploadedFile", newUploadedFile);
+
+    const updatedReply = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.repliesID,
+      id,
+      {
+        content: content,
+        mediaUrl: newFilesUrl,
+        mediaId: newUploadedFile ? newUploadedFile.$id : "",
+      },
+    );
+    if (!updatedReply) throw new Error("Post not found");
+    return updatedReply;
+  } catch (err) {
+    console.log(err);
+  }
+}

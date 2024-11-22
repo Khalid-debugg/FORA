@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
 import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { AiOutlineMenuFold } from "react-icons/ai";
+import { SlOptions } from "react-icons/sl";
 import EditNormalPost from "./EditNormalPost";
 import {
   AlertDialog,
@@ -59,7 +59,7 @@ const OneNormalPost = () => {
         </div>
         <AlertDialog>
           {user.id === post?.creator.$id && (
-            <DropdownMenu label={<AiOutlineMenuFold size={25} color="green" />}>
+            <DropdownMenu label={<SlOptions size={25} color="green" />}>
               <DropdownMenuItem onClick={() => setIsEditing(true)}>
                 Edit
               </DropdownMenuItem>

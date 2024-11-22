@@ -2,7 +2,11 @@ import { queryClient } from "@/main";
 import { INewComment, INewReply } from "@/types";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { QueryKeys } from "../queryKeys";
-import { createReply, getReplies } from "@/lib/appwrite/Apis/replies";
+import {
+  createReply,
+  editReply,
+  getReplies,
+} from "@/lib/appwrite/Apis/replies";
 import { likeReply, unlikeReply } from "@/lib/appwrite/Apis/posts";
 
 export const useCreateReply = (commentId: string) => {
@@ -31,5 +35,27 @@ export const useLikeReply = (reply: INewComment, userId: string) => {
 export const useUnlikeReply = (reply: INewComment, userId: string) => {
   return useMutation({
     mutationFn: () => unlikeReply(reply, userId),
+  });
+};
+export const useEditReply = (commentId) => {
+  return useMutation({
+    mutationFn: ({
+      id,
+      content,
+      file,
+      mediaUrl,
+      mediaId,
+    }: {
+      id: string;
+      content: string;
+      file: File | null;
+      mediaUrl: string;
+      mediaId: string;
+    }) => editReply(id, content, file, mediaUrl, mediaId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Replies + commentId],
+      });
+    },
   });
 };

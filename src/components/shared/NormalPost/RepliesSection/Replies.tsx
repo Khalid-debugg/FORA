@@ -59,6 +59,7 @@ const Replies = ({ comment, replyRef }) => {
             replyRef={replyRef}
             key={reply?.$id || idx}
             reply={reply}
+            commentId={comment?.$id}
             mimeType={mimeTypes[idx]}
           />
         ))}
