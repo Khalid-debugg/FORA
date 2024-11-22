@@ -1,6 +1,7 @@
 import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useUserContext } from "@/context/AuthContext";
 import {
+  useDeleteReply,
   useEditReply,
   useLikeReply,
   useUnlikeReply,
@@ -22,6 +23,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
   const { mutateAsync: likeReply } = useLikeReply(reply, user?.id);
   const { mutateAsync: unikeReply } = useUnlikeReply(reply, user?.id);
   const { mutateAsync: editReply } = useEditReply(commentId);
+  const { mutateAsync: deleteReply } = useDeleteReply(commentId);
   const [isLiked, setIsLiked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState("");
@@ -128,6 +130,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
               <div className="relative">
                 {newFileType?.includes("video") ? (
                   <MediaPlayer
+                    className="w-full h-full"
                     src={newMediaUrl}
                     viewType="video"
                     streamType="on-demand"
@@ -221,7 +224,9 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
                   <DropdownMenuItem onClick={() => setIsEditing(true)}>
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={undefined}>
+                  <DropdownMenuItem
+                    onClick={async () => await deleteReply(reply.$id)}
+                  >
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenu>

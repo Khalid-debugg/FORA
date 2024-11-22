@@ -4,6 +4,7 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { QueryKeys } from "../queryKeys";
 import {
   createReply,
+  deleteReply,
   editReply,
   getReplies,
 } from "@/lib/appwrite/Apis/replies";
@@ -52,6 +53,16 @@ export const useEditReply = (commentId) => {
       mediaUrl: string;
       mediaId: string;
     }) => editReply(id, content, file, mediaUrl, mediaId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Replies + commentId],
+      });
+    },
+  });
+};
+export const useDeleteReply = (commentId) => {
+  return useMutation({
+    mutationFn: (id: string) => deleteReply(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.Replies + commentId],

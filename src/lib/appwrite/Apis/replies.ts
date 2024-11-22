@@ -63,32 +63,37 @@ export async function editReply(
   mediaId: string,
 ) {
   try {
-    console.log("id", id);
-    console.log("content", content);
-    console.log("file", file);
-    console.log("mediaUrl", mediaUrl);
-    console.log("mediaId", mediaId);
     const newUploadedFile = file
       ? await handleFileOperation(uploadFiles, file)
       : null;
     const newFilesUrl = file
       ? await handleFileOperation(getFilePreview, newUploadedFile)
       : null;
-    console.log("newFilesUrl", newFilesUrl);
-    console.log("newUploadedFile", newUploadedFile);
-
     const updatedReply = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.repliesID,
       id,
       {
         content: content,
-        mediaUrl: newFilesUrl,
-        mediaId: newUploadedFile ? newUploadedFile.$id : "",
+        mediaUrl: mediaUrl || newFilesUrl || "",
+        mediaId: newUploadedFile?.$id || mediaId || null,
       },
     );
     if (!updatedReply) throw new Error("Post not found");
     return updatedReply;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function deleteReply(id: string) {
+  try {
+    const deletedReply = await databases.deleteDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.repliesID,
+      id,
+    );
+    if (!deletedReply) throw new Error("Post not found");
+    return deletedReply;
   } catch (err) {
     console.log(err);
   }
