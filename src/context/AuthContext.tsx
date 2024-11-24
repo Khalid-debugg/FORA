@@ -2,7 +2,6 @@ import { getCurrentUser } from "@/lib/appwrite/Apis/users";
 import { IContextType, IUser } from "@/types";
 import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
 export const INITIAL_USER = {
   id: "",
   username: "",
