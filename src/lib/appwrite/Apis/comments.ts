@@ -103,3 +103,46 @@ export async function unlikeComment(comment: INewComment, userId: string) {
     throw err;
   }
 }
+export async function editComment(
+  id: string,
+  content: string,
+  file: File | null,
+  mediaUrl: string,
+  mediaId: string,
+) {
+  try {
+    const newUploadedFile = file
+      ? await handleFileOperation(uploadFiles, file)
+      : null;
+    const newFilesUrl = file
+      ? await handleFileOperation(getFilePreview, newUploadedFile)
+      : null;
+    const updatedComment = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      id,
+      {
+        content: content,
+        mediaUrl: mediaUrl || newFilesUrl || null,
+        mediaId: newUploadedFile?.$id || mediaId || null,
+      },
+    );
+    if (!updatedComment) throw new Error("Post not found");
+    return updatedComment;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function deleteComment(id: string) {
+  try {
+    const deletedComment = await databases.deleteDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      id,
+    );
+    if (!deletedComment) throw new Error("Post not found");
+    return deletedComment;
+  } catch (err) {
+    console.log(err);
+  }
+}

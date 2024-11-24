@@ -86,7 +86,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
     if (reply?.replyLikes?.some((likedUser) => likedUser.$id === user?.id)) {
       setIsLiked(true);
     }
-  }, [reply]);
+  }, [reply, user]);
   return (
     <>
       {isEditing ? (

@@ -75,7 +75,7 @@ export async function editReply(
       id,
       {
         content: content,
-        mediaUrl: mediaUrl || newFilesUrl || "",
+        mediaUrl: mediaUrl || newFilesUrl || null,
         mediaId: newUploadedFile?.$id || mediaId || null,
       },
     );
