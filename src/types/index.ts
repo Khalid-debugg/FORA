@@ -51,6 +51,7 @@ export type IUpdatePost = {
 };
 
 export type IUser = {
+  name?: string;
   id: string;
   username: string;
   email: string;
