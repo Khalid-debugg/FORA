@@ -30,7 +30,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const currentAcc = await getCurrentUser();
       if (currentAcc) {
         setUser({
-          id: currentAcc.$id,
+          id: currentAcc.accountID,
           username: currentAcc.username,
           email: currentAcc.email,
           imageUrl: currentAcc.imageUrl,

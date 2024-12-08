@@ -3,6 +3,7 @@ import {
   createUserAccount,
   deleteSession,
   getCurrentUser,
+  getUser,
 } from "@/lib/appwrite/Apis/users";
 import { INewUser, IRegisteredUser } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -27,5 +28,11 @@ export const useGetCurrentUser = () => {
   return useQuery({
     queryKey: [QueryKeys.Users],
     queryFn: () => getCurrentUser(),
+  });
+};
+export const useGetUser = (id: string) => {
+  return useQuery({
+    queryKey: ["user", id],
+    queryFn: () => getUser(id),
   });
 };

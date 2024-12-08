@@ -51,6 +51,7 @@ export type IUpdatePost = {
 };
 
 export type IUser = {
+  friendship: any;
   name?: string;
   id: string;
   username: string;
