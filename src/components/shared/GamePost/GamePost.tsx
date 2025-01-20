@@ -95,11 +95,11 @@ const GamePost = ({ post, isOne }) => {
       >
         <div className="flex gap-3 items-center">
           <img
-            src={post?.creator.imageUrl}
+            src={post?.creator?.imageUrl}
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />
-          <p className="text-xl font-medium">{post?.creator.username}</p>
+          <p className="text-xl font-medium">{post?.creator?.username}</p>
         </div>
         <div className="flex flex-col w-1/2">
           <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ const GamePost = ({ post, isOne }) => {
           />
         </div>
       </div>
-      {user.id !== post?.creator.$id && !isWaiting && !isJoined && (
+      {user.id !== post?.creator?.$id && !isWaiting && !isJoined && (
         <button
           disabled={isJoining}
           onClick={handleJoin}
@@ -151,7 +151,7 @@ const GamePost = ({ post, isOne }) => {
           {isJoining && <div className=" animate-spin">⚽</div>}
         </button>
       )}
-      {user.id !== post?.creator.$id && isWaiting && (
+      {user.id !== post?.creator?.$id && isWaiting && (
         <button
           disabled={isLeaving}
           onClick={handleLeave}

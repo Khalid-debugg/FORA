@@ -88,8 +88,11 @@ const NormalPost = ({
     const fetchMediaFiles = async () => {
       const fetchedMediaFiles = await Promise.all(
         post?.mediaIds.map(async (id) => {
-          const file = await storage.getFile(appwriteConfig.storageID, id);
-          const fileView = storage.getFileView(appwriteConfig.storageID, id);
+          const file = await storage.getFile(appwriteConfig.mediaBucketID, id);
+          const fileView = storage.getFileView(
+            appwriteConfig.mediaBucketID,
+            id,
+          );
           return { mimeType: file.mimeType, ref: fileView.href };
         }),
       );
@@ -147,11 +150,11 @@ const NormalPost = ({
       >
         <div className="flex gap-3 items-center">
           <img
-            src={post?.creator.imageUrl}
+            src={post?.creator?.imageUrl}
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />
-          <p className="text-xl font-medium">{post?.creator.username}</p>
+          <p className="text-xl font-medium">{post?.creator?.username}</p>
         </div>
         <div className="flex items-center gap-2">
           <BsCalendar2DateFill fill="green" size={20} />

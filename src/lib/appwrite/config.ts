@@ -1,4 +1,5 @@
 import { Client, Account, Databases, Storage, Avatars } from "appwrite";
+console.log(import.meta.env.VITE_APPWRITE_MEDIA_BUCKET_ID);
 
 export const appwriteConfig = {
   projectID: import.meta.env.VITE_APPWRITE_PROJECT_ID,

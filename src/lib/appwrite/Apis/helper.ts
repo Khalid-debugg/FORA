@@ -22,7 +22,7 @@ export async function uploadFiles(fileOrFiles?: File | File[]) {
 
     const uploadedFiles = await Promise.all(
       files.map((file) =>
-        storage.createFile(appwriteConfig.storageID, ID.unique(), file),
+        storage.createFile(appwriteConfig.mediaBucketID, ID.unique(), file),
       ),
     );
     if (uploadedFiles.some((file) => !file))
@@ -40,7 +40,7 @@ export async function deleteFiles(fileOrFiles?: Models.File | Models.File[]) {
     const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
     await Promise.all(
       files.map((file) =>
-        storage.deleteFile(appwriteConfig.storageID, file.$id),
+        storage.deleteFile(appwriteConfig.mediaBucketID, file.$id),
       ),
     );
     return { status: "ok" };
@@ -57,7 +57,7 @@ export async function getFilePreview(
   try {
     const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
     const fileUrls = files.map((file) =>
-      storage.getFileView(appwriteConfig.storageID, file.$id),
+      storage.getFileView(appwriteConfig.mediaBucketID, file.$id),
     );
     return Array.isArray(fileOrFiles) ? fileUrls : fileUrls[0];
   } catch (err) {

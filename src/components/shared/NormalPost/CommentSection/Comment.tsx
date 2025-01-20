@@ -52,7 +52,7 @@ const Comment = ({ comment, mimeType, postId }) => {
       setMediaUrl(comment?.mediaUrl);
       setFileType(response.mimeType);
     };
-    if (comment.mediaId) {
+    if (comment?.mediaId) {
       fetchMediaType();
     }
   }, [comment, user]);

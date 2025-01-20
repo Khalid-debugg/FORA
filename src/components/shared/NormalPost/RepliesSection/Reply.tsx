@@ -75,7 +75,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
       setMediaUrl(reply?.mediaUrl);
       setFileType(response.mimeType);
     };
-    if (reply.mediaId) {
+    if (reply?.mediaId) {
       fetchMediaType();
     }
   }, [reply, user]);

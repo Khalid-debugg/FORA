@@ -1,14 +1,31 @@
+import { useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useParams } from "react-router-dom";
 import { useGetUser } from "@/lib/react-query/queriesAndMutations/users";
 import { IoPersonAddSharp, IoSettings } from "react-icons/io5";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { SetupForm } from "@/_root/forms/SetupForm";
 
 const Profile = () => {
   const { id } = useParams();
   const { user: currentUser } = useUserContext();
   const { data: user, isPending: isGettingUser } = useGetUser(id!);
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
+
+  const handleSetupSubmit = (formData: FormData) => {
+    console.log("Form submitted:", formData);
+
+    setIsSetupOpen(false);
+  };
+
   return (
     <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
       {isGettingUser ? (
@@ -17,7 +34,7 @@ const Profile = () => {
         <>
           <div className="relative h-48 md:h-64 bg-gray-300">
             <img
-              src="/placeholder.svg?height=256&width=768"
+              src={user?.CoverUrl || "/public/assets/images/gray-texture.jpg"}
               alt="Profile Background"
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -48,10 +65,20 @@ const Profile = () => {
                     </Button>
                   )}
                 {currentUser.id === user?.accountID && (
-                  <Button variant="outline" className="flex gap-2 rounded-full">
-                    <IoSettings />
-                    <p>Setup</p>
-                  </Button>
+                  <Dialog open={isSetupOpen} onOpenChange={setIsSetupOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="flex gap-2 rounded-full hover:bg-slate-100"
+                      >
+                        <IoSettings />
+                        <p>Setup</p>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <SetupForm user={user} onSubmit={handleSetupSubmit} />
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
             </div>
