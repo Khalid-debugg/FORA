@@ -87,7 +87,7 @@ export type ICreatedPost = {
   caption: string;
   creator: any;
   isGame: boolean;
-  postLikes: any;
+  postLikes: IUser[];
   location: string;
   media: string[];
   mediaIds: string[];
