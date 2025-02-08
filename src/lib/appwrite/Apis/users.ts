@@ -17,6 +17,7 @@ export async function createUserAccount(user: INewUser) {
       "30cc42",
     );
     return await createUserInDB({
+      name: user.firstName + user.lastName,
       accountID: newUser.$id,
       email: user.email,
       username: user.username,
@@ -27,6 +28,7 @@ export async function createUserAccount(user: INewUser) {
   }
 }
 export async function createUserInDB(user: {
+  name: string;
   accountID: string;
   email: string;
   username: string;
@@ -81,7 +83,7 @@ export async function getUser(id: string) {
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.usersID,
-      [Query.equal("accountID", id)],
+      [Query.equal("$id", id)],
     );
     if (!currentUser) throw new Error();
     return currentUser.documents[0];

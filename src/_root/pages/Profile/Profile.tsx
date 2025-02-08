@@ -5,15 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useParams } from "react-router-dom";
 import { useGetUser } from "@/lib/react-query/queriesAndMutations/users";
 import { IoPersonAddSharp, IoSettings } from "react-icons/io5";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SetupForm } from "@/_root/forms/SetupForm";
-
+import ProfilePicture from "@/components/shared/Profile/ProfilePicture";
+import CoverImage from "@/components/shared/Profile/CoverImage";
 const Profile = () => {
   const { id } = useParams();
   const { user: currentUser } = useUserContext();
@@ -25,34 +20,19 @@ const Profile = () => {
 
     setIsSetupOpen(false);
   };
-
   return (
     <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
       {isGettingUser ? (
         <div>Loading...</div>
       ) : (
         <>
-          <div className="relative h-48 md:h-64 bg-gray-300">
-            <img
-              src={user?.CoverUrl || "/public/assets/images/gray-texture.jpg"}
-              alt="Profile Background"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
+          <CoverImage user={user} />
 
           <div className="relative px-4">
-            <div className="absolute -top-16 left-4 border-4 border-white rounded-full bg-white">
-              <img
-                src={user?.imageUrl || "/default-avatar.png"}
-                alt="Profile Picture"
-                width={128}
-                height={128}
-                className="rounded-full"
-              />
-            </div>
+            <ProfilePicture user={user} />
             <div className="flex gap-2 justify-end mt-4">
               <div className="flex flex-col gap-2">
-                {currentUser.id !== user?.accountID &&
+                {currentUser.id !== user?.$id ? (
                   !currentUser?.friendship?.friends?.some(
                     (friend) => friend.id === user?.accountID,
                   ) && (
@@ -63,8 +43,8 @@ const Profile = () => {
                       <IoPersonAddSharp />
                       <p>Add</p>
                     </Button>
-                  )}
-                {currentUser.id === user?.accountID && (
+                  )
+                ) : (
                   <Dialog open={isSetupOpen} onOpenChange={setIsSetupOpen}>
                     <DialogTrigger asChild>
                       <Button
@@ -90,21 +70,17 @@ const Profile = () => {
             </div>
             <Card className="mt-4">
               <CardContent className="pt-4">
-                <p>
-                  {user?.bio || "Web developer | Coffee enthusiast | Dog lover"}
+                <p>{user?.bio}</p>
+                <p className="text-wrap">
+                  {user?.tags.length > 0 &&
+                    user?.tags.map((tag) => " " + tag + " ").join(" |")}
                 </p>
                 <div className="flex gap-4 mt-2 text-gray-500">
                   <span>
                     <strong className="text-black">
-                      {user?.followingCount || 0}
+                      {/* {user?.friends.length || 0} */}
                     </strong>{" "}
-                    Following
-                  </span>
-                  <span>
-                    <strong className="text-black">
-                      {user?.followersCount || 0}
-                    </strong>{" "}
-                    Followers
+                    Friends
                   </span>
                 </div>
               </CardContent>

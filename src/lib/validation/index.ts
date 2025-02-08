@@ -1,6 +1,14 @@
 import { z } from "zod";
 export const SignupValidation = z
   .object({
+    firstName: z
+      .string()
+      .min(2, { message: "Too short" })
+      .max(15, { message: "That's too much, maximum 15 characters" }),
+    lastName: z
+      .string()
+      .min(2, { message: "Too short" })
+      .max(15, { message: "That's too much, maximum 15 characters" }),
     username: z
       .string()
       .min(2, { message: "Too short" })

@@ -61,6 +61,8 @@ export type IUser = {
 };
 
 export type INewUser = {
+  firstName: string;
+  lastName: string;
   email: string;
   username: string;
   password: string;

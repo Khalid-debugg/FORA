@@ -31,6 +31,8 @@ const SignUpForm: React.FC = () => {
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       username: "",
       email: "",
       password: "",
@@ -84,6 +86,42 @@ const SignUpForm: React.FC = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col justify-center gap-3"
         >
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="John"
+                    type="text"
+                    className="shad-input"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Doe"
+                    type="text"
+                    className="shad-input"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="username"
