@@ -21,6 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formSchema } from "@/lib/validation";
+import { toast } from "@/components/ui/use-toast";
+import { useUpdateProfile } from "@/lib/react-query/queriesAndMutations/Profile";
 
 interface SetupFormProps {
   user: {
@@ -28,26 +30,47 @@ interface SetupFormProps {
     bio: string;
     tags: string[];
     favPosition?: string;
+    FifaCard?: string;
   };
   onSubmit: (values: z.infer<typeof formSchema>) => void;
 }
 
-export function SetupForm({ user, onSubmit }: SetupFormProps) {
+export function SetupForm({ user, setIsSetupOpen }: SetupFormProps) {
   const [tags, setTags] = useState<string[]>(user?.tags || []);
   const [newTag, setNewTag] = useState("");
+  const { mutateAsync: updateProfile, isPending: isUpdating } =
+    useUpdateProfile(user?.$id);
+  const handleSetupSubmit = async (formData: FormData) => {
+    try {
+      await updateProfile(formData);
+      setIsSetupOpen(false);
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
+    } catch (err) {
+      setIsSetupOpen(false);
+      toast({
+        variant: "error",
+        title: "Error",
+        description: "Something went wrong",
+      });
+    }
+  };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: user.name,
-      bio: user.bio,
-      favPosition: user.favPosition,
+      name: user?.name,
+      bio: user?.bio,
+      favPosition: user?.favPosition,
+      FifaCard: user?.FifaCard,
     },
   });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSetupSubmit)}
         className="flex p-8 flex-col space-y-6 rounded-md bg-white"
       >
         <h1 className="text-3xl font-bold">Edit Profile</h1>
@@ -175,11 +198,35 @@ export function SetupForm({ user, onSubmit }: SetupFormProps) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="FifaCard"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Favorite FIFA Card</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your FIFA Card" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="ICON">Icon</SelectItem>
+                  <SelectItem value="TOTY">TOTY</SelectItem>
+                  <SelectItem value="FUTURE">Future</SelectItem>
+                  <SelectItem value="GOLD">Gold</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button
           type="submit"
           className="w-1/3 mx-auto shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
         >
           Save Changes
+          {isUpdating && <div className="animate-spin">⚽</div>}
         </Button>
       </form>
     </Form>

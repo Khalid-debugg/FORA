@@ -9,40 +9,21 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SetupForm } from "@/_root/forms/SetupForm";
 import ProfilePicture from "@/components/shared/Profile/ProfilePicture";
 import CoverImage from "@/components/shared/Profile/CoverImage";
-import { useUpdateProfile } from "@/lib/react-query/queriesAndMutations/Profile";
-import { toast } from "@/components/ui/use-toast";
 const Profile = () => {
   const { id } = useParams();
   const { user: currentUser } = useUserContext();
   const { data: user, isPending: isGettingUser } = useGetUser(id!);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
-  const { mutateAsync: updateProfile } = useUpdateProfile(user?.$id);
-  const handleSetupSubmit = async (formData: FormData) => {
-    try {
-      await updateProfile(formData);
-      setIsSetupOpen(false);
-      toast({
-        title: "Success",
-        description: "Profile updated successfully",
-      });
-    } catch (err) {
-      setIsSetupOpen(false);
-      toast({
-        variant: "error",
-        title: "Error",
-        description: "Something went wrong",
-      });
-    }
-  };
+
   return (
     <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
       {isGettingUser ? (
         <div>Loading...</div>
       ) : (
         <>
-          <CoverImage user={user} />
+          <CoverImage user={user} currentUser={currentUser} />
           <div className="relative px-4 flex flex-col gap-2">
-            <ProfilePicture user={user} />
+            <ProfilePicture user={user} currentUser={currentUser} />
             <div className="flex gap-2 justify-end mt-4">
               <div className="flex flex-col gap-2">
                 {currentUser.id !== user?.$id ? (
@@ -69,22 +50,22 @@ const Profile = () => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
-                      <SetupForm user={user} onSubmit={handleSetupSubmit} />
+                      <SetupForm user={user} setIsSetupOpen={setIsSetupOpen} />
                     </DialogContent>
                   </Dialog>
                 )}
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-24">
               <h1 className="text-xl font-bold">
                 {user?.name || "Unnamed User"}
               </h1>
               <p className="text-gray-500">@{user?.username || "unknown"}</p>
             </div>
             <Card>
-              <CardContent className="flex flex-col gap-2 p-4">
-                <p>{user?.bio}</p>
-                <div className="flex flex-wrap">
+              <CardContent className="flex flex-col p-4 gap-2">
+                {user?.bio && <p>{user?.bio}</p>}
+                <div className="flex flex-wrap gap-2">
                   {user?.tags.length > 0 &&
                     user?.tags.map((tag, idx) => (
                       <span
@@ -95,7 +76,7 @@ const Profile = () => {
                       </span>
                     ))}
                 </div>
-                <div className="flex gap-4 mt-2 text-gray-500">
+                <div className="flex gap-4 text-gray-500">
                   <span>
                     <strong className="text-black">
                       {/* {user?.friends.length || 0} */}

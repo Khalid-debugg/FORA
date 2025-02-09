@@ -51,6 +51,7 @@ export async function updateProfile(formData, userId) {
         bio: formData.bio,
         tags: formData.tags,
         favPosition: formData.favPosition,
+        FifaCard: formData.FifaCard,
       },
     );
     if (!updatedProfile) throw new Error("Something went wrong");

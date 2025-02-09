@@ -12,7 +12,7 @@ import ReactCrop from "react-image-crop";
 import { Button } from "@/components/ui/button";
 import "react-image-crop/dist/ReactCrop.css";
 
-const ProfilePicture = ({ user }) => {
+const ProfilePicture = ({ user, currentUser }) => {
   const {
     mutateAsync: changeProfilePicture,
     isPending: isChangingProfilePicture,
@@ -34,42 +34,53 @@ const ProfilePicture = ({ user }) => {
   );
 
   return (
-    <div className="absolute -top-16 left-4 border-4 border-white rounded-full bg-white">
-      <img
-        src={image}
-        alt="Profile Picture"
-        width={128}
-        height={128}
-        className="rounded-full"
-      />
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        id="image"
-        onChange={handleImageUpload}
-      />
-      <label
-        htmlFor="image"
-        className="cursor-pointer shad-button_primary hover:shad-button_ghost absolute bottom-0 right-0 rounded-2xl"
-      >
-        <IoCamera
-          size={40}
-          className="text-gray-600 p-2 rounded-2xl font-semibold hover:shad-button_primary shad-button_ghost transition-[background] 0.5s ease-in-out"
+    <div className="absolute -top-16 left-2">
+      <div className="relative">
+        <img
+          src={image}
+          alt="Profile Picture"
+          width={80}
+          height={80}
+          className="absolute right-5 top-1/2 -translate-y-1/2 !bg-transparent"
         />
-      </label>
+        <p
+          className={`absolute top-16 left-6 text-xs font-extrabold ${user?.FifaCard === "TOTY" || user?.FifaCard === "FUTURE" ? "text-white" : "text-[#594d2c]"}`}
+        >
+          {user?.favPosition}
+        </p>
+        <img
+          src={`/assets/images/${user?.FifaCard}.png`}
+          alt="FIFA CARD"
+          className="w-[10rem]"
+        />
+      </div>
+      {currentUser?.id === user?.$id && (
+        <>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="image"
+            onChange={handleImageUpload}
+          />
+          <label
+            htmlFor="image"
+            className="cursor-pointer shad-button_primary hover:shad-button_ghost absolute bottom-0 right-0 rounded-2xl"
+          >
+            <IoCamera
+              size={40}
+              className="text-gray-600 p-2 rounded-2xl font-semibold hover:shad-button_primary shad-button_ghost transition-[background] 0.5s ease-in-out"
+            />
+          </label>
+        </>
+      )}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-white p-8">
           <DialogHeader>
             <DialogTitle>Crop Profile Picture</DialogTitle>
           </DialogHeader>
           {tempImage && (
-            <ReactCrop
-              crop={crop}
-              onChange={(c) => setCrop(c)}
-              aspect={1}
-              circularCrop
-            >
+            <ReactCrop crop={crop} onChange={(c) => setCrop(c)} aspect={1}>
               <img
                 ref={imageRef}
                 src={tempImage || "/placeholder.svg"}

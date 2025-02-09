@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import "react-image-crop/dist/ReactCrop.css";
 import { IoCamera } from "react-icons/io5";
 
-const CoverImage = ({ user }) => {
+const CoverImage = ({ user, currentUser }) => {
   const { mutateAsync: changeCoverImage, isPending: isChangingCoverImage } =
     useChangeCoverImage();
 
@@ -38,22 +38,26 @@ const CoverImage = ({ user }) => {
         alt="Cover Image"
         className="w-full h-full object-cover"
       />
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        id="cover"
-        onChange={handleImageUpload}
-      />
-      <label
-        htmlFor="cover"
-        className="cursor-pointer shad-button_primary hover:shad-button_ghost absolute bottom-4 right-4 rounded-2xl"
-      >
-        <IoCamera
-          size={40}
-          className="text-gray-600 p-2 rounded-2xl font-semibold hover:shad-button_primary shad-button_ghost transition-[background] 0.5s ease-in-out"
-        />
-      </label>
+      {currentUser?.id === user?.$id && (
+        <>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="cover"
+            onChange={handleImageUpload}
+          />
+          <label
+            htmlFor="cover"
+            className="cursor-pointer shad-button_primary hover:shad-button_ghost absolute bottom-4 right-4 rounded-2xl"
+          >
+            <IoCamera
+              size={40}
+              className="text-gray-600 p-2 rounded-2xl font-semibold hover:shad-button_primary shad-button_ghost transition-[background] 0.5s ease-in-out"
+            />
+          </label>
+        </>
+      )}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-white p-8">
           <DialogHeader>

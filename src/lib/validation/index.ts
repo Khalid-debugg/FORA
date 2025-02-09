@@ -75,4 +75,5 @@ export const formSchema = z.object({
     .max(10, { message: "You can only add up to 10 tags." })
     .optional(),
   favPosition: z.string().optional(),
+  FifaCard: z.string().optional(),
 });
