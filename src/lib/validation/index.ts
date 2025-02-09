@@ -64,3 +64,15 @@ export const replyValidation = z.object({
     .max(2200, { message: "That's too much, maximum 2200 characters" }),
   media: z.custom<File>(),
 });
+export const formSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  bio: z
+    .string()
+    .max(220, { message: "Bio must not exceed 160 characters." })
+    .optional(),
+  tags: z
+    .array(z.string())
+    .max(10, { message: "You can only add up to 10 tags." })
+    .optional(),
+  favPosition: z.string().optional(),
+});

@@ -20,97 +20,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
-
-const MAX_FILE_SIZE = 5000000; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  username: z.string().min(3, {
-    message: "Username must be at least 3 characters.",
-  }),
-  bio: z.string().max(160, {
-    message: "Bio must not exceed 160 characters.",
-  }),
-  profilePicture: z
-    .any()
-    .refine(
-      (file) => !file || file?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`,
-    )
-    .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      "Only .jpg, .png, and .webp formats are supported.",
-    )
-    .optional(),
-  coverImage: z
-    .any()
-    .refine(
-      (file) => !file || file?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`,
-    )
-    .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      "Only .jpg, .png, and .webp formats are supported.",
-    )
-    .optional(),
-  favoritePosition: z.string().optional(),
-});
+import { formSchema } from "@/lib/validation";
 
 interface SetupFormProps {
   user: {
     name: string;
-    username: string;
     bio: string;
-    imageUrl: string;
-    coverImageUrl: string;
-    favoritePosition?: string;
+    tags: string[];
+    favPosition?: string;
   };
   onSubmit: (values: z.infer<typeof formSchema>) => void;
 }
 
 export function SetupForm({ user, onSubmit }: SetupFormProps) {
-  const [profilePreview, setProfilePreview] = useState<string | null>(
-    user.imageUrl,
-  );
-  const [coverPreview, setCoverPreview] = useState<string | null>(
-    user.coverImageUrl,
-  );
-
+  const [tags, setTags] = useState<string[]>(user?.tags || []);
+  const [newTag, setNewTag] = useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: user.name,
-      username: user.username,
       bio: user.bio,
-      favoritePosition: user.favoritePosition,
+      favPosition: user.favPosition,
     },
   });
-
-  const handleImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setPreview: (preview: string | null) => void,
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const removeImage = (
-    setPreview: (preview: string | null) => void,
-    fieldName: "profilePicture" | "coverImage",
-  ) => {
-    setPreview(null);
-    form.setValue(fieldName, undefined);
-  };
 
   return (
     <Form {...form}>
@@ -134,19 +66,6 @@ export function SetupForm({ user, onSubmit }: SetupFormProps) {
         />
         <FormField
           control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="Your username" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="bio"
           render={({ field }) => (
             <FormItem>
@@ -162,9 +81,65 @@ export function SetupForm({ user, onSubmit }: SetupFormProps) {
             </FormItem>
           )}
         />
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-4 items-end">
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="New tag"
+                      {...field}
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              className="shad-button_primary hover:shad-button_ghost"
+              onClick={() => {
+                if (!newTag.trim()) return;
+                const updatedTags = [...tags, newTag.trim()];
+                setTags(updatedTags); // ✅ Updates state
+                form.setValue("tags", updatedTags); // ✅ Uses updated array
+                setNewTag("");
+              }}
+            >
+              Add
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, index) => (
+              <div
+                key={index}
+                className="flex items-center p-2 border border-slate-200 rounded-lg"
+              >
+                <p className="mr-2">{tag}</p>
+                <button
+                  type="button"
+                  className="text-red-500 hover:text-red-700 border border-red-500 hover:border-red-700 rounded-full w-5 h-5 flex items-center justify-center"
+                  onClick={() => {
+                    const updatedTags = tags.filter((_, i) => i !== index);
+                    setTags(updatedTags);
+                    form.setValue("tags", updatedTags);
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
         <FormField
           control={form.control}
-          name="favoritePosition"
+          name="favPosition"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Favorite Position</FormLabel>
