@@ -64,6 +64,12 @@ const Profile = () => {
             </div>
             <Card>
               <CardContent className="flex flex-col p-4 gap-2">
+                <span>
+                  <strong className="text-black">
+                    {/* {user?.friends.length || 0} */}
+                  </strong>{" "}
+                  Friends
+                </span>
                 {user?.bio && <p>{user?.bio}</p>}
                 <div className="flex flex-wrap gap-2">
                   {user?.tags.length > 0 &&
@@ -75,14 +81,6 @@ const Profile = () => {
                         {" " + tag + " "}
                       </span>
                     ))}
-                </div>
-                <div className="flex gap-4 text-gray-500">
-                  <span>
-                    <strong className="text-black">
-                      {/* {user?.friends.length || 0} */}
-                    </strong>{" "}
-                    Friends
-                  </span>
                 </div>
               </CardContent>
             </Card>

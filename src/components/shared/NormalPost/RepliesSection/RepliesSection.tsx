@@ -46,9 +46,9 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
         commentId: comment?.$id,
         ...values,
       };
-      const newComment = await createReply(postVariables);
+      const newReply = await createReply(postVariables);
 
-      if (newComment) {
+      if (newReply) {
         form.reset();
         setFile(undefined);
       } else {

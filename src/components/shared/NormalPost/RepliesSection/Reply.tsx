@@ -26,10 +26,10 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
   const { mutateAsync: deleteReply } = useDeleteReply(commentId);
   const [isLiked, setIsLiked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState("");
-  const [mediaId, setMediaId] = useState("");
-  const [mediaUrl, setMediaUrl] = useState("");
-  const [fileType, setFileType] = useState("");
+  const [content, setContent] = useState(reply?.content);
+  const [mediaId, setMediaId] = useState(reply?.mediaId);
+  const [mediaUrl, setMediaUrl] = useState(reply?.mediaUrl);
+  const [fileType, setFileType] = useState(mimeType);
   const [newFile, setNewFile] = useState(null);
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
@@ -66,27 +66,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
     setMediaId(null);
     setFileType(null);
   };
-  useEffect(() => {
-    const fetchMediaType = async () => {
-      const response = await storage.getFile(
-        appwriteConfig.mediaBucketID,
-        reply?.mediaId,
-      );
-      setMediaUrl(reply?.mediaUrl);
-      setFileType(response.mimeType);
-    };
-    if (reply?.mediaId) {
-      fetchMediaType();
-    }
-  }, [reply, user]);
-  useEffect(() => {
-    if (reply) {
-      setContent(reply?.content);
-    }
-    if (reply?.replyLikes?.some((likedUser) => likedUser.$id === user?.id)) {
-      setIsLiked(true);
-    }
-  }, [reply, user]);
+
   return (
     <>
       {isEditing ? (
@@ -213,7 +193,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
                     alt="comment"
                     className="w-32 h-32 object-cover rounded-lg"
                   />
-                ) : reply?.mediaUrl && mimeType?.mimeType?.includes("video") ? (
+                ) : reply?.mediaUrl && mimeType?.includes("video") ? (
                   <video
                     src={reply?.mediaUrl}
                     controls

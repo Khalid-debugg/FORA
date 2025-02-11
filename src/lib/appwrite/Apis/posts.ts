@@ -71,9 +71,6 @@ export async function editNormalPost(
 }
 export async function getRecentPosts() {
   try {
-    console.log("db ID:", appwriteConfig.databaseID);
-    console.log("games ID:", appwriteConfig.gamesID);
-    console.log("posts ID:", appwriteConfig.postsID);
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,

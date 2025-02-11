@@ -83,6 +83,7 @@ export async function likeComment(comment: INewComment, userId: string) {
 export async function unlikeComment(comment: INewComment, userId: string) {
   try {
     const currentLikes = comment?.commentLikes?.map((like) => like.$id);
+    console.log(currentLikes);
 
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,

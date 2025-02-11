@@ -1,101 +1,129 @@
-import { appwriteConfig, storage } from "@/lib/appwrite/config";
 import { useEffect, useState } from "react";
-import Reply from "./Reply";
 import { useGetReplies } from "@/lib/react-query/queriesAndMutations/replies";
+import { appwriteConfig, storage } from "@/lib/appwrite/config";
+import Reply from "./Reply";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+
 const Replies = ({ comment, replyRef }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetReplies(comment?.$id);
-  const [pages, setPages] = useState([]);
   const [visiblePageCount, setVisiblePageCount] = useState(1);
+  const [allReplies, setAllReplies] = useState(
+    data?.pages
+      .slice(0, visiblePageCount)
+      .flatMap((page) => page.documents || []),
+  );
   const [mimeTypes, setMimeTypes] = useState([]);
+  const [isRepliesClicked, setIsRepliesClicked] = useState(false);
+  const [totalReplies, setTotalReplies] = useState(data?.pages[0]?.total);
 
   useEffect(() => {
     if (data) {
-      setPages(data.pages);
-      setVisiblePageCount(data.pages.length);
+      setAllReplies(
+        data?.pages
+          .slice(0, visiblePageCount)
+          .flatMap((page) => page.documents || []),
+      );
+      setTotalReplies(data.pages[0]?.total);
     }
-  }, [data]);
+  }, [data, visiblePageCount]);
 
   useEffect(() => {
     const fetchMediaFiles = async () => {
-      const allReplies = pages.slice(0, visiblePageCount).flat();
-      const mediaIds = allReplies.map((reply) => reply?.mediaId);
-
-      if (mediaIds.length > 0) {
+      const mediaIds = allReplies?.map((reply) => reply?.mediaId);
+      if (mediaIds?.length > 0) {
         const fetchedMediaFiles = await Promise.all(
           mediaIds.map(async (id, index) => {
             if (!id) return null;
-            const file = await storage.getFile(appwriteConfig.storageID, id);
+            const file = await storage.getFile(
+              appwriteConfig.mediaBucketID,
+              id,
+            );
             return { mimeType: file.mimeType, index };
           }),
         );
+        console.log(fetchedMediaFiles);
         setMimeTypes(fetchedMediaFiles.filter((file) => file));
       }
     };
 
     fetchMediaFiles();
-  }, [pages, visiblePageCount]);
-
-  const allReplies = pages.slice(0, visiblePageCount).flat();
-  console.log(allReplies);
+  }, [allReplies]);
 
   const handleViewLess = () => {
     setVisiblePageCount((prev) => Math.max(prev - 1, 1));
   };
 
   const handleViewMore = async () => {
-    if (visiblePageCount < pages.length) {
+    if (visiblePageCount < data?.pages.length && !hasNextPage) {
       setVisiblePageCount((prev) => prev + 1);
     } else if (hasNextPage && !isFetchingNextPage) {
       await fetchNextPage();
+      setVisiblePageCount((prev) => prev + 1);
     }
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-4">
-        {allReplies.map((reply, idx) => (
-          <Reply
-            replyRef={replyRef}
-            key={reply?.$id || idx}
-            reply={reply}
-            commentId={comment?.$id}
-            mimeType={mimeTypes[idx]}
-          />
-        ))}
-      </div>
-      <div className="flex justify-between p-2">
-        {allReplies.length > 0 && (
-          <p>
-            {allReplies.length} out of{" "}
-            {comment?.replies?.length >= allReplies.length
-              ? comment?.replies?.length
-              : allReplies.length}{" "}
-            reply(ies)
-          </p>
-        )}
-        <div className="flex gap-2">
-          {hasNextPage || visiblePageCount < pages.length ? (
-            <button
-              className=" flex items-center gap-1"
-              onClick={handleViewMore}
-              disabled={isFetchingNextPage}
-            >
-              {isFetchingNextPage ? (
-                <div className="animate-spin">⚽</div>
-              ) : (
-                <p className="hover:underline">View more</p>
-              )}
-            </button>
-          ) : null}
-          {visiblePageCount > 1 && (
-            <button className="hover:underline" onClick={handleViewLess}>
-              View less
-            </button>
+    <div className="flex flex-col">
+      {totalReplies > 0 && (
+        <button
+          onClick={() => setIsRepliesClicked((prev) => !prev)}
+          className="flex items-center gap-1 self-center mb-2"
+        >
+          View
+          <span>{totalReplies === 1 ? " reply" : " replies"}</span>
+          {!isRepliesClicked ? (
+            <IoIosArrowDown size={20} />
+          ) : (
+            <IoIosArrowUp size={20} />
           )}
-        </div>
-      </div>
-    </>
+        </button>
+      )}
+
+      {isRepliesClicked && (
+        <>
+          <div className="flex flex-col gap-4">
+            {allReplies?.map((reply, idx) => (
+              <Reply
+                replyRef={replyRef}
+                key={reply?.$id || idx}
+                reply={reply}
+                commentId={comment?.$id}
+                mimeType={mimeTypes[idx]?.mimeType}
+              />
+            ))}
+          </div>
+          <div className="flex justify-between p-2">
+            {allReplies && totalReplies > 0 && (
+              <p>
+                {allReplies?.length} out of {totalReplies}
+                {" Reply(ies)"}
+              </p>
+            )}
+            <div className="flex gap-2">
+              {hasNextPage || visiblePageCount < data?.pages.length ? (
+                <button
+                  className="flex items-center gap-1"
+                  onClick={handleViewMore}
+                  disabled={isFetchingNextPage}
+                >
+                  {isFetchingNextPage ? (
+                    <div className="animate-spin">⚽</div>
+                  ) : (
+                    <p className="hover:underline">View more</p>
+                  )}
+                </button>
+              ) : null}
+              {visiblePageCount > 1 && (
+                <button className="hover:underline" onClick={handleViewLess}>
+                  View less
+                </button>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

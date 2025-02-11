@@ -54,7 +54,6 @@ const NormalPost = ({
   const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
   const [isLiked, setIsLiked] = useState(false);
-  console.log(post);
 
   const handleLike = async () => {
     try {

@@ -20,8 +20,6 @@ const CommentSection = ({ post, isCommentClicked }) => {
   const [file, setFile] = useState(undefined);
   const { mutateAsync: createComment, isPending: isCommenting } =
     useCreateComment(post?.$id);
-  const [refetchComments, setRefetchComments] = useState(false);
-
   const form = useForm<z.infer<typeof commentValidation>>({
     resolver: zodResolver(commentValidation),
     defaultValues: {
@@ -49,7 +47,6 @@ const CommentSection = ({ post, isCommentClicked }) => {
       const newComment = await createComment(postVariables);
 
       if (newComment) {
-        setRefetchComments(true);
         form.reset();
         setFile(undefined);
       } else {
@@ -168,11 +165,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
           </div>
         </div>
       )}
-      <Comments
-        post={post}
-        refetchComments={refetchComments}
-        setRefetchComments={setRefetchComments}
-      />
+      <Comments post={post} />
     </div>
   );
 };

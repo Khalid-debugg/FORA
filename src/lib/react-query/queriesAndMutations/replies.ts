@@ -21,11 +21,11 @@ export const useCreateReply = (commentId: string) => {
   });
 };
 export const useGetReplies = (commentId: string) => {
-  return useInfiniteQuery<Comment[]>({
+  return useInfiniteQuery<{ documents: Comment[] }>({
     queryKey: [QueryKeys.Replies + commentId],
     queryFn: ({ pageParam = 0 }) => getReplies(commentId, pageParam),
     getNextPageParam: (lastPage, allPages) =>
-      lastPage?.length === 5 ? allPages.length : undefined,
+      lastPage?.documents.length === 5 ? allPages.length : undefined,
   });
 };
 export const useLikeReply = (reply: INewComment, userId: string) => {

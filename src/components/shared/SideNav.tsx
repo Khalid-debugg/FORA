@@ -13,8 +13,6 @@ const SideNav = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user } = useUserContext();
-  console.log(user);
-
   const { mutateAsync: deleteSession, isPending } = useDeleteSession();
   const logout = () => {
     deleteSession();

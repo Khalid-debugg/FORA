@@ -9,24 +9,26 @@ import {
 } from "./helper";
 export async function getReplies(commentId: string, pageParam: number) {
   try {
-    const comments = await databases.listDocuments(
+    const replies = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.repliesID,
       [
-        Query.equal("comment", commentId),
+        Query.equal("commentId", commentId),
         Query.limit(5),
         Query.offset(pageParam * 5),
         Query.orderDesc("$createdAt"),
       ],
     );
-
-    if (!comments) throw new Error("Something went wrong");
-    return comments.documents;
+    if (!replies) throw new Error("Something went wrong");
+    return replies;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 }
 export async function createReply(reply: INewReply) {
+  console.log(reply);
+
   try {
     const uploadedFile = await handleFileOperation(uploadFiles, reply.media);
     const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
@@ -38,7 +40,7 @@ export async function createReply(reply: INewReply) {
       {
         creator: reply.userId,
         content: reply.reply,
-        comment: reply.commentId,
+        commentId: reply.commentId,
         mediaUrl: fileUrl,
         mediaId: uploadedFile?.$id || null,
       },
