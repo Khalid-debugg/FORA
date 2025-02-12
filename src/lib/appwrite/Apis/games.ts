@@ -63,6 +63,24 @@ export async function getGame(postId: string) {
     console.log(err);
   }
 }
+export async function getRecentGames(pageParam: number, userId: string) {
+  try {
+    const games = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      [
+        Query.equal("creator", userId),
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+
+    return games.documents;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export async function createGame(post: INewGame) {
   try {
     const newPost = await databases.createDocument(
@@ -200,7 +218,6 @@ export async function getWaitingGame(gameId: string) {
     console.log(err);
   }
 }
-
 export async function getJoinedGame(gameId: string) {
   try {
     const game = await databases.listDocuments(

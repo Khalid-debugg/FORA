@@ -5,9 +5,10 @@ import VideoHover from "@/components/ui/video-hover";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CreatePost from "./CreatePost";
 import { useState } from "react";
-import { useGetRecentPosts } from "@/lib/react-query/queriesAndMutations/posts";
+import { useGetRecentPostsAndGames } from "@/lib/react-query/queriesAndMutations/posts";
 const Home = () => {
-  const { data: posts, isPending: isPostsPending } = useGetRecentPosts();
+  const { data: posts, isPending: isPostsPending } =
+    useGetRecentPostsAndGames();
   const [postType, setPostType] = useState("post");
   return (
     <>

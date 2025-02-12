@@ -69,7 +69,7 @@ export async function editNormalPost(
     console.log(err);
   }
 }
-export async function getRecentPosts() {
+export async function getRecentPostsAndGames() {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -89,6 +89,42 @@ export async function getRecentPosts() {
       (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt),
     );
     return allPosts;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getRecentPosts(pageParam: number, userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      [
+        Query.equal("creator", userId),
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+
+    return posts.documents;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getRecentLikedPosts(pageParam: number, userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.postsID,
+      [
+        Query.contains("likesIds", userId),
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+
+    return posts.documents;
   } catch (err) {
     console.log(err);
   }
@@ -135,6 +171,7 @@ export async function likePost(post: ICreatedPost, userId: string) {
       post.$id,
       {
         postLikes: [...currentLikes, userId],
+        likesIds: [...currentLikes, userId],
       },
     );
 
@@ -151,7 +188,6 @@ export async function likePost(post: ICreatedPost, userId: string) {
 export async function unlikePost(post: ICreatedPost, userId: string) {
   try {
     const currentLikes = post?.postLikes?.map((like) => like.$id);
-    console.log(currentLikes);
 
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
@@ -175,7 +211,6 @@ export async function unlikePost(post: ICreatedPost, userId: string) {
 export async function likeReply(reply, userId) {
   try {
     const currentLikes = reply?.replyLikes?.map((like) => like.$id) || [];
-    console.log([...currentLikes, userId]);
 
     const updatedReply = await databases.updateDocument(
       appwriteConfig.databaseID,

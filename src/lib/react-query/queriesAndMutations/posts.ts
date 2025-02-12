@@ -1,12 +1,14 @@
 import { queryClient } from "@/main";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../queryKeys";
 import {
   createPost,
   deleteNormalPost,
   editNormalPost,
   getNormalPost,
+  getRecentLikedPosts,
   getRecentPosts,
+  getRecentPostsAndGames,
   likePost,
   unlikePost,
 } from "@/lib/appwrite/Apis/posts";
@@ -16,14 +18,32 @@ export const useCreatePost = () => {
   return useMutation({
     mutationFn: (post: INewPost) => createPost(post),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.RecentPosts] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.RecentPostsAndGames],
+      });
     },
   });
 };
-export const useGetRecentPosts = () => {
+export const useGetRecentPostsAndGames = () => {
   return useQuery({
+    queryKey: [QueryKeys.RecentPostsAndGames],
+    queryFn: () => getRecentPostsAndGames(),
+  });
+};
+export const useGetRecentPosts = (userId: string) => {
+  return useInfiniteQuery({
     queryKey: [QueryKeys.RecentPosts],
-    queryFn: () => getRecentPosts(),
+    queryFn: ({ pageParam = 0 }) => getRecentPosts(pageParam, userId),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage?.length === 10 ? allPages.length : undefined,
+  });
+};
+export const useGetRecentLikedPosts = (userId: string) => {
+  return useInfiniteQuery({
+    queryKey: [QueryKeys.RecentLikedPosts],
+    queryFn: ({ pageParam = 0 }) => getRecentLikedPosts(pageParam, userId),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage?.length === 10 ? allPages.length : undefined,
   });
 };
 export const useGetNormalPost = (postId: string) => {

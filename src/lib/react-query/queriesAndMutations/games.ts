@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../queryKeys";
 import { INewGame } from "@/types";
 import {
@@ -8,6 +8,7 @@ import {
   editGamePost,
   getGame,
   getJoinedGame,
+  getRecentGames,
   getWaitingGame,
   joinGame,
   leaveGame,
@@ -34,7 +35,14 @@ export const useGetCities = () => {
     },
   });
 };
-
+export const useGetRecentGames = (userId: string) => {
+  return useInfiniteQuery({
+    queryKey: [QueryKeys.RecentGames],
+    queryFn: ({ pageParam = 0 }) => getRecentGames(pageParam, userId),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage?.length === 10 ? allPages.length : undefined,
+  });
+};
 export const useCreateGame = () => {
   return useMutation({
     mutationFn: (post: INewGame) => createGame(post),

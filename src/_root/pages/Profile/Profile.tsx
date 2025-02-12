@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SetupForm } from "@/_root/forms/SetupForm";
 import ProfilePicture from "@/components/shared/Profile/ProfilePicture";
 import CoverImage from "@/components/shared/Profile/CoverImage";
+import ProfileSections from "@/components/shared/Profile/ProfileSections/ProfileSections";
 const Profile = () => {
   const { id } = useParams();
   const { user: currentUser } = useUserContext();
@@ -78,12 +79,13 @@ const Profile = () => {
                         key={idx}
                         className="p-2 border border-slate-100 rounded-lg"
                       >
-                        {" " + tag + " "}
+                        {tag}
                       </span>
                     ))}
                 </div>
               </CardContent>
             </Card>
+            <ProfileSections />
           </div>
         </>
       )}
