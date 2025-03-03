@@ -29,7 +29,6 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
       media: undefined,
     },
   });
-
   const handleFileChange = (event) => {
     form.setValue("media", event.target.files[0]);
     setFile(event.target.files[0]);
@@ -62,7 +61,6 @@ const RepliesSection = ({ comment, isRepliesClicked }) => {
       console.log(err);
     }
   }
-
   return (
     <div
       className={`px-4 overflow-auto transition-all ease-in-out duration-[500ms] ${

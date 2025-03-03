@@ -27,7 +27,6 @@ const CommentSection = ({ post, isCommentClicked }) => {
       media: undefined,
     },
   });
-
   const handleFileChange = (event) => {
     form.setValue("media", event.target.files[0]);
     setFile(event.target.files[0]);

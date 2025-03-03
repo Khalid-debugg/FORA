@@ -1,8 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { BiSolidLike } from "react-icons/bi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import RepliesSection from "../RepliesSection/RepliesSection";
 import { useUserContext } from "@/context/AuthContext";
 import {
   useDeleteComment,
@@ -20,9 +19,9 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
+const RepliesSection = lazy(() => import("../RepliesSection/RepliesSection"));
 const Comment = ({ comment, mimeType, postId }) => {
   const { user } = useUserContext();
-
   const [isRepliesClicked, setIsRepliesClicked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { mutateAsync: createLike, isPending: isLiking } = useLikeComment(
@@ -43,6 +42,7 @@ const Comment = ({ comment, mimeType, postId }) => {
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
   const [isLiked, setIsLiked] = useState(false);
+
   useEffect(() => {
     const fetchMediaType = async () => {
       const response = await storage.getFile(
@@ -309,7 +309,14 @@ const Comment = ({ comment, mimeType, postId }) => {
           )}
         </button>
       )}
-      <RepliesSection comment={comment} isRepliesClicked={isRepliesClicked} />
+      {isRepliesClicked && (
+        <Suspense fallback={<div className="animate-spin">⚽</div>}>
+          <RepliesSection
+            comment={comment}
+            isRepliesClicked={isRepliesClicked}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

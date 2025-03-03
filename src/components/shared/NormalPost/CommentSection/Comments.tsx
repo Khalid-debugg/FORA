@@ -53,7 +53,7 @@ const Comments = ({ post }) => {
         {allComments?.map((comment, idx) => (
           <Comment
             postId={post?.$id}
-            key={comment?.$id}
+            key={idx}
             comment={comment}
             mimeType={mimeTypes[idx]}
           />
@@ -62,7 +62,7 @@ const Comments = ({ post }) => {
       <div className="flex justify-between p-2">
         {allComments?.length > 0 && (
           <p>
-            {allComments.length} out of {post?.comments.length + " "}
+            {allComments.length} out of {totalComments}
             comment(s)
           </p>
         )}

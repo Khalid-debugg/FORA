@@ -16,7 +16,6 @@ const Replies = ({ comment, replyRef }) => {
   const [mimeTypes, setMimeTypes] = useState([]);
   const [isRepliesClicked, setIsRepliesClicked] = useState(false);
   const [totalReplies, setTotalReplies] = useState(data?.pages[0]?.total);
-
   useEffect(() => {
     if (data) {
       setAllReplies(
@@ -42,7 +41,6 @@ const Replies = ({ comment, replyRef }) => {
             return { mimeType: file.mimeType, index };
           }),
         );
-        console.log(fetchedMediaFiles);
         setMimeTypes(fetchedMediaFiles.filter((file) => file));
       }
     };

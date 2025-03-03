@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { ICreatedPost } from "@/types";
 import {
   Carousel,
@@ -23,13 +23,14 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { FaCommentDots } from "react-icons/fa6";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../../ui/use-toast";
-import CommentSection from "./CommentSection/CommentSection";
 import UsersList from "../UsersList";
 import { useNavigate } from "react-router-dom";
 import {
   useLikePost,
   useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations/posts";
+const CommentSection = lazy(() => import("./CommentSection/CommentSection"));
+
 const NormalPost = ({
   post,
   isOne,
@@ -202,7 +203,11 @@ const NormalPost = ({
           <p className="text-center">Comment</p>
         </button>
       </div>
-      <CommentSection post={post} isCommentClicked={isCommentClicked} />
+      {isCommentClicked && (
+        <Suspense fallback={<div className="animate-spin">⚽</div>}>
+          <CommentSection post={post} isCommentClicked={isCommentClicked} />{" "}
+        </Suspense>
+      )}
     </div>
   );
 };
