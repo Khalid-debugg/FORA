@@ -69,30 +69,35 @@ export async function editNormalPost(
     console.log(err);
   }
 }
-export async function getRecentPostsAndGames() {
+export async function getRecentPostsAndGames(pageParam: number) {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
-      [Query.limit(20)],
+      [
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
+      ],
     );
-    if (!posts) throw new Error();
 
     const games = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.gamesID,
-      [Query.limit(20)],
+      [
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
+      ],
     );
-    if (!games) throw new Error();
 
-    const allPosts = [...posts.documents, ...games.documents].sort(
-      (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt),
-    );
-    return allPosts;
+    return [...posts.documents, ...games.documents];
   } catch (err) {
     console.log(err);
+    return [];
   }
 }
+
 export async function getRecentPosts(pageParam: number, userId: string) {
   try {
     const posts = await databases.listDocuments(

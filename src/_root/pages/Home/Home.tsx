@@ -4,16 +4,46 @@ import { Outlet } from "react-router-dom";
 import VideoHover from "@/components/ui/video-hover";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CreatePost from "./CreatePost";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useGetRecentPostsAndGames } from "@/lib/react-query/queriesAndMutations/posts";
+
 const Home = () => {
-  const { data: posts, isPending: isPostsPending } =
-    useGetRecentPostsAndGames();
+  const {
+    data: posts,
+    isPending,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetRecentPostsAndGames();
+
   const [postType, setPostType] = useState("post");
+  const [allPosts, setAllPosts] = useState([]);
+
+  useEffect(() => {
+    if (posts) {
+      setAllPosts(posts.pages.flat());
+    }
+  }, [posts]);
+
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
   return (
     <>
       <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto items-center">
-        {!isPostsPending && (
+        {!isPending && (
           <div className="flex w-full h-[10rem] justify-center gap-2">
             <Dialog>
               <DialogTrigger onClick={() => setPostType("game")} asChild>
@@ -38,20 +68,32 @@ const Home = () => {
             </Dialog>
           </div>
         )}
-        {isPostsPending && (
+
+        {isPending && (
           <div className="flex w-full h-full items-center justify-center">
             <div className="animate-spin text-[5rem]">⚽</div>
           </div>
         )}
-        {posts &&
-          posts.map((doc, i) => {
-            return doc.hasOwnProperty("playersNumber") ? (
-              <GamePost key={i} post={doc} isOne={false} />
-            ) : (
-              <NormalPost key={i} post={doc} />
-            );
-          })}
-        {posts?.length === 0 && (
+
+        {allPosts.map((doc, i) =>
+          doc.hasOwnProperty("playersNumber") ? (
+            <GamePost key={i} post={doc} isOne={false} />
+          ) : (
+            <NormalPost key={i} post={doc} />
+          ),
+        )}
+
+        {isFetchingNextPage && (
+          <div className="flex w-full items-center justify-center p-4">
+            <div className="animate-spin text-[3rem]">⚽</div>
+          </div>
+        )}
+
+        {!hasNextPage && allPosts.length > 0 && !isFetchingNextPage && (
+          <div className="text-center text-gray-500 p-4">No more posts</div>
+        )}
+
+        {!isPending && allPosts.length === 0 && !isFetchingNextPage && (
           <div className="py-32">No posts Available ❎</div>
         )}
       </div>

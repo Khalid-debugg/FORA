@@ -25,11 +25,14 @@ export const useCreatePost = () => {
   });
 };
 export const useGetRecentPostsAndGames = () => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: [QueryKeys.RecentPostsAndGames],
-    queryFn: () => getRecentPostsAndGames(),
+    queryFn: ({ pageParam = 0 }) => getRecentPostsAndGames(pageParam),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === 10 ? allPages.length : undefined,
   });
 };
+
 export const useGetRecentPosts = (userId: string) => {
   return useInfiniteQuery({
     queryKey: [QueryKeys.RecentPosts],

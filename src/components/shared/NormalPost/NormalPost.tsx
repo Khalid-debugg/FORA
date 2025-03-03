@@ -153,7 +153,7 @@ const NormalPost = ({
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />
-          <p className="text-xl font-medium">{post?.creator?.username}</p>
+          <p className="text-xl font-medium">{post?.creator?.name}</p>
         </div>
         <div className="flex items-center gap-2">
           <BsCalendar2DateFill fill="green" size={20} />
