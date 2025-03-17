@@ -3,11 +3,13 @@ import MenuItem from "./MenuItem";
 import { useUserContext } from "@/context/AuthContext";
 import { Skeleton } from "../ui/skeleton";
 import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
+import { log } from "console";
 const sideLinks = [
   { logoUrl: "home", label: "Home", path: "/" },
   { logoUrl: "mygames", label: "My Games" },
   { logoUrl: "search", label: "Explore" },
-  { logoUrl: "chat", label: "Messages" },
+  // { logoUrl: "chat", label: "Messages" },
+  { logoUrl: "notifications", label: "Notifications", path: "/notifications" },
 ];
 const SideNav = () => {
   const { pathname } = useLocation();
@@ -19,10 +21,12 @@ const SideNav = () => {
     localStorage.clear();
     navigate("/signin");
   };
+  console.log(user);
+
   return (
     <nav className="fixed top-0 left-0 w-1/3 max-w-1/3 h-screen hidden md:flex flex-col justify-between items-end py-5 px-7">
       <div className="flex flex-col gap-5">
-        <button className="w-60 p-5">
+        <button className="w-60 p-5" onClick={() => navigate("/")}>
           <header>
             <img
               src="/assets/brand-logo/svg/logo-no-background.svg"
@@ -31,7 +35,10 @@ const SideNav = () => {
             />
           </header>
         </button>
-        <button className="w-56 flex items-center gap-3 p-4 ">
+        <button
+          className="w-56 flex items-center gap-3 p-4 "
+          onClick={() => navigate(`/profile/${user?.id}`)}
+        >
           {user?.imageUrl ? (
             <>
               <img

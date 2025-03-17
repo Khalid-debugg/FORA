@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import {
+  addFriend,
   changeCoverImage,
   changeProfilePicture,
   updateProfile,
@@ -24,5 +25,11 @@ export const useUpdateProfile = (userId) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", userId] });
     },
+  });
+};
+export const useAddFriend = () => {
+  return useMutation({
+    mutationFn: ({ userId, friendId }: { userId: string; friendId: string }) =>
+      addFriend(userId, friendId),
   });
 };

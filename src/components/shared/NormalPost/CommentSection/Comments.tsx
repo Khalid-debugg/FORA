@@ -62,7 +62,7 @@ const Comments = ({ post }) => {
       <div className="flex justify-between p-2">
         {allComments?.length > 0 && (
           <p>
-            {allComments.length} out of {totalComments}
+            {allComments.length} out of {post?.comments?.length + " "}
             comment(s)
           </p>
         )}

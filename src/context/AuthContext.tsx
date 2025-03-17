@@ -4,6 +4,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 export const INITIAL_USER = {
   id: "",
+  name: "",
   username: "",
   email: "",
   imageUrl: "",
@@ -22,7 +23,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const currentRoute = useLocation();
   const navigate = useNavigate();
   const checkAuthUser = async () => {
@@ -31,6 +31,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (currentAcc) {
         setUser({
           id: currentAcc.$id,
+          name: currentAcc.name,
           username: currentAcc.username,
           email: currentAcc.email,
           imageUrl: currentAcc.imageUrl,

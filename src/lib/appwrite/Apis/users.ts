@@ -35,12 +35,14 @@ export async function createUserInDB(user: {
   imageUrl: URL;
 }) {
   try {
+    const uniqueUserId = ID.unique();
     const document = await databases.createDocument(
       appwriteConfig.databaseID,
       appwriteConfig.usersID,
-      ID.unique(),
+      uniqueUserId,
       user,
     );
+    if (!document) throw new Error("Something went wrong");
     return document;
   } catch (err) {
     return err;
@@ -48,7 +50,10 @@ export async function createUserInDB(user: {
 }
 export async function createLoginSession(user: IRegisteredUser) {
   try {
-    const newUser = await account.createEmailSession(user.email, user.password);
+    const newUser = await account.createEmailPasswordSession(
+      user.email,
+      user.password,
+    );
     return newUser;
   } catch (err) {
     return err;

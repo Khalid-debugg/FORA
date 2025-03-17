@@ -9,4 +9,5 @@ export enum QueryKeys {
   Users = "getUsers",
   WaitingGame = "getWaitingGame",
   JoinedGame = "getJoinedGame",
+  Notifications = "getNotifications",
 }

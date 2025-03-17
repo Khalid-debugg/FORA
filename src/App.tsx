@@ -1,7 +1,13 @@
 import { Routes, Route } from "react-router-dom";
 import "./globals.css";
 import SignInForm from "./_auth/forms/SignInForm";
-import { Home, OneGamePost, OneNormalPost, Profile } from "./_root/pages";
+import {
+  Home,
+  OneGamePost,
+  OneNormalPost,
+  Profile,
+  Notifications,
+} from "./_root/pages";
 import SignUpForm from "./_auth/forms/SignUpForm";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
@@ -20,6 +26,7 @@ const App = () => {
           <Route path="/normal-post/:id" element={<OneNormalPost />} />
           <Route path="/game-post/:id" element={<OneGamePost />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
       </Routes>
       <Toaster />

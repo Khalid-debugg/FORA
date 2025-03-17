@@ -65,7 +65,10 @@ export const replyValidation = z.object({
   media: z.custom<File>(),
 });
 export const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters." })
+    .max(20, { message: "Name must not exceed 20 characters." }),
   bio: z
     .string()
     .max(220, { message: "Bio must not exceed 160 characters." })
