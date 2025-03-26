@@ -24,7 +24,7 @@ import { FaCommentDots } from "react-icons/fa6";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../../ui/use-toast";
 import UsersList from "../UsersList";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   useLikePost,
   useUnlikePost,
@@ -154,11 +154,13 @@ const NormalPost = ({
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />
-          <p className="text-xl font-medium">{post?.creator?.name}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <BsCalendar2DateFill fill="green" size={20} />
-          <p>{formatDate()}</p>
+          <Link
+            to={`/profile/${post?.creator?.$id}`}
+            className="text-xl font-medium hover:underline"
+            onClick={(e) => e.stopPropagation()} // Prevent button click interference
+          >
+            {post?.creator?.name}
+          </Link>
         </div>
       </button>
       <div className="px-4 flex flex-col">
