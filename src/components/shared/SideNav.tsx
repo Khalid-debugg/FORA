@@ -3,11 +3,10 @@ import MenuItem from "./MenuItem";
 import { useUserContext } from "@/context/AuthContext";
 import { Skeleton } from "../ui/skeleton";
 import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
-import { log } from "console";
 const sideLinks = [
   { logoUrl: "home", label: "Home", path: "/" },
   { logoUrl: "mygames", label: "My Games" },
-  { logoUrl: "search", label: "Explore" },
+  { logoUrl: "search", label: "Explore", path: "/explore" },
   // { logoUrl: "chat", label: "Messages" },
   { logoUrl: "notifications", label: "Notifications", path: "/notifications" },
 ];

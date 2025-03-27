@@ -29,6 +29,15 @@ import {
   useLikePost,
   useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations/posts";
+import { IoMdAdd } from "react-icons/io";
+import { FaLocationDot } from "react-icons/fa6";
+import { FaClock } from "react-icons/fa";
+import { ImExit } from "react-icons/im";
+import { GiSoccerKick } from "react-icons/gi";
+import WaitingList from "./WaitingList";
+import JoinedList from "./JoinedList";
+import { useMediaFiles } from "@/lib/react-query/queriesAndMutations/helper";
+
 const CommentSection = lazy(() => import("./CommentSection/CommentSection"));
 
 const NormalPost = ({
@@ -39,9 +48,7 @@ const NormalPost = ({
   isOne?: boolean;
 }) => {
   const { user } = useUserContext();
-  const [mediaFiles, setMediaFiles] = useState<
-    { mimeType: string; ref: string }[]
-  >([]);
+  const { data: mediaFiles } = useMediaFiles(post?.mediaIds || []);
   const [totalLikes, setTotalLikes] = useState(post?.postLikes?.length);
   const date = new Date(post?.$createdAt);
   const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
@@ -55,6 +62,12 @@ const NormalPost = ({
   const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
   const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    setIsLiked(
+      post?.postLikes?.some((likedUser) => likedUser.$id === user?.id),
+    );
+  }, [post, user]);
 
   const handleLike = async () => {
     try {
@@ -84,33 +97,8 @@ const NormalPost = ({
     }
   };
 
-  useEffect(() => {
-    const fetchMediaFiles = async () => {
-      const fetchedMediaFiles = await Promise.all(
-        post?.mediaIds.map(async (id) => {
-          const file = await storage.getFile(appwriteConfig.mediaBucketID, id);
-          const fileView = storage.getFileView(
-            appwriteConfig.mediaBucketID,
-            id,
-          );
-          return { mimeType: file.mimeType, ref: fileView.href };
-        }),
-      );
-      setMediaFiles(fetchedMediaFiles);
-    };
-
-    fetchMediaFiles();
-    setIsLiked(
-      post?.postLikes?.some((likedUser) => likedUser.$id === user?.id),
-    );
-  }, [post, user]);
-
-  const formatDate = () => {
-    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-  };
-
   const renderCarousel = () => {
-    if (mediaFiles.length === 0) return null;
+    if (!mediaFiles || mediaFiles?.length === 0) return null;
     return mediaFiles.map((media, i) => (
       <CarouselItem key={i}>
         {media.mimeType.startsWith("image/") ? (
@@ -166,11 +154,11 @@ const NormalPost = ({
       <div className="px-4 flex flex-col">
         <div className="p-2">{post?.caption}</div>
         <Carousel
-          className={`flex justify-center items-center ${mediaFiles.length > 0 ? "border" : ""}`}
+          className={`flex justify-center items-center ${mediaFiles?.length > 0 ? "border" : ""}`}
         >
           <CarouselContent>{renderCarousel()}</CarouselContent>
-          {mediaFiles.length > 1 && <CarouselPrevious />}
-          {mediaFiles.length > 1 && <CarouselNext />}
+          {mediaFiles?.length > 1 && <CarouselPrevious />}
+          {mediaFiles?.length > 1 && <CarouselNext />}
         </Carousel>
         {totalLikes > 0 && (
           <div className="self-end p-2">

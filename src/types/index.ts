@@ -1,3 +1,5 @@
+import { Models } from "appwrite";
+
 export type INavLink = {
   imgURL: string;
   route: string;
@@ -95,3 +97,9 @@ export type ICreatedPost = {
   players: number;
   privacy: string;
 };
+
+export interface ISearchResults {
+  posts: Models.Document[];
+  games: Models.Document[];
+  users: Models.Document[];
+}

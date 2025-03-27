@@ -48,8 +48,8 @@ const Profile = () => {
   );
   if (isGettingUser || !currentUser)
     return (
-      <div className="h-full animate-spin flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
-        ⚽
+      <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
+        <p className="text-center animate-spin">⚽</p>
       </div>
     );
   return (

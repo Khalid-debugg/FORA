@@ -7,6 +7,7 @@ import {
   OneNormalPost,
   Profile,
   Notifications,
+  Explore,
 } from "./_root/pages";
 import SignUpForm from "./_auth/forms/SignUpForm";
 import AuthLayout from "./_auth/AuthLayout";
@@ -23,6 +24,7 @@ const App = () => {
         </Route>
         <Route element={<RootLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="/normal-post/:id" element={<OneNormalPost />} />
           <Route path="/game-post/:id" element={<OneGamePost />} />
           <Route path="/profile/:id" element={<Profile />} />

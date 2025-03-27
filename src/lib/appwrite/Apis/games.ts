@@ -212,10 +212,21 @@ export async function getWaitingGame(gameId: string) {
       appwriteConfig.waitingGamesID,
       [Query.equal("gameId", gameId)],
     );
-    if (!game) throw new Error();
+    if (!game || game.documents.length === 0) {
+      return {
+        $id: gameId,
+        waitingPlayers: [],
+        gameId: gameId,
+      };
+    }
     return game.documents[0];
   } catch (err) {
     console.log(err);
+    return {
+      $id: gameId,
+      waitingPlayers: [],
+      gameId: gameId,
+    };
   }
 }
 export async function getJoinedGame(gameId: string) {
@@ -225,10 +236,21 @@ export async function getJoinedGame(gameId: string) {
       appwriteConfig.joinedGamesID,
       [Query.equal("gameId", gameId)],
     );
-    if (!game) throw new Error();
+    if (!game || game.documents.length === 0) {
+      return {
+        $id: gameId,
+        joinedPlayers: [],
+        gameId: gameId,
+      };
+    }
     return game.documents[0];
   } catch (err) {
     console.log(err);
+    return {
+      $id: gameId,
+      joinedPlayers: [],
+      gameId: gameId,
+    };
   }
 }
 export async function rejectPlayer({

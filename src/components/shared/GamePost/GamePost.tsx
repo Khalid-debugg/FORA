@@ -115,7 +115,13 @@ const GamePost = ({ post, isOne }) => {
           <div className="flex items-center gap-2">
             <GiSoccerKick fill="green" size={20} />
             <p>Players needed: </p>
-            <p>{post?.playersNumber - joinedGame?.joinedPlayers?.length}</p>
+            <p>
+              {Math.max(
+                0,
+                (post?.playersNumber || 0) -
+                  (joinedGame?.joinedPlayers?.length || 0),
+              )}
+            </p>
           </div>
         </div>
       </button>

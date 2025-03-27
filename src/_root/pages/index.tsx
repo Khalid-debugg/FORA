@@ -4,3 +4,4 @@ export { default as Profile } from "./Profile/Profile";
 export { default as OneNormalPost } from "./NormalPost/OneNormalPost";
 export { default as OneGamePost } from "./GamePost/OneGamePost";
 export { default as Notifications } from "./Notifications/Notifications";
+export { default as Explore } from "./Explore/Explore";

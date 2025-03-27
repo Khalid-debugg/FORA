@@ -122,12 +122,24 @@ export const useGetWaitingGame = (gameId: string) => {
   return useQuery({
     queryKey: [`${gameId + QueryKeys.WaitingGame}`],
     queryFn: async () => await getWaitingGame(gameId),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
   });
 };
 export const useGetJoinedGame = (gameId: string) => {
   return useQuery({
     queryKey: [`${gameId + QueryKeys.JoinedGame}`],
     queryFn: async () => await getJoinedGame(gameId),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
   });
 };
 export const useRejectPlayer = (gameId: string) => {
