@@ -1,5 +1,5 @@
 import { ID, Query } from "appwrite";
-import { account, appwriteConfig, avatars, databases } from "../config";
+import { account, appwriteConfig, databases, storage } from "../config";
 import { INewUser, IRegisteredUser } from "@/types";
 
 export async function createUserAccount(user: INewUser) {
@@ -10,18 +10,16 @@ export async function createUserAccount(user: INewUser) {
       user.password,
     );
     if (!newUser) throw new Error();
-    const avatarURL = avatars.getInitials(
-      user.username,
-      undefined,
-      undefined,
-      "30cc42",
+    const initialImage = await storage.getFilePreview(
+      appwriteConfig.mediaBucketID,
+      "21302130",
     );
     return await createUserInDB({
       name: user.firstName + user.lastName,
       accountID: newUser.$id,
       email: user.email,
       username: user.username,
-      imageUrl: avatarURL,
+      imageUrl: initialImage,
     });
   } catch (error) {
     return error;
