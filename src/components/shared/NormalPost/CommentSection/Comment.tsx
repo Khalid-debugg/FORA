@@ -27,6 +27,7 @@ const Comment = ({ comment, mimeType, postId }) => {
   const { mutateAsync: createLike, isPending: isLiking } = useLikeComment(
     comment,
     user.id,
+    comment?.creator?.$id,
   );
   const { mutateAsync: deleteLike, isPending: isDisliking } = useUnlikeComment(
     comment,

@@ -21,10 +21,17 @@ export type INewPost = {
   file?: File[];
 };
 export type INewComment = {
+  creator: any;
+  $id?: string;
+  $createdAt?: string;
   userId: string;
   postId: string;
   comment: string;
   media?: File;
+  mediaUrl?: string;
+  mediaId?: string;
+  commentLikes?: Models.Document[];
+  replyLikes?: Models.Document[];
 };
 export type INewReply = {
   userId: string;

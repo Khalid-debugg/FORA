@@ -28,9 +28,13 @@ export const useGetComments = (postId: string) => {
       lastPage?.length === 5 ? allPages.length : undefined,
   });
 };
-export const useLikeComment = (comment: INewComment, userId: string) => {
+export const useLikeComment = (
+  comment: INewComment,
+  userId: string,
+  commentCreatorId: string,
+) => {
   return useMutation({
-    mutationFn: () => likeComment(comment, userId),
+    mutationFn: () => likeComment(comment, userId, commentCreatorId),
   });
 };
 export const useUnlikeComment = (comment: INewComment, userId: string) => {

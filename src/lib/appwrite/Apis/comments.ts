@@ -7,6 +7,7 @@ import {
   handleFileOperation,
   uploadFiles,
 } from "./helper";
+import { createNotification } from "./notifications";
 
 export async function getComments(postId: string, pageParam: number) {
   try {
@@ -56,11 +57,13 @@ export async function createComment(comment: INewComment) {
     throw err;
   }
 }
-export async function likeComment(comment: INewComment, userId: string) {
+export async function likeComment(
+  comment: INewComment,
+  userId: string,
+  commentCreatorId: string,
+) {
   try {
     const currentLikes = comment?.commentLikes?.map((like) => like.$id) || [];
-    console.log([...currentLikes, userId]);
-
     const updatedComment = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.commentsID,
@@ -69,7 +72,15 @@ export async function likeComment(comment: INewComment, userId: string) {
         commentLikes: [...currentLikes, userId],
       },
     );
-
+    if (comment?.creator.$id !== userId) {
+      await createNotification({
+        type: "LIKE_COMMENT",
+        senderId: userId,
+        receiverId: commentCreatorId,
+        commentId: comment?.$id,
+        message: `${comment.creator.name} liked your comment`,
+      });
+    }
     if (!updatedComment) {
       return new Error("Failed to like the comment.");
     }
