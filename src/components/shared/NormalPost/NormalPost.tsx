@@ -54,6 +54,7 @@ const NormalPost = ({
   const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
     post,
     user?.id,
+    post?.creator?.$id,
   );
   const { mutateAsync: deleteLike, isPending: isDisliking } = useUnlikePost(
     post,

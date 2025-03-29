@@ -1,6 +1,8 @@
 import { INewGame } from "@/types";
 import { appwriteConfig, databases } from "../config";
 import { ID, Query } from "appwrite";
+import { createNotification } from "./notifications";
+
 export async function deleteGame(id: string) {
   try {
     const deletedPost = await databases.deleteDocument(
@@ -14,6 +16,7 @@ export async function deleteGame(id: string) {
     console.log(err);
   }
 }
+
 export async function editGamePost(
   emptySpots: number,
   newJoinedPlayers: string[],
@@ -50,6 +53,7 @@ export async function editGamePost(
     console.log(err);
   }
 }
+
 export async function getGame(postId: string) {
   try {
     const normalPost = await databases.getDocument(
@@ -63,6 +67,7 @@ export async function getGame(postId: string) {
     console.log(err);
   }
 }
+
 export async function getRecentGames(pageParam: number, userId: string) {
   try {
     const games = await databases.listDocuments(
@@ -81,6 +86,7 @@ export async function getRecentGames(pageParam: number, userId: string) {
     console.log(err);
   }
 }
+
 export async function createGame(post: INewGame) {
   try {
     const newPost = await databases.createDocument(
@@ -128,6 +134,7 @@ export async function createGame(post: INewGame) {
     console.log(err);
   }
 }
+
 export async function leaveGame({
   userId,
   postId,
@@ -166,6 +173,7 @@ export async function leaveGame({
     console.log(err);
   }
 }
+
 export async function joinGame({
   userId,
   postId,
@@ -176,35 +184,41 @@ export async function joinGame({
   playersNumber: number;
 }) {
   try {
-    const waitingGame = await databases.listDocuments(
+    const game = await databases.getDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.waitingGamesID,
-      [Query.equal("gameId", [postId])],
+      appwriteConfig.gamesID,
+      postId,
     );
 
-    const waitingPlayers = waitingGame.documents[0].waitingPlayers;
-    if (waitingPlayers.length === playersNumber)
-      return new Error("Game is full");
-    if (!waitingPlayers.some((player) => player.$id === userId)) {
-      const updatedPost = await databases.updateDocument(
-        appwriteConfig.databaseID,
-        appwriteConfig.waitingGamesID,
-        waitingGame.documents[0].$id,
-        {
-          waitingPlayers: [
-            ...waitingPlayers.map((player) => player.$id),
-            userId,
-          ],
-        },
-      );
-      return updatedPost;
-    } else {
-      return new Error("Already joined the game");
+    if (!game) throw new Error("Game not found");
+    if (game.creator !== userId) {
+      await createNotification({
+        type: "JOIN_GAME_REQUEST",
+        senderId: userId,
+        receiverId: game.creator,
+        gameId: postId,
+        message: `${userId} wants to join your game`,
+        sender: userId,
+      });
     }
+
+    const waitingGame = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.waitingGamesID,
+      ID.unique(),
+      {
+        gameId: postId,
+        waitingPlayers: [userId],
+        playersNumber: playersNumber,
+      },
+    );
+
+    return waitingGame;
   } catch (err) {
     console.log(err);
   }
 }
+
 export async function getWaitingGame(gameId: string) {
   try {
     const game = await databases.listDocuments(
@@ -229,6 +243,7 @@ export async function getWaitingGame(gameId: string) {
     };
   }
 }
+
 export async function getJoinedGame(gameId: string) {
   try {
     const game = await databases.listDocuments(
@@ -253,6 +268,7 @@ export async function getJoinedGame(gameId: string) {
     };
   }
 }
+
 export async function rejectPlayer({
   waitingGameId,
   userId,
@@ -281,6 +297,7 @@ export async function rejectPlayer({
     console.log(err);
   }
 }
+
 export async function acceptPlayer({
   gameId,
   userId,
@@ -293,44 +310,40 @@ export async function acceptPlayer({
   waitingPlayers: any[];
 }) {
   try {
-    const joinedGame = await databases.listDocuments(
+    const game = await databases.getDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.joinedGamesID,
-      [Query.equal("gameId", gameId)],
+      appwriteConfig.gamesID,
+      gameId,
     );
-    if (!joinedGame) throw new Error("Joined game not found");
+
+    if (!game) throw new Error("Game not found");
+    await createNotification({
+      type: "JOIN_GAME_REQUEST",
+      senderId: game.creator,
+      receiverId: userId,
+      gameId: gameId,
+      message: `Your request to join the game has been accepted`,
+    });
+
+    const updatedGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      gameId,
+      {
+        joinedPlayers: [...game.joinedPlayers, userId],
+      },
+    );
+
     const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
       waitingGameId,
       {
-        waitingPlayers: waitingPlayers
-          .filter((player) => player.$id !== userId)
-          .map((player) => player.$id),
+        waitingPlayers: waitingPlayers.filter((player) => player !== userId),
       },
     );
-    console.log(
-      waitingPlayers
-        .filter((player) => player.$id !== userId)
-        .map((player) => player.$id),
-    );
 
-    if (!updatedWaitingGame) throw new Error("Waiting game not found");
-    const updatedJoinedGame = await databases.updateDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.joinedGamesID,
-      joinedGame.documents[0].$id,
-      {
-        joinedPlayers: [
-          ...joinedGame.documents[0].joinedPlayers.map((player) => player.$id),
-          userId,
-        ],
-      },
-    );
-    console.log(joinedGame.documents[0].joinedPlayers, userId);
-
-    if (!updatedJoinedGame) throw new Error("Joined game not found");
-    return updatedJoinedGame;
+    return { updatedGame, updatedWaitingGame };
   } catch (err) {
     console.log(err);
   }

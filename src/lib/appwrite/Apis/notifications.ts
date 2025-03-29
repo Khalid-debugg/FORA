@@ -1,6 +1,7 @@
 import { ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
 import { Query } from "appwrite";
+import { INotification } from "@/types";
 export const sendFriendRequest = async (
   userId: string,
   userName: string,
@@ -47,19 +48,6 @@ export const removeFriendRequest = async (userId: string, friendId: string) => {
     console.log(error.message);
   }
 };
-export const getNotifications = async (userId: string) => {
-  try {
-    const notifications = await databases.listDocuments(
-      appwriteConfig.databaseID,
-      appwriteConfig.notificationsID,
-      [Query.equal("user", userId)],
-    );
-    if (!notifications) throw new Error("Something went wrong!!");
-    return notifications?.documents;
-  } catch (error) {
-    console.log(error.message);
-  }
-};
 export const checkIsFriendRequestSent = async (
   userId: string,
   friendId: string,
@@ -82,3 +70,111 @@ export const checkIsFriendRequestSent = async (
     console.log(error.message);
   }
 };
+export async function createNotification({
+  type,
+  senderId,
+  receiverId,
+  postId,
+  gameId,
+  commentId,
+  replyId,
+  message,
+}: Omit<INotification, "$id" | "$createdAt" | "isRead">) {
+  try {
+    const notification = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      ID.unique(),
+      {
+        type,
+        senderId,
+        receiverId,
+        postId,
+        gameId,
+        commentId,
+        replyId,
+        message,
+        isRead: false,
+      },
+    );
+    return notification;
+  } catch (error) {
+    console.error("Error creating notification:", error);
+    throw error;
+  }
+}
+
+export async function getNotifications(userId: string) {
+  try {
+    const notifications = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      [Query.equal("receiverId", userId), Query.orderDesc("$createdAt")],
+    );
+    return notifications.documents.map((doc) => ({
+      ...doc,
+      sender: JSON.parse(doc.sender),
+    }));
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    throw error;
+  }
+}
+
+export async function markNotificationAsRead(notificationId: string) {
+  try {
+    const notification = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      notificationId,
+      {
+        isRead: true,
+      },
+    );
+    return notification;
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    throw error;
+  }
+}
+
+export async function markAllNotificationsAsRead(userId: string) {
+  try {
+    const notifications = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      [Query.equal("receiverId", userId), Query.equal("isRead", false)],
+    );
+
+    const updatePromises = notifications.documents.map((doc) =>
+      databases.updateDocument(
+        appwriteConfig.databaseID,
+        appwriteConfig.notificationsID,
+        doc.$id,
+        {
+          isRead: true,
+        },
+      ),
+    );
+
+    await Promise.all(updatePromises);
+    return true;
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    throw error;
+  }
+}
+
+export async function deleteNotification(notificationId: string) {
+  try {
+    await databases.deleteDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      notificationId,
+    );
+    return true;
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    throw error;
+  }
+}

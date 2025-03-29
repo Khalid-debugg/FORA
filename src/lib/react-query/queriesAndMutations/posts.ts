@@ -77,9 +77,13 @@ export const useEditNormalPost = () => {
     }) => editNormalPost(id, caption, fileOrFiles, mediaUrls, mediaIds),
   });
 };
-export const useLikePost = (post: ICreatedPost, userId: string) => {
+export const useLikePost = (
+  post: ICreatedPost,
+  userId: string,
+  postCreatorId: string,
+) => {
   return useMutation({
-    mutationFn: () => likePost(post, userId),
+    mutationFn: () => likePost(post, userId, postCreatorId),
   });
 };
 export const useUnlikePost = (post: ICreatedPost, userId: string) => {

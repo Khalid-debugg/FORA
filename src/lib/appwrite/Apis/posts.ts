@@ -7,6 +7,7 @@ import {
   uploadFiles,
 } from "./helper";
 import { ICreatedPost, INewComment, INewPost } from "@/types";
+import { createNotification } from "./notifications";
 
 export async function getNormalPost(postId: string) {
   try {
@@ -167,27 +168,33 @@ export async function createPost(post: INewPost) {
     throw err;
   }
 }
-export async function likePost(post: ICreatedPost, userId: string) {
+export async function likePost(
+  post: ICreatedPost,
+  userId: string,
+  postCreatorId: string,
+) {
   try {
-    const currentLikes = post?.postLikes?.map((like) => like.$id);
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
       post.$id,
       {
-        postLikes: [...currentLikes, userId],
-        likesIds: [...currentLikes, userId],
+        postLikes: [...post.postLikes, userId],
       },
     );
-
-    if (!updatedPost) {
-      return new Error("Failed to like the post.");
+    if (post.creator.$id !== userId) {
+      await createNotification({
+        type: "LIKE_POST",
+        senderId: userId,
+        receiverId: postCreatorId,
+        postId: post.$id,
+        message: `${post.creator.name} liked your post`,
+      });
     }
 
     return updatedPost;
   } catch (err) {
-    console.error("Error creating like:", err);
-    throw err;
+    console.log(err);
   }
 }
 export async function unlikePost(post: ICreatedPost, userId: string) {
@@ -257,5 +264,33 @@ export async function unlikeReply(reply: INewComment, userId: string) {
   } catch (err) {
     console.error("Error creating reply:", err);
     throw err;
+  }
+}
+export async function createComment(post: ICreatedPost, comment: INewComment) {
+  try {
+    const newComment = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.commentsID,
+      ID.unique(),
+      {
+        ...comment,
+        postId: post.$id,
+      },
+    );
+    if (post.creator.$id !== comment.userId) {
+      await createNotification({
+        type: "COMMENT",
+        senderId: comment.userId,
+        receiverId: post.creator.$id,
+        postId: post.$id,
+        commentId: newComment.$id,
+        message: `${comment.userId} commented on your post`,
+        sender: comment.userId,
+      });
+    }
+
+    return newComment;
+  } catch (err) {
+    console.log(err);
   }
 }

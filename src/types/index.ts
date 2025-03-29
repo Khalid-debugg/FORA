@@ -98,6 +98,29 @@ export type ICreatedPost = {
   privacy: string;
 };
 
+export type NotificationType =
+  | "JOIN_GAME_REQUEST"
+  | "FRIEND_REQUEST"
+  | "LIKE_POST"
+  | "LIKE_COMMENT"
+  | "LIKE_REPLY"
+  | "COMMENT"
+  | "REPLY";
+
+export type INotification = {
+  $id: string;
+  $createdAt: string;
+  type: NotificationType;
+  senderId: string;
+  receiverId: string;
+  isRead: boolean;
+  postId?: string;
+  gameId?: string;
+  commentId?: string;
+  replyId?: string;
+  message: string;
+};
+
 export interface ISearchResults {
   posts: Models.Document[];
   games: Models.Document[];
