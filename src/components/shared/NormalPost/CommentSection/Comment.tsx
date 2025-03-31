@@ -61,7 +61,9 @@ const Comment = ({ comment, mimeType, postId }) => {
     if (comment) {
       setContent(comment?.content);
     }
-    if (comment?.replyLikes?.some((likedUser) => likedUser.$id === user?.id)) {
+    if (
+      comment?.commentLikes?.some((likedUser) => likedUser.$id === user?.id)
+    ) {
       setIsLiked(true);
     }
   }, [comment, user]);
