@@ -13,10 +13,10 @@ export const sendFriendRequest = async (
       appwriteConfig.notificationsID,
       ID.unique(),
       {
-        user: friendId,
-        actor: userId,
-        type: "friendRequest",
-        content: `${userName} sent you a friend request`,
+        senderId: friendId,
+        receiverId: userId,
+        type: "FRIEND_REQUEST",
+        message: `${userName} sent you a friend request`,
       },
     );
     if (!friendRequest) throw new Error("Something went wrong!!");
@@ -31,9 +31,9 @@ export const removeFriendRequest = async (userId: string, friendId: string) => {
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
       [
-        Query.equal("user", friendId),
-        Query.equal("type", "friendRequest"),
-        Query.equal("actor", userId),
+        Query.equal("senderId", friendId),
+        Query.equal("type", "FRIEND_REQUEST"),
+        Query.equal("receiverId", userId),
       ],
     );
     if (!friendRequest) throw new Error("Something went wrong!!");
@@ -58,9 +58,9 @@ export const checkIsFriendRequestSent = async (
       appwriteConfig.notificationsID,
       [
         Query.and([
-          Query.equal("type", "friendRequest"),
-          Query.equal("user", friendId),
-          Query.equal("actor", userId),
+          Query.equal("type", "FRIEND_REQUEST"),
+          Query.equal("senderId", friendId),
+          Query.equal("receiverId", userId),
         ]),
       ],
     );
