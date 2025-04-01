@@ -2,6 +2,7 @@ import { ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
 import { Query } from "appwrite";
 import { INotification } from "@/types";
+
 export const sendFriendRequest = async (
   userId: string,
   userName: string,
@@ -13,27 +14,30 @@ export const sendFriendRequest = async (
       appwriteConfig.notificationsID,
       ID.unique(),
       {
-        senderId: friendId,
-        receiverId: userId,
+        sender: friendId,
+        receiver: userId,
         type: "FRIEND_REQUEST",
         message: `${userName} sent you a friend request`,
       },
     );
     if (!friendRequest) throw new Error("Something went wrong!!");
     return friendRequest;
-  } catch (error) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
   }
 };
+
 export const removeFriendRequest = async (userId: string, friendId: string) => {
   try {
     const friendRequest = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
       [
-        Query.equal("senderId", friendId),
+        Query.equal("sender", friendId),
         Query.equal("type", "FRIEND_REQUEST"),
-        Query.equal("receiverId", userId),
+        Query.equal("receiver", userId),
       ],
     );
     if (!friendRequest) throw new Error("Something went wrong!!");
@@ -44,10 +48,13 @@ export const removeFriendRequest = async (userId: string, friendId: string) => {
     );
     if (!deletedRequest) throw new Error("Something went wrong!!");
     return deletedRequest;
-  } catch (error) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
   }
 };
+
 export const checkIsFriendRequestSent = async (
   userId: string,
   friendId: string,
@@ -59,25 +66,29 @@ export const checkIsFriendRequestSent = async (
       [
         Query.and([
           Query.equal("type", "FRIEND_REQUEST"),
-          Query.equal("senderId", friendId),
-          Query.equal("receiverId", userId),
+          Query.equal("sender", friendId),
+          Query.equal("receiver", userId),
         ]),
       ],
     );
     if (!friendShip) throw new Error("Something went wrong!!");
     return friendShip.documents.length > 0;
-  } catch (error) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    return false;
   }
 };
+
 export async function createNotification({
   type,
-  senderId,
-  receiverId,
-  postId,
-  gameId,
-  commentId,
-  replyId,
+  sender,
+  receiver,
+  post,
+  game,
+  comment,
+  reply,
   message,
 }: Omit<INotification, "$id" | "$createdAt" | "isRead">) {
   try {
@@ -87,12 +98,12 @@ export async function createNotification({
       ID.unique(),
       {
         type,
-        senderId,
-        receiverId,
-        postId,
-        gameId,
-        commentId,
-        replyId,
+        sender,
+        receiver,
+        post,
+        game,
+        comment,
+        reply,
         message,
         isRead: false,
       },
@@ -109,14 +120,13 @@ export async function getNotifications(userId: string) {
     const notifications = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
-      [Query.equal("receiverId", userId), Query.orderDesc("$createdAt")],
+      [Query.equal("receiver", userId), Query.orderDesc("$createdAt")],
     );
-    return notifications.documents.map((doc) => ({
-      ...doc,
-      sender: JSON.parse(doc.sender),
-    }));
-  } catch (error) {
-    console.error("Error fetching notifications:", error);
+    return notifications.documents;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching notifications:", error.message);
+    }
     throw error;
   }
 }
@@ -143,7 +153,7 @@ export async function markAllNotificationsAsRead(userId: string) {
     const notifications = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
-      [Query.equal("receiverId", userId), Query.equal("isRead", false)],
+      [Query.equal("receiver", userId), Query.equal("isRead", false)],
     );
 
     const updatePromises = notifications.documents.map((doc) =>

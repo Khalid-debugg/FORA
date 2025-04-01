@@ -8,10 +8,14 @@ import {
   sendFriendRequest,
 } from "@/lib/appwrite/Apis/notifications";
 
-export const useGetNotifications = (userId: string) => {
+export const useGetNotifications = (
+  userId: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery({
     queryKey: [QueryKeys.Notifications],
     queryFn: () => getNotifications(userId),
+    enabled: options?.enabled ?? true,
   });
 };
 

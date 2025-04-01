@@ -1,4 +1,4 @@
-import { Query } from "appwrite";
+import { Query, ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
 
 export const checkIsFriend = async (userId: string, friendId: string) => {
@@ -39,5 +39,26 @@ export const unFriend = async (friendShipId: string) => {
     return deletedFriendShip;
   } catch (error) {
     console.log(error.message);
+  }
+};
+
+export const addFriend = async (userId: string, friendId: string) => {
+  try {
+    const newFriendship = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.friendShipID,
+      ID.unique(),
+      {
+        actor: userId,
+        receiver: friendId,
+      },
+    );
+    if (!newFriendship) throw new Error("Failed to create friendship");
+    return newFriendship;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    throw error;
   }
 };
