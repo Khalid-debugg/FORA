@@ -195,8 +195,14 @@ const NormalPost = ({
         </button>
       </div>
       {isCommentClicked && (
-        <Suspense fallback={<div className="animate-spin">⚽</div>}>
-          <CommentSection post={post} isCommentClicked={isCommentClicked} />{" "}
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center">
+              <div className="animate-spin">⚽</div>
+            </div>
+          }
+        >
+          <CommentSection post={post} isCommentClicked={isCommentClicked} />
         </Suspense>
       )}
     </div>
