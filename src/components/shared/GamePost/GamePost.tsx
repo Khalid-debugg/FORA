@@ -34,6 +34,8 @@ const GamePost = ({ post, isOne }) => {
   const [isJoined, setisJoined] = useState(false);
   const [isWaiting, setisWaiting] = useState(false);
   const navigate = useNavigate();
+  const [showOverlay, setShowOverlay] = useState(true);
+
   useEffect(() => {
     if (waitingGame) {
       setisJoined(
@@ -85,10 +87,30 @@ const GamePost = ({ post, isOne }) => {
     }
   };
 
+  const playersNeeded = Math.max(
+    0,
+    (post?.playersNumber || 0) - (joinedGame?.joinedPlayers?.length || 0),
+  );
+
   return (
     <div
-      className={`flex flex-col border-primary-500 w-full divide-y-2 divide-primary-500 min-h-[30rem] overflow-hidden ${!isOne ? "rounded-3xl border-2 " : "border-b-2"}`}
+      className={`flex flex-col border-primary-500 w-full divide-y-2 divide-primary-500 min-h-[30rem] overflow-hidden relative ${!isOne ? "rounded-3xl border-2 " : "border-b-2"}`}
     >
+      {playersNeeded === 0 &&
+        showOverlay &&
+        user?.id !== post?.creator?.$id && (
+          <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg text-center">
+              <h3 className="text-xl font-bold mb-4">Game is Full! 🏃‍♂️</h3>
+              <button
+                onClick={() => setShowOverlay(false)}
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors"
+              >
+                Show Anyway
+              </button>
+            </div>
+          </div>
+        )}
       <button
         onClick={() => navigate(`/game-post/${post?.$id}`)}
         className="flex p-4 justify-between items-center hover:bg-slate-100"
@@ -115,16 +137,17 @@ const GamePost = ({ post, isOne }) => {
           <div className="flex items-center gap-2">
             <GiSoccerKick fill="green" size={20} />
             <p>Players needed: </p>
-            <p>
-              {Math.max(
-                0,
-                (post?.playersNumber || 0) -
-                  (joinedGame?.joinedPlayers?.length || 0),
-              )}
-            </p>
+            <p>{playersNeeded}</p>
           </div>
         </div>
       </button>
+
+      {post?.content && (
+        <div className="p-4">
+          <p className="text-gray-700 whitespace-pre-wrap">{post?.content}</p>
+        </div>
+      )}
+
       <div className="flex flex-1">
         <JoinedList
           joinedPlayers={joinedGame?.joinedPlayers}
