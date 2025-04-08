@@ -11,7 +11,10 @@ const Notifications = () => {
     });
 
   return (
-    <div className="flex flex-col gap-2 md:w-1/3 w-full mx-auto items-center">
+    <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
+      <div className="flex items-center w-full shadow-md">
+        <h1 className="text-xl px-4 py-8">Notifications</h1>
+      </div>
       {isGettingNotifications ? (
         <Skeleton className="w-full h-10" />
       ) : (

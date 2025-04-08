@@ -29,13 +29,6 @@ import {
   useLikePost,
   useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations/posts";
-import { IoMdAdd } from "react-icons/io";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaClock } from "react-icons/fa";
-import { ImExit } from "react-icons/im";
-import { GiSoccerKick } from "react-icons/gi";
-import WaitingList from "./WaitingList";
-import JoinedList from "./JoinedList";
 import { useMediaFiles } from "@/lib/react-query/queriesAndMutations/helper";
 
 const CommentSection = lazy(() => import("./CommentSection/CommentSection"));

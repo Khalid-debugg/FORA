@@ -5,19 +5,43 @@ import { Link } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../ui/use-toast";
 import { useAddFriend } from "@/lib/react-query/queriesAndMutations/Profile";
-import { useRemoveFriendRequest } from "@/lib/react-query/queriesAndMutations/notifications";
+import {
+  useRemoveFriendRequest,
+  useDeleteNotification,
+} from "@/lib/react-query/queriesAndMutations/notifications";
+import { useState, useEffect } from "react";
+
 const NotificationCard = ({
   notification,
 }: {
   notification: INotification;
 }) => {
-  console.log(notification);
   const { user } = useUserContext();
   const { mutateAsync: addFriend } = useAddFriend();
   const { mutateAsync: removeFriendRequest } = useRemoveFriendRequest(
     user?.id || "",
     notification.sender,
   );
+  const { mutate: deleteNotification } = useDeleteNotification(
+    notification.$id,
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showUndo, setShowUndo] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (isDeleting) {
+      timeoutId = setTimeout(() => {
+        deleteNotification();
+        setIsDeleting(false);
+        setShowUndo(false);
+      }, 2000);
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isDeleting, deleteNotification]);
+
   const handleAcceptFriendRequest = async () => {
     try {
       await addFriend({
@@ -28,6 +52,8 @@ const NotificationCard = ({
         title: "Friend request accepted!",
         variant: "default",
       });
+      setIsDeleting(true);
+      setShowUndo(true);
     } catch (error) {
       toast({
         title: "Failed to accept friend request",
@@ -43,6 +69,8 @@ const NotificationCard = ({
         title: "Friend request rejected",
         variant: "default",
       });
+      setIsDeleting(true);
+      setShowUndo(true);
     } catch (error) {
       toast({
         title: "Failed to reject friend request",
@@ -50,6 +78,30 @@ const NotificationCard = ({
       });
     }
   };
+
+  const handleUndo = () => {
+    setIsDeleting(false);
+    setShowUndo(false);
+  };
+
+  if (isDeleting) {
+    return (
+      <Card className="w-full">
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-2">
+            {showUndo && (
+              <Button
+                onClick={handleUndo}
+                className="bg-blue-500 text-white hover:bg-blue-600"
+              >
+                Undo
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full">
