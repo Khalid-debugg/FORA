@@ -107,7 +107,33 @@ const NotificationCard = ({
     <Card className="w-full">
       <CardContent className="p-4">
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gray-600">{notification.message}</p>
+          <div className="flex justify-between items-start">
+            <p className="text-sm text-gray-600">{notification.message}</p>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => {
+                setIsDeleting(true);
+                setShowUndo(true);
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </Button>
+          </div>
           {notification.type === "FRIEND_REQUEST" && (
             <div className="flex gap-2">
               <Button
