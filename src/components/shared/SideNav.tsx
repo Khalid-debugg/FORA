@@ -5,9 +5,8 @@ import { Skeleton } from "../ui/skeleton";
 import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
 const sideLinks = [
   { logoUrl: "home", label: "Home", path: "/" },
-  { logoUrl: "mygames", label: "My Games" },
+  { logoUrl: "chat", label: "Messages", path: "/messages" },
   { logoUrl: "search", label: "Explore", path: "/explore" },
-  // { logoUrl: "chat", label: "Messages" },
   { logoUrl: "notifications", label: "Notifications", path: "/notifications" },
 ];
 const SideNav = () => {

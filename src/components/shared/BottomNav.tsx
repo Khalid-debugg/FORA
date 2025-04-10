@@ -4,18 +4,18 @@ const BottomNav = () => {
   const navigate = useNavigate();
   return (
     <nav className="border-t-2 bg-white border-primary-500 flex items-center justify-center w-full md:hidden divide-x fixed bottom-0 z-50">
-      <button className="flex-1 p-5">
+      <button className="flex-1 p-5" onClick={() => navigate("/")}>
         <img
-          src="/assets/icons/mygames.svg"
-          alt="profile picture"
-          className="h-10 hover:bg-gray-300  mx-auto"
+          src="/assets/icons/home.svg"
+          alt="Home icon"
+          className="h-10 hover:bg-gray-300 mx-auto"
         />
       </button>
-      <button className="flex-1 p-5">
+      <button className="flex-1 p-5" onClick={() => navigate("/messages")}>
         <img
           src="/assets/icons/chat.svg"
           alt="Messages icon"
-          className="h-10 mx-auto"
+          className="h-10 hover:bg-gray-300 mx-auto"
         />
       </button>
       <button
@@ -28,11 +28,11 @@ const BottomNav = () => {
           className="mx-auto"
         />
       </button>
-      <button className="flex-1 p-5">
+      <button className="flex-1 p-5" onClick={() => navigate("/explore")}>
         <img
           src="/assets/icons/search.svg"
           alt="Search icon"
-          className="h-10 mx-auto"
+          className="h-10 hover:bg-gray-300 mx-auto"
         />
       </button>
     </nav>
