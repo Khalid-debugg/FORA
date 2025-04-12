@@ -1,7 +1,19 @@
+import { useUserContext } from "@/context/AuthContext";
+import { useGetChats } from "@/lib/react-query/queriesAndMutations/chats";
 import { useState } from "react";
 
 const Messages = () => {
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedChat, setSelectedChat] = useState<{
+    id: string;
+    name: string;
+  }>(null);
+  const { user } = useUserContext();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetChats(
+    user?.id,
+  );
+
+  const chats = data?.pages.flat() || [];
+  console.log(chats);
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
@@ -10,20 +22,67 @@ const Messages = () => {
           <div className="p-4 border-b border-green-200">
             <h2 className="text-xl font-semibold">Messages</h2>
           </div>
-          <div className="flex-1 overflow-y-auto h-full">
-            <div className="p-4 text-center text-gray-500">No messages yet</div>
+
+          <div className="flex-1 overflow-y-auto">
+            {chats.length === 0 ? (
+              <div className="p-4 text-center text-gray-500">
+                No messages yet
+              </div>
+            ) : (
+              <>
+                {chats.map((chat: any) => (
+                  <div
+                    key={chat.$id}
+                    onClick={() =>
+                      setSelectedChat({ id: chat.$id, name: chat.name })
+                    }
+                    className={`p-4 cursor-pointer hover:bg-green-50 border-b ${
+                      selectedChat === chat.$id ? "bg-green-100" : ""
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <img
+                        className="w-10 h-10 rounded-full mr-2"
+                        src={chat.lastMessage?.sender?.imageUrl}
+                        loading="lazy"
+                        alt=""
+                      />
+                      <div>{chat.lastMessage?.content}</div>
+                    </div>
+                  </div>
+                ))}
+                {hasNextPage && (
+                  <div className="p-4 text-center">
+                    <button
+                      onClick={() => fetchNextPage()}
+                      disabled={isFetchingNextPage}
+                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                    >
+                      {isFetchingNextPage ? "Loading..." : "Show More"}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
+
         <div className="hidden md:flex flex-col flex-1">
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold">
-              Select a chat to start messaging
+              {selectedChat
+                ? selectedChat.name
+                : "Select a chat to start messaging"}
             </h2>
           </div>
           <div className="flex-1 flex items-center justify-center">
-            <p className="text-gray-500">
-              Select a conversation to start messaging
-            </p>
+            {selectedChat ? (
+              <p>Selected chat: {selectedChat.name}</p>
+            ) : (
+              <p className="text-gray-500">
+                Select a conversation to start messaging
+              </p>
+            )}
           </div>
         </div>
       </div>
