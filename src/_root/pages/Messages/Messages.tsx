@@ -1,3 +1,4 @@
+import MessagesContainter from "@/components/shared/Messages/MessagesContainter";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetChats } from "@/lib/react-query/queriesAndMutations/chats";
 import { useState } from "react";
@@ -13,7 +14,6 @@ const Messages = () => {
   );
 
   const chats = data?.pages.flat() || [];
-  console.log(chats);
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
@@ -37,17 +37,22 @@ const Messages = () => {
                       setSelectedChat({ id: chat.$id, name: chat.name })
                     }
                     className={`p-4 cursor-pointer hover:bg-green-50 border-b ${
-                      selectedChat === chat.$id ? "bg-green-100" : ""
+                      selectedChat?.id === chat.$id ? "bg-green-100" : ""
                     }`}
                   >
                     <div className="flex items-center">
                       <img
                         className="w-10 h-10 rounded-full mr-2"
-                        src={chat.lastMessage?.sender?.imageUrl}
+                        src={
+                          chat.lastMessage?.sender?.imageUrl ||
+                          "/default-avatar.png"
+                        }
                         loading="lazy"
-                        alt=""
+                        alt="avatar"
                       />
-                      <div>{chat.lastMessage?.content}</div>
+                      <div className="text-sm text-left">
+                        {chat.lastMessage?.content || "No messages yet"}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -77,7 +82,7 @@ const Messages = () => {
           </div>
           <div className="flex-1 flex items-center justify-center">
             {selectedChat ? (
-              <p>Selected chat: {selectedChat.name}</p>
+              <MessagesContainter selectedChat={selectedChat} />
             ) : (
               <p className="text-gray-500">
                 Select a conversation to start messaging

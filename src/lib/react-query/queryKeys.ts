@@ -11,4 +11,5 @@ export enum QueryKeys {
   JoinedGame = "getJoinedGame",
   Notifications = "getNotifications",
   Chats = "getChats",
+  Messages = "getMessages",
 }

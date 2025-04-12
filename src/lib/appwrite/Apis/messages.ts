@@ -25,3 +25,23 @@ export const hasNewMessages = async (userId: string) => {
     return false;
   }
 };
+export async function getMessages(chatId: string, pageParam: number) {
+  try {
+    console.log(chatId);
+
+    const messages = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.messagesID,
+      [
+        Query.equal("chat", chatId),
+        Query.limit(20),
+        Query.offset(pageParam * 20),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+    if (!messages) throw new Error("Something went wrong");
+    return messages.documents;
+  } catch (err) {
+    console.log(err);
+  }
+}
