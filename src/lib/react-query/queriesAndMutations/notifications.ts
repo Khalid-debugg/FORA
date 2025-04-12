@@ -7,6 +7,8 @@ import {
   removeFriendRequest,
   sendFriendRequest,
   deleteNotification,
+  hasNewNotifications,
+  markAllNotificationsAsRead,
 } from "@/lib/appwrite/Apis/notifications";
 
 export const useGetNotifications = (
@@ -61,6 +63,24 @@ export const useDeleteNotification = (notificationId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.Notifications],
+      });
+    },
+  });
+};
+export const useHasNewNotifications = (userId: string) => {
+  return useQuery({
+    queryKey: ["hasNewNotifications", userId],
+    queryFn: () => hasNewNotifications(userId),
+    enabled: !!userId,
+  });
+};
+
+export const useMarkAllNotificationsAsRead = () => {
+  return useMutation({
+    mutationFn: (userId: string) => markAllNotificationsAsRead(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["hasNewNotifications"],
       });
     },
   });

@@ -1,25 +1,31 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import MenuItem from "./MenuItem";
-import { useUserContext } from "@/context/AuthContext";
 import { Skeleton } from "../ui/skeleton";
 import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
+import { IUser } from "@/types";
 const sideLinks = [
   { logoUrl: "home", label: "Home", path: "/" },
   { logoUrl: "chat", label: "Messages", path: "/messages" },
   { logoUrl: "search", label: "Explore", path: "/explore" },
   { logoUrl: "notifications", label: "Notifications", path: "/notifications" },
 ];
-const SideNav = () => {
+const SideNav = ({
+  user,
+  hasNewNotifications,
+  hasNewMessages,
+}: {
+  user: IUser | undefined;
+  hasNewNotifications: boolean;
+  hasNewMessages: boolean;
+}) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user } = useUserContext();
   const { mutateAsync: deleteSession, isPending } = useDeleteSession();
   const logout = () => {
     deleteSession();
     localStorage.clear();
     navigate("/signin");
   };
-  console.log(user);
 
   return (
     <nav className="fixed top-0 left-0 w-1/3 max-w-1/3 h-screen hidden md:flex flex-col justify-between items-end py-5 px-7">
@@ -62,6 +68,12 @@ const SideNav = () => {
               pagePath={link.path}
               isActive={pathname === link.path}
               key={link.label}
+              showNotificationsIndicator={
+                link.label === "Notifications" && hasNewNotifications
+              }
+              showMessagesIndicator={
+                link.label === "Messages" && hasNewMessages
+              }
             />
           );
         })}

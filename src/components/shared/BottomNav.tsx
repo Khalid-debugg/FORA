@@ -1,6 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
-const BottomNav = () => {
+const BottomNav = ({
+  user,
+  hasNewNotifications,
+  hasNewMessages,
+}: {
+  user: IUser | undefined;
+  hasNewNotifications: boolean;
+  hasNewMessages: boolean;
+}) => {
   const navigate = useNavigate();
   return (
     <nav className="border-t-2 bg-white border-primary-500 flex items-center justify-center w-full md:hidden divide-x fixed bottom-0 z-50">

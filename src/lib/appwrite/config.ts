@@ -13,8 +13,10 @@ export const appwriteConfig = {
   commentsID: import.meta.env.VITE_APPWRITE_COMMENTS_ID,
   repliesID: import.meta.env.VITE_APPWRITE_REPLIES_ID,
   mediaBucketID: import.meta.env.VITE_APPWRITE_MEDIA_BUCKET_ID,
-  friendShipID: import.meta.env.VITE_APPWRITE_FRIENDSHIP,
-  notificationsID: import.meta.env.VITE_APPWRITE_NOTIFICATIONS,
+  friendShipID: import.meta.env.VITE_APPWRITE_FRIENDSHIP_ID,
+  notificationsID: import.meta.env.VITE_APPWRITE_NOTIFICATIONS_ID,
+  chatsID: import.meta.env.VITE_APPWRITE_CHATS_ID,
+  messagesID: import.meta.env.VITE_APPWRITE_MESSAGES_ID,
 };
 export const client = new Client();
 

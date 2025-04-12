@@ -188,3 +188,19 @@ export async function deleteNotification(notificationId: string) {
     throw error;
   }
 }
+export const hasNewNotifications = async (userId: string) => {
+  try {
+    const notifications = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      [Query.equal("receiver", userId), Query.equal("isRead", false)],
+    );
+    if (!notifications) throw new Error("Something went wrong!!");
+    return notifications.documents.length > 0;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    return false;
+  }
+};
