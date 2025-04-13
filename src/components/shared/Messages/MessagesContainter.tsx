@@ -2,13 +2,14 @@ import { useEffect, useRef } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetMessages } from "@/lib/react-query/queriesAndMutations/messages";
 import MessageForm from "./MessageForm";
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages";
 
 const MessagesContainter = ({ selectedChat }) => {
   const { user } = useUserContext();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useGetMessages(selectedChat.id);
+  useRealtimeMessages(selectedChat.id);
   const messages = data?.pages.flat() || [];
-
   const bottomRef = useRef(null);
   const hasScrolledInitially = useRef(false);
 
@@ -30,10 +31,10 @@ const MessagesContainter = ({ selectedChat }) => {
   }, [data]);
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 h-full overflow-y-auto flex flex-col justify-start p-4 gap-2">
+    <div className="flex flex-col h-[100vh] overflow-y-auto">
+      <div className=" flex-1 flex flex-col justify-start p-4 gap-2">
         {isFetchingNextPage && (
-          <p className="text-center text-gray-500">Loading more...</p>
+          <p className="text-center text-gray-500 animate-spin">⚽</p>
         )}
         {!hasNextPage && messages.length > 0 && (
           <p className="text-center text-gray-400 text-sm">

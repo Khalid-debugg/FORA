@@ -14,8 +14,6 @@ const Messages = () => {
   );
 
   const chats = data?.pages.flat() || [];
-
-  // Auto-select the first chat if none is selected
   useEffect(() => {
     if (!selectedChat && chats.length > 0) {
       setSelectedChat({ id: chats[0].$id, name: chats[0].name });
