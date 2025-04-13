@@ -20,6 +20,7 @@ const MessageForm = ({ selectedChat }) => {
 
   const { mutateAsync: createMessage, isPending: isSending } = useCreateMessage(
     selectedChat.id,
+    user?.id,
   );
 
   const form = useForm<z.infer<typeof messageValidation>>({
@@ -46,9 +47,7 @@ const MessageForm = ({ selectedChat }) => {
   const onSubmit = async (values: z.infer<typeof messageValidation>) => {
     try {
       const messagePayload = {
-        chatId: selectedChat.id,
         message: values,
-        userId: user?.id,
       };
       console.log(messagePayload);
 

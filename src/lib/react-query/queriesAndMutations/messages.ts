@@ -26,13 +26,12 @@ export const useGetMessages = (chatId: string) => {
     enabled: !!chatId,
   });
 };
-export const useCreateMessage = (chatId: string) => {
+export const useCreateMessage = (chatId: string, userId: string) => {
   return useMutation({
-    mutationFn: ({ message, userId }) =>
-      createMessage({ chatId, message, userId }),
+    mutationFn: ({ message }) => createMessage({ chatId, message, userId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.Messages + chatId],
+        queryKey: [QueryKeys.Chats + userId],
       });
     },
   });

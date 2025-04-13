@@ -27,7 +27,7 @@ export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 export const avatars = new Avatars(client);
-export const subscribeToMessages = (chatId, onMessageReceived) => {
+export const subscribeToMessages = (onMessageReceived) => {
   const unsubscribe = client.subscribe(
     `databases.${appwriteConfig.databaseID}.collections.${appwriteConfig.messagesID}.documents`,
     (response) => {

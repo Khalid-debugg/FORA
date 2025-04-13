@@ -6,13 +6,15 @@ import { queryClient } from "@/main";
 export const useRealtimeMessages = (chatId: string) => {
   useEffect(() => {
     if (!chatId) return;
-
-    const websocket = subscribeToMessages(chatId, (newMessage) => {
+    const websocket = subscribeToMessages((newMessage) => {
       queryClient.setQueryData(
         [QueryKeys.Messages + chatId],
         (oldData: any) => {
           if (!oldData) return oldData;
-
+          const alreadyExists = oldData.pages[0].some(
+            (msg: any) => msg.$id === newMessage.$id,
+          );
+          if (alreadyExists) return oldData;
           return {
             ...oldData,
             pages: [

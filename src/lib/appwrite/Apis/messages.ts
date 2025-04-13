@@ -14,8 +14,6 @@ export const hasNewMessages = async (userId: string) => {
       appwriteConfig.chatsID,
       [Query.equal("participantsIds", userId)],
     );
-    console.log(chats);
-
     if (!chats) throw new Error("Something went wrong!!");
 
     const newMessages = chats.documents.some((chat) => {
@@ -33,8 +31,6 @@ export const hasNewMessages = async (userId: string) => {
 };
 export async function getMessages(chatId: string, pageParam: number) {
   try {
-    console.log(chatId);
-
     const messages = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.messagesID,
@@ -52,15 +48,11 @@ export async function getMessages(chatId: string, pageParam: number) {
   }
 }
 export async function createMessage({ chatId, message, userId }) {
-  console.log(chatId);
-
   try {
-    console.log(message.media);
-
     const uploadedFile = await handleFileOperation(uploadFiles, message.media);
     const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
 
-    const newComment = await databases.createDocument(
+    const newMessage = await databases.createDocument(
       appwriteConfig.databaseID,
       appwriteConfig.messagesID,
       ID.unique(),
@@ -73,15 +65,21 @@ export async function createMessage({ chatId, message, userId }) {
         mediaType: message.media ? message.media.type : null,
       },
     );
-
-    if (!newComment) {
+    if (!newMessage) {
       await handleFileOperation(deleteFiles, uploadedFile);
-      throw new Error("Failed to create the comment.");
+      throw new Error("Failed to create the message.");
     }
-
-    return newComment;
+    const updatedChat = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.chatsID,
+      chatId,
+      {
+        lastMessage: newMessage.$id,
+      },
+    );
+    return updatedChat;
   } catch (err) {
-    console.error("Error creating comment:", err);
+    console.error("Error creating message:", err);
     throw err;
   }
 }
