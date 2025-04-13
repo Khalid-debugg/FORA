@@ -80,3 +80,10 @@ export const formSchema = z.object({
   favPosition: z.string().optional(),
   FifaCard: z.string().optional(),
 });
+export const messageValidation = z.object({
+  content: z
+    .string()
+    .nonempty("text is required")
+    .max(2200, { message: "That's too much, maximum 2200 characters" }),
+  media: z.custom<File>(),
+});

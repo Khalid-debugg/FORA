@@ -1,5 +1,11 @@
-import { Query } from "appwrite";
+import { ID, Query } from "appwrite";
 import { appwriteConfig, databases } from "../config";
+import {
+  deleteFiles,
+  getFilePreview,
+  handleFileOperation,
+  uploadFiles,
+} from "./helper";
 
 export const hasNewMessages = async (userId: string) => {
   try {
@@ -43,5 +49,39 @@ export async function getMessages(chatId: string, pageParam: number) {
     return messages.documents;
   } catch (err) {
     console.log(err);
+  }
+}
+export async function createMessage({ chatId, message, userId }) {
+  console.log(chatId);
+
+  try {
+    console.log(message.media);
+
+    const uploadedFile = await handleFileOperation(uploadFiles, message.media);
+    const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
+
+    const newComment = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.messagesID,
+      ID.unique(),
+      {
+        sender: userId,
+        content: message.content,
+        chat: chatId,
+        mediaUrl: fileUrl || null,
+        mediaId: uploadedFile?.$id || null,
+        mediaType: message.media ? message.media.type : null,
+      },
+    );
+
+    if (!newComment) {
+      await handleFileOperation(deleteFiles, uploadedFile);
+      throw new Error("Failed to create the comment.");
+    }
+
+    return newComment;
+  } catch (err) {
+    console.error("Error creating comment:", err);
+    throw err;
   }
 }

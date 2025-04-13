@@ -1,19 +1,26 @@
 import MessagesContainter from "@/components/shared/Messages/MessagesContainter";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetChats } from "@/lib/react-query/queriesAndMutations/chats";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Messages = () => {
+  const { user } = useUserContext();
   const [selectedChat, setSelectedChat] = useState<{
     id: string;
     name: string;
   }>(null);
-  const { user } = useUserContext();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetChats(
     user?.id,
   );
 
   const chats = data?.pages.flat() || [];
+
+  // Auto-select the first chat if none is selected
+  useEffect(() => {
+    if (!selectedChat && chats.length > 0) {
+      setSelectedChat({ id: chats[0].$id, name: chats[0].name });
+    }
+  }, [chats, selectedChat]);
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
@@ -51,7 +58,10 @@ const Messages = () => {
                         alt="avatar"
                       />
                       <div className="text-sm text-left">
-                        {chat.lastMessage?.content || "No messages yet"}
+                        <p className="font-semibold">{chat.name}</p>
+                        <p className="text-gray-500 text-sm">
+                          {chat.lastMessage?.content || "No messages yet"}
+                        </p>
                       </div>
                     </div>
                   </div>
