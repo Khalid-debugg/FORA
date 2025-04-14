@@ -1,7 +1,7 @@
 import MessagesContainter from "@/components/shared/Messages/MessagesContainter";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetChats } from "@/lib/react-query/queriesAndMutations/chats";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const Messages = () => {
   const { user } = useUserContext();
@@ -21,8 +21,17 @@ const Messages = () => {
         !chat?.lastMessage?.readBy?.some((u) => u.$id === user?.id),
     );
   }, [chats, user?.id]);
-  console.log(unreadChats);
-
+  const handleChatSelection = (chat: any) => {
+    setSelectedChat({
+      id: chat.$id,
+      name: chat.name
+        ? chat.name
+        : chat.participants
+            .filter((p: any) => p.$id !== user?.id)
+            .map((p: any) => p.name)
+            .join(", "),
+    });
+  };
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
       <div className="flex h-full w-full">
@@ -40,9 +49,7 @@ const Messages = () => {
                 {chats.map((chat: any) => (
                   <div
                     key={chat.$id}
-                    onClick={() =>
-                      setSelectedChat({ id: chat.$id, name: chat.name })
-                    }
+                    onClick={() => handleChatSelection(chat)}
                     className={`w-full flex items-center p-4 cursor-pointer hover:bg-green-50 border-b ${
                       selectedChat?.id === chat.$id ? "bg-green-100" : ""
                     }`}
@@ -57,7 +64,14 @@ const Messages = () => {
                       alt="avatar"
                     />
                     <div className="flex-1 text-sm text-left">
-                      <p className="font-semibold">{chat.name}</p>
+                      <p className="font-semibold">
+                        {chat.name
+                          ? chat.name
+                          : chat.participants
+                              .filter((p: any) => p.$id !== user?.id)
+                              .map((p: any) => p.name)
+                              .join(", ")}
+                      </p>
                       <p className="text-gray-500 text-sm">
                         {chat.lastMessage?.content || "No messages yet"}
                       </p>
