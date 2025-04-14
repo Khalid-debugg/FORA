@@ -1,7 +1,7 @@
 import MessagesContainter from "@/components/shared/Messages/MessagesContainter";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetChats } from "@/lib/react-query/queriesAndMutations/chats";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Messages = () => {
   const { user } = useUserContext();
@@ -12,13 +12,16 @@ const Messages = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetChats(
     user?.id,
   );
-
-  const chats = data?.pages.flat() || [];
-  useEffect(() => {
-    if (!selectedChat && chats.length > 0) {
-      setSelectedChat({ id: chats[0].$id, name: chats[0].name });
-    }
-  }, [chats, selectedChat]);
+  const chats = useMemo(() => data?.pages.flat() || [], [data]);
+  const unreadChats = useMemo(() => {
+    if (!chats || chats.length === 0 || !user?.id) return [];
+    return chats.filter(
+      (chat) =>
+        chat?.lastMessage?.sender?.$id !== user?.id &&
+        !chat?.lastMessage?.readBy?.some((u) => u.$id === user?.id),
+    );
+  }, [chats, user?.id]);
+  console.log(unreadChats);
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
@@ -27,7 +30,6 @@ const Messages = () => {
           <div className="p-4 border-b border-green-200">
             <h2 className="text-xl font-semibold">Messages</h2>
           </div>
-
           <div className="flex-1 overflow-y-auto">
             {chats.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
@@ -41,27 +43,28 @@ const Messages = () => {
                     onClick={() =>
                       setSelectedChat({ id: chat.$id, name: chat.name })
                     }
-                    className={`p-4 cursor-pointer hover:bg-green-50 border-b ${
+                    className={`w-full flex items-center p-4 cursor-pointer hover:bg-green-50 border-b ${
                       selectedChat?.id === chat.$id ? "bg-green-100" : ""
                     }`}
                   >
-                    <div className="flex items-center">
-                      <img
-                        className="w-10 h-10 rounded-full mr-2"
-                        src={
-                          chat.lastMessage?.sender?.imageUrl ||
-                          "/default-avatar.png"
-                        }
-                        loading="lazy"
-                        alt="avatar"
-                      />
-                      <div className="text-sm text-left">
-                        <p className="font-semibold">{chat.name}</p>
-                        <p className="text-gray-500 text-sm">
-                          {chat.lastMessage?.content || "No messages yet"}
-                        </p>
-                      </div>
+                    <img
+                      className="w-10 h-10 rounded-full mr-2"
+                      src={
+                        chat.lastMessage?.sender?.imageUrl ||
+                        "/default-avatar.png"
+                      }
+                      loading="lazy"
+                      alt="avatar"
+                    />
+                    <div className="flex-1 text-sm text-left">
+                      <p className="font-semibold">{chat.name}</p>
+                      <p className="text-gray-500 text-sm">
+                        {chat.lastMessage?.content || "No messages yet"}
+                      </p>
                     </div>
+                    {unreadChats.some((c) => c.$id === chat.$id) && (
+                      <div className="w-2 h-2 bg-green-500 rounded-full justify-end"></div>
+                    )}
                   </div>
                 ))}
                 {hasNextPage && (

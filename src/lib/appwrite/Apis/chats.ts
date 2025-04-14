@@ -11,6 +11,7 @@ export async function getChats(userId: string, pageParam: number) {
         Query.limit(10),
         Query.offset(pageParam * 10),
         Query.orderDesc("$updatedAt"),
+        Query.orderDesc("$createdAt"),
       ],
     );
     if (!chats) throw new Error("Something went wrong");
