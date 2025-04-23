@@ -22,7 +22,7 @@ export const checkIsFriend = async (userId: string, friendId: string) => {
     if (!friendShip) throw new Error("Something went wrong!!");
     return {
       isFriend: friendShip.documents.length > 0,
-      friendShipId: friendShip.documents[0].$id,
+      friendShipId: friendShip.documents[0]?.$id,
     };
   } catch (error) {
     console.log(error.message);

@@ -37,7 +37,7 @@ const MenuItem: React.FC<{
         {label}
       </p>
       {(showNotificationsIndicator || showMessagesIndicator) && (
-        <span className="w-2 h-2 rounded-full bg-red-500"></span>
+        <span className="w-2 h-2 rounded-full bg-primary-500"></span>
       )}
     </button>
   );

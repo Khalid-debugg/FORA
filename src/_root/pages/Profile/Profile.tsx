@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { useGetUser } from "@/lib/react-query/queriesAndMutations/users";
 import { IoPersonAddSharp, IoSettings } from "react-icons/io5";
 import { MdPersonRemove } from "react-icons/md";
+import { RiMessageFill } from "react-icons/ri";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SetupForm } from "@/_root/forms/SetupForm";
 import ProfilePicture from "@/components/shared/Profile/ProfilePicture";
@@ -57,7 +58,7 @@ const Profile = () => {
       <CoverImage user={visitedUser} currentUser={currentUser} />
       <div className="relative px-4 flex flex-col gap-2">
         <ProfilePicture user={visitedUser} currentUser={currentUser} />
-        <div className="flex gap-2 justify-end mt-4">
+        <div className="flex flex-col min-w-1/6 gap-2 self-end mt-4">
           {currentUser.id === visitedUser?.$id ? (
             <Dialog open={isSetupOpen} onOpenChange={setIsSetupOpen}>
               <DialogTrigger asChild>
@@ -81,7 +82,7 @@ const Profile = () => {
                 className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
                 disabled={isRemovingRequest}
               >
-                <MdPersonRemove />
+                <MdPersonRemove size={20} />
                 <p>Remove Friend Request</p>
               </Button>
             ) : (
@@ -91,7 +92,7 @@ const Profile = () => {
                 className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
                 disabled={isAddingRequest}
               >
-                <IoPersonAddSharp />
+                <IoPersonAddSharp size={20} />
                 <p>Add Friend</p>
               </Button>
             )
@@ -102,8 +103,19 @@ const Profile = () => {
               className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
               disabled={isUnfriending}
             >
-              <MdPersonRemove />
+              <MdPersonRemove size={20} />
               <p>Unfriend</p>
+            </Button>
+          )}
+          {currentUser.id !== visitedUser?.$id && data?.isFriend && (
+            <Button
+              onClick={() => {}}
+              variant="outline"
+              className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
+              disabled={isUnfriending}
+            >
+              <RiMessageFill size={20} />
+              <p>Message</p>
             </Button>
           )}
         </div>
@@ -113,25 +125,24 @@ const Profile = () => {
           </h1>
           <p className="text-gray-500">@{visitedUser?.username || "unknown"}</p>
         </div>
-        <Card>
-          <CardContent className="flex flex-col p-4 gap-2">
-            <span>
-              <strong className="text-black"></strong> Friends
-            </span>
-            {visitedUser?.bio && <p>{visitedUser?.bio}</p>}
-            <div className="flex flex-wrap gap-2">
-              {visitedUser?.tags?.length > 0 &&
-                visitedUser?.tags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="p-2 border border-slate-100 rounded-lg"
-                  >
-                    {tag}
-                  </span>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
+        {(visitedUser?.bio || visitedUser?.tags?.length > 0) && (
+          <Card>
+            <CardContent className="flex flex-col p-4 gap-2">
+              {visitedUser?.bio && <p>{visitedUser?.bio}</p>}
+              <div className="flex flex-wrap gap-2">
+                {visitedUser?.tags?.length > 0 &&
+                  visitedUser?.tags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="p-2 border border-slate-100 rounded-lg"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
         <ProfileSections />
       </div>
     </div>

@@ -20,3 +20,20 @@ export async function getChats(userId: string, pageParam: number) {
     console.log(err);
   }
 }
+export async function editChat({ chatId, newChat }) {
+  try {
+    const chat = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.chatsID,
+      chatId,
+      {
+        name: newChat.name,
+        participants: newChat.participants?.map((p) => p.$id),
+      },
+    );
+    if (!chat) throw new Error("Something went wrong");
+    return chat;
+  } catch (err) {
+    console.log(err);
+  }
+}

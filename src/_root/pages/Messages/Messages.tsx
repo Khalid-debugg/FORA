@@ -1,6 +1,12 @@
 import MessagesContainter from "@/components/shared/Messages/MessagesContainter";
+import { Input } from "@/components/ui/input";
 import { useUserContext } from "@/context/AuthContext";
-import { useGetChats } from "@/lib/react-query/queriesAndMutations/chats";
+import {
+  useEditChat,
+  useGetChats,
+} from "@/lib/react-query/queriesAndMutations/chats";
+import { CiEdit } from "react-icons/ci";
+import { MdOutlineCancel } from "react-icons/md";
 import { useMemo, useState } from "react";
 
 const Messages = () => {
@@ -9,10 +15,16 @@ const Messages = () => {
     id: string;
     name: string;
   }>(null);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetChats(
-    user?.id,
-  );
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending: isGettingChats,
+  } = useGetChats(user?.id);
   const chats = useMemo(() => data?.pages.flat() || [], [data]);
+  const [isEditingChatName, setIsEditingChatName] = useState(false);
+  const { mutateAsync: editChat } = useEditChat(selectedChat?.id, user?.id);
   const unreadChats = useMemo(() => {
     if (!chats || chats.length === 0 || !user?.id) return [];
     return chats.filter(
@@ -40,7 +52,10 @@ const Messages = () => {
             <h2 className="text-xl font-semibold">Messages</h2>
           </div>
           <div className="flex-1 overflow-y-auto">
-            {chats.length === 0 ? (
+            {isGettingChats && (
+              <div className="animate-spin text-center">⚽</div>
+            )}
+            {chats.length === 0 && !isGettingChats ? (
               <div className="p-4 text-center text-gray-500">
                 No messages yet
               </div>
@@ -98,12 +113,51 @@ const Messages = () => {
         </div>
 
         <div className="hidden md:flex flex-col flex-1">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold">
-              {selectedChat
-                ? selectedChat.name
-                : "Select a chat to start messaging"}
-            </h2>
+          <div className="flex items-center justify-between gap-2 p-4 border-b border-gray-200">
+            {selectedChat && !isEditingChatName && (
+              <>
+                <h2>{selectedChat?.name || "New Chat"} </h2>
+                <button onClick={() => setIsEditingChatName((prev) => !prev)}>
+                  <CiEdit />
+                </button>
+              </>
+            )}
+            {selectedChat && isEditingChatName && (
+              <>
+                <Input
+                  type="text"
+                  defaultValue={selectedChat?.name}
+                  onChange={(e) => {
+                    setSelectedChat((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }));
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    setSelectedChat((prev) => ({
+                      ...prev,
+                      name: selectedChat?.name,
+                    }));
+                    editChat({ newChat: selectedChat });
+                    setIsEditingChatName(false);
+                  }}
+                  className="p-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditingChatName(false)}
+                  className="py-2 px-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                >
+                  <MdOutlineCancel size={20} />
+                </button>
+              </>
+            )}
+            {!selectedChat && (
+              <h2 className="text-xl font-semibold">Select a Chat</h2>
+            )}
           </div>
           <div className="flex-1 flex items-center justify-center">
             {selectedChat ? (
