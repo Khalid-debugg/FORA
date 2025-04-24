@@ -30,7 +30,7 @@ const App = () => {
           <Route path="/game-post/:id" element={<OneGamePost />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
-          <Route path="/messages" element={<Messages />} />
+          <Route path="/messages/:chatId?" element={<Messages />} />
         </Route>
       </Routes>
       <Toaster />

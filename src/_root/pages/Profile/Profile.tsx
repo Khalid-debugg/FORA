@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetUser } from "@/lib/react-query/queriesAndMutations/users";
 import { IoPersonAddSharp, IoSettings } from "react-icons/io5";
 import { MdPersonRemove } from "react-icons/md";
@@ -21,9 +21,11 @@ import {
   useCheckIsFriend,
   useUnfriend,
 } from "@/lib/react-query/queriesAndMutations/friendship";
+import { useGetChatId } from "@/lib/react-query/queriesAndMutations/chats";
 
 const Profile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user: currentUser } = useUserContext();
   const { data: visitedUser, isPending: isGettingUser } = useGetUser(id!);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
@@ -44,6 +46,10 @@ const Profile = () => {
     currentUser?.id || "",
   );
   const { data: isFriendRequestSent } = useCheckIsFriendRequestSent(
+    currentUser?.id || "",
+    visitedUser?.$id || "",
+  );
+  const { data: chatId, refetch: getChatId } = useGetChatId(
     currentUser?.id || "",
     visitedUser?.$id || "",
   );
@@ -107,11 +113,16 @@ const Profile = () => {
               <p>Unfriend</p>
             </Button>
           )}
-          {currentUser.id !== visitedUser?.$id && data?.isFriend && (
+          {currentUser.id !== visitedUser?.$id && (
             <Button
-              onClick={() => {}}
+              onClick={async () => {
+                await getChatId();
+                if (chatId) {
+                  navigate(`/messages/${chatId}`);
+                }
+              }}
               variant="outline"
-              className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
+              className="flex gap-2 rounded-full shad-button_ghost transition-all duration-100 ease-in-out"
               disabled={isUnfriending}
             >
               <RiMessageFill size={20} />

@@ -14,12 +14,14 @@ import { messageValidation } from "@/lib/validation";
 import { useCreateMessage } from "@/lib/react-query/queriesAndMutations/messages";
 
 const MessageForm = ({ selectedChat }) => {
+  console.log(selectedChat);
+
   const { user } = useUserContext();
   const { toast } = useToast();
   const [file, setFile] = useState<File | undefined>(undefined);
 
   const { mutateAsync: createMessage, isPending: isSending } = useCreateMessage(
-    selectedChat.id,
+    selectedChat.$id,
     user?.id,
   );
 

@@ -1,7 +1,12 @@
-import { editChat, getChats } from "@/lib/appwrite/Apis/chats";
+import {
+  editChat,
+  getChat,
+  getChatId,
+  getChats,
+} from "@/lib/appwrite/Apis/chats";
 import { QueryKeys } from "@/lib/react-query/queryKeys";
 import { queryClient } from "@/main";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetChats = (userId: string) => {
   return useInfiniteQuery({
@@ -15,6 +20,13 @@ export const useGetChats = (userId: string) => {
     enabled: !!userId,
   });
 };
+export const useGetChat = (chatId: string) => {
+  return useQuery({
+    queryKey: ["chatId"],
+    queryFn: () => getChat(chatId),
+    enabled: !!chatId,
+  });
+};
 export const useEditChat = (chatId: string, userId: string) => {
   return useMutation({
     mutationFn: ({ newChat }) => editChat({ chatId, newChat }),
@@ -23,5 +35,12 @@ export const useEditChat = (chatId: string, userId: string) => {
         queryKey: [QueryKeys.Chats + userId],
       });
     },
+  });
+};
+export const useGetChatId = (userId: string, friendId: string) => {
+  return useQuery({
+    queryKey: ["chatId", userId, friendId],
+    queryFn: () => getChatId(userId, friendId),
+    enabled: false,
   });
 };

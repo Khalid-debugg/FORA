@@ -2,7 +2,7 @@ import CoverImage from "@/components/shared/Profile/CoverImage";
 import { appwriteConfig, databases } from "../config";
 import { getFilePreview, handleFileOperation, uploadFiles } from "./helper";
 import { Tags } from "lucide-react";
-import { Query } from "appwrite";
+import { ID, Query } from "appwrite";
 export async function changeProfilePicture(file: File, userId: string) {
   try {
     const uploadedFile = await handleFileOperation(uploadFiles, file);

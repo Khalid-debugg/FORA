@@ -7,8 +7,8 @@ import { useRealtimeMessages } from "@/hooks/useRealtimeMessages";
 const MessagesContainter = ({ selectedChat }) => {
   const { user } = useUserContext();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useGetMessages(selectedChat.id);
-  useRealtimeMessages(selectedChat.id);
+    useGetMessages(selectedChat.$id);
+  useRealtimeMessages(selectedChat.$id);
   const messages = data?.pages.flat() || [];
   const bottomRef = useRef(null);
   const hasScrolledInitially = useRef(false);
