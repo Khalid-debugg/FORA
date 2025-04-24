@@ -12,14 +12,18 @@ export const hasNewMessages = async (userId: string) => {
     const chats = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.chatsID,
-      [Query.equal("participantsIds", userId)],
+      [Query.contains("participantsIds", userId)],
     );
     if (!chats) throw new Error("Something went wrong!!");
 
-    const newMessages = chats.documents.some((chat) => {
-      const readBy = chat.lastMessage?.readBy.map((user) => user.$id) ?? [];
-      return !readBy.includes(userId);
-    });
+    const newMessages = chats.documents
+      .filter((chat) => chat.lastMessage.sender.$id !== userId)
+      .some((chat) => {
+        if (!chat.lastMessage) return false;
+        const readBy = chat.lastMessage?.readBy.map((user) => user.$id) ?? [];
+        return !readBy.includes(userId);
+      });
+    console.log(chats);
 
     return newMessages;
   } catch (error: unknown) {
