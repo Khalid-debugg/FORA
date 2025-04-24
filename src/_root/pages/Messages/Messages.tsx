@@ -9,6 +9,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { get } from "http";
 
 const Messages = () => {
   const { user } = useUserContext();
@@ -44,7 +45,13 @@ const Messages = () => {
 
     return otherParticipant?.imageUrl || "/default-avatar.png";
   };
-
+  const getChatName = (chat: any) => {
+    if (chat?.name) return chat?.name;
+    return chat.participants
+      .filter((p) => p.$id !== user?.id)
+      .map((p) => p.name)
+      .join(", ");
+  };
   const unreadChats = useMemo(() => {
     if (!chats || !user?.id) return [];
     return chats.filter(
@@ -163,10 +170,10 @@ const Messages = () => {
                 </>
               ) : (
                 <>
-                  <h2>{selectedChat.name || "New Chat"}</h2>
+                  <h2>{getChatName(selectedChat)}</h2>
                   <button
                     onClick={() => {
-                      setEditingName(selectedChat.name || "");
+                      setEditingName(getChatName(selectedChat));
                       setIsEditingChatName(true);
                     }}
                   >
