@@ -56,6 +56,7 @@ const Messages = () => {
     if (!chats || !user?.id) return [];
     return chats.filter(
       (chat) =>
+        chat?.lastMessage &&
         chat?.lastMessage?.sender?.$id !== user?.id &&
         !chat?.lastMessage?.readBy?.some((u) => u.$id === user?.id),
     );
