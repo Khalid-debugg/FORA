@@ -16,6 +16,8 @@ export const SignupValidation = z
     email: z.string().email({ message: "Please enter a valid email" }),
     password: z.string().min(8, { message: "Too short" }),
     confirmPassword: z.string(),
+    governorate: z.string().nonempty("Governorate is required"),
+    city: z.string(),
   })
   .refine(
     (values) => {

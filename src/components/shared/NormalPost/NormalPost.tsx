@@ -110,7 +110,7 @@ const NormalPost = ({
             crossOrigin
             playsInline
           >
-            <MediaProvider></MediaProvider>
+            x<MediaProvider></MediaProvider>
             <DefaultVideoLayout icons={defaultLayoutIcons} />
           </MediaPlayer>
         ) : (

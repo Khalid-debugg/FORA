@@ -10,12 +10,12 @@ export async function createUserAccount(user: INewUser) {
       user.password,
     );
     if (!newUser) throw new Error();
-    const initialImage = await storage.getFilePreview(
+    const initialImage = await storage.getFileView(
       appwriteConfig.mediaBucketID,
-      "21302130",
+      "default-profile-image",
     );
     return await createUserInDB({
-      name: user.firstName + user.lastName,
+      name: user.firstName + " " + user.lastName,
       accountID: newUser.$id,
       email: user.email,
       username: user.username,
