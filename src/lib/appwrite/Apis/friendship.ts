@@ -62,3 +62,24 @@ export const addFriend = async (userId: string, friendId: string) => {
     throw error;
   }
 };
+export const getFriends = async (userId: string) => {
+  try {
+    const friends = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.friendShipID,
+      [
+        Query.or([
+          Query.equal("actor", userId),
+          Query.equal("receiver", userId),
+        ]),
+      ],
+    );
+    if (!friends) throw new Error("Something went wrong!!");
+    return friends.documents;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    throw error;
+  }
+};

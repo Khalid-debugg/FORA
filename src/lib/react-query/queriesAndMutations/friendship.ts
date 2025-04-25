@@ -2,6 +2,7 @@ import {
   checkIsFriend,
   unFriend,
   addFriend,
+  getFriends,
 } from "@/lib/appwrite/Apis/friendship";
 import { queryClient } from "@/main";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -27,5 +28,12 @@ export const useUnfriend = (userId: string, friendId: string) => {
 export const useAddFriend = (userId: string, friendId: string) => {
   return useMutation({
     mutationFn: () => addFriend(userId, friendId),
+  });
+};
+export const useGetFriends = (userId: string) => {
+  return useQuery({
+    queryKey: ["friends", userId],
+    queryFn: () => getFriends(userId),
+    enabled: !!userId,
   });
 };
