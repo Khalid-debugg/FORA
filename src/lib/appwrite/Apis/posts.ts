@@ -70,13 +70,20 @@ export async function editNormalPost(
     console.log(err);
   }
 }
-export async function getRecentPostsAndGames(pageParam: number) {
+export async function getRecentPostsAndGames(
+  pageParam: number,
+  friends: any[],
+  userId: string,
+) {
   try {
+    if (!friends) return [];
+    const userAndFriedsIds = [userId, ...friends.map((friend) => friend.$id)];
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
       [
         Query.limit(10),
+        Query.contains("creator", userAndFriedsIds),
         Query.offset(pageParam * 10),
         Query.orderDesc("$createdAt"),
       ],
@@ -87,6 +94,7 @@ export async function getRecentPostsAndGames(pageParam: number) {
       appwriteConfig.gamesID,
       [
         Query.limit(10),
+        Query.contains("creator", userAndFriedsIds),
         Query.offset(pageParam * 10),
         Query.orderDesc("$createdAt"),
       ],

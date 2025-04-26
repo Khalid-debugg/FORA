@@ -6,19 +6,22 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CreatePost from "./CreatePost";
 import { useState, useEffect, useCallback } from "react";
 import { useGetRecentPostsAndGames } from "@/lib/react-query/queriesAndMutations/posts";
+import { useGetFriends } from "@/lib/react-query/queriesAndMutations/friendship";
+import { useUserContext } from "@/context/AuthContext";
 
 const Home = () => {
+  const { user } = useUserContext();
+  const { data: friends } = useGetFriends(user?.id);
   const {
     data: posts,
     isPending,
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useGetRecentPostsAndGames();
+  } = useGetRecentPostsAndGames(friends, user?.id);
 
   const [postType, setPostType] = useState("post");
   const [allPosts, setAllPosts] = useState([]);
-
   useEffect(() => {
     if (posts) {
       setAllPosts(posts.pages.flat());

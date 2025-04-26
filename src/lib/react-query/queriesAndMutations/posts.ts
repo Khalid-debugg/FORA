@@ -24,12 +24,17 @@ export const useCreatePost = () => {
     },
   });
 };
-export const useGetRecentPostsAndGames = () => {
+export const useGetRecentPostsAndGames = (friends: any[], userId: string) => {
   return useInfiniteQuery({
     queryKey: [QueryKeys.RecentPostsAndGames],
-    queryFn: ({ pageParam = 0 }) => getRecentPostsAndGames(pageParam),
+    queryFn: ({ pageParam = 0 }) =>
+      getRecentPostsAndGames(pageParam, friends, userId),
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === 10 ? allPages.length : undefined,
+    initialPageParam: 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    enabled: !!friends,
   });
 };
 
@@ -39,6 +44,9 @@ export const useGetRecentPosts = (userId: string) => {
     queryFn: ({ pageParam = 0 }) => getRecentPosts(pageParam, userId),
     getNextPageParam: (lastPage, allPages) =>
       lastPage?.length === 10 ? allPages.length : undefined,
+    initialPageParam: 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 export const useGetRecentLikedPosts = (userId: string) => {
@@ -47,6 +55,9 @@ export const useGetRecentLikedPosts = (userId: string) => {
     queryFn: ({ pageParam = 0 }) => getRecentLikedPosts(pageParam, userId),
     getNextPageParam: (lastPage, allPages) =>
       lastPage?.length === 10 ? allPages.length : undefined,
+    initialPageParam: 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 export const useGetNormalPost = (postId: string) => {
