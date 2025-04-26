@@ -61,8 +61,8 @@ export function SetupForm({ user, setIsSetupOpen }: SetupFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: user?.name,
-      bio: user?.bio,
-      favPosition: user?.favPosition,
+      bio: user?.bio || "",
+      favPosition: user?.favPosition || "",
       FifaCard: user?.FifaCard,
     },
   });
