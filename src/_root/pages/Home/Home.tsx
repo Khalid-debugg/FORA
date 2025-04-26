@@ -1,6 +1,6 @@
 import GamePost from "@/components/shared/GamePost/GamePost";
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import VideoHover from "@/components/ui/video-hover";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CreatePost from "./CreatePost";
@@ -19,7 +19,7 @@ const Home = () => {
     isFetchingNextPage,
     hasNextPage,
   } = useGetRecentPostsAndGames(friends, user?.id);
-
+  const navigate = useNavigate();
   const [postType, setPostType] = useState("post");
   const [allPosts, setAllPosts] = useState([]);
   useEffect(() => {
@@ -97,7 +97,16 @@ const Home = () => {
         )}
 
         {!isPending && allPosts.length === 0 && !isFetchingNextPage && (
-          <div className="py-32">No posts Available ❎</div>
+          <>
+            <h2 className="pt-32 text-xl font-bold">No posts Available ?</h2>
+            <h2 className="text-lg"> Explore new friends</h2>
+            <button
+              onClick={() => navigate("/explore")}
+              className="shad-button_primary hover:shad-button_ghost p-2 rounded-lg"
+            >
+              Explore
+            </button>
+          </>
         )}
       </div>
       <Outlet />
