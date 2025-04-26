@@ -8,7 +8,7 @@ const NavBar = () => {
     <nav className="border-b-2 bg-white border-primary-500 shadow-lg flex items-center justify-between px-5 py-4 w-full md:hidden sticky top-0 z-20">
       <Link to="/profile">
         <img
-          src={user.imageURL}
+          src={user.imageUrl}
           alt="profile picture"
           className="h-12 rounded-full border border-black"
         />

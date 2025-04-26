@@ -50,7 +50,12 @@ const SideNav = ({
                 alt="profile picture"
                 className="h-12 w-12 rounded-full border border-black"
               />
-              <p className="font-[500] text-lg">@{user.username}</p>
+              <div className="flex flex-col items-start">
+                <p className="font-[600] text-lg">{user.name}</p>
+                <p className="font-[300] text-lg text-gray-500">
+                  @{user.username}
+                </p>
+              </div>
             </>
           ) : (
             <>
