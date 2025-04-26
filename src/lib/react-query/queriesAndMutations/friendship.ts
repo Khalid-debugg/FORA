@@ -25,15 +25,16 @@ export const useUnfriend = (userId: string, friendId: string) => {
     },
   });
 };
-export const useAddFriend = (userId: string, friendId: string) => {
-  return useMutation({
-    mutationFn: () => addFriend(userId, friendId),
-  });
-};
 export const useGetFriends = (userId: string) => {
   return useQuery({
     queryKey: ["friends", userId],
     queryFn: () => getFriends(userId),
     enabled: !!userId,
+  });
+};
+export const useAddFriend = () => {
+  return useMutation({
+    mutationFn: ({ userId, friendId }: { userId: string; friendId: string }) =>
+      addFriend(userId, friendId),
   });
 };

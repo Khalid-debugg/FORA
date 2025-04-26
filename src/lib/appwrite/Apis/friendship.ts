@@ -42,29 +42,9 @@ export const unFriend = async (friendShipId: string) => {
   }
 };
 
-export const addFriend = async (userId: string, friendId: string) => {
-  try {
-    const newFriendship = await databases.createDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.friendShipID,
-      ID.unique(),
-      {
-        actor: userId,
-        receiver: friendId,
-      },
-    );
-    if (!newFriendship) throw new Error("Failed to create friendship");
-    return newFriendship;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.log(error.message);
-    }
-    throw error;
-  }
-};
 export const getFriends = async (userId: string) => {
   try {
-    const friends = await databases.listDocuments(
+    const friendships = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.friendShipID,
       [
@@ -74,8 +54,16 @@ export const getFriends = async (userId: string) => {
         ]),
       ],
     );
-    if (!friends) throw new Error("Something went wrong!!");
-    return friends.documents;
+    const friendsDocs = friendships.documents.map((friendship) => {
+      if (friendship.actor === userId) {
+        return friendship.receiver;
+      } else {
+        return friendship.actor;
+      }
+    });
+
+    if (!friendsDocs) throw new Error("Something went wrong!!");
+    return friendsDocs;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.log(error.message);
@@ -83,3 +71,19 @@ export const getFriends = async (userId: string) => {
     throw error;
   }
 };
+export async function addFriend(userId: string, friendId: string) {
+  try {
+    const friendShip = await databases.createDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.friendShipID,
+      ID.unique(),
+      {
+        actor: userId,
+        receiver: friendId,
+      },
+    );
+    return friendShip;
+  } catch (err) {
+    console.log(err);
+  }
+}

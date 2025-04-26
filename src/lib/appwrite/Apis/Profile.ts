@@ -62,26 +62,3 @@ export async function updateProfile(formData, userId) {
     throw err;
   }
 }
-export async function addFriend(userId: string, friendId: string) {
-  try {
-    const friendShip = await databases.listDocuments(
-      appwriteConfig.databaseID,
-      appwriteConfig.friendShipID,
-      [Query.equal("user", userId)],
-    );
-    console.log(friendShip);
-
-    if (!friendShip) throw new Error("Something went wrong");
-    const updatedFriendShip = await databases.updateDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.friendShipID,
-      friendShip.documents[0].$id,
-      {
-        friends: [...friendShip.documents[0].friends, friendId],
-      },
-    );
-    return updatedFriendShip;
-  } catch (err) {
-    console.log(err);
-  }
-}

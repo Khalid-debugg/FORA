@@ -14,8 +14,8 @@ export const sendFriendRequest = async (
       appwriteConfig.notificationsID,
       ID.unique(),
       {
-        sender: friendId,
-        receiver: userId,
+        sender: userId,
+        receiver: friendId,
         type: "FRIEND_REQUEST",
         message: `${userName} sent you a friend request`,
       },
@@ -66,8 +66,8 @@ export const checkIsFriendRequestSent = async (
       [
         Query.and([
           Query.equal("type", "FRIEND_REQUEST"),
-          Query.equal("sender", friendId),
-          Query.equal("receiver", userId),
+          Query.equal("sender", userId),
+          Query.equal("receiver", friendId),
         ]),
       ],
     );

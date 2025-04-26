@@ -83,7 +83,7 @@ export async function getRecentPostsAndGames(
       appwriteConfig.postsID,
       [
         Query.limit(10),
-        Query.contains("creator", userAndFriedsIds),
+        Query.equal("creator", userAndFriedsIds),
         Query.offset(pageParam * 10),
         Query.orderDesc("$createdAt"),
       ],
@@ -94,7 +94,7 @@ export async function getRecentPostsAndGames(
       appwriteConfig.gamesID,
       [
         Query.limit(10),
-        Query.contains("creator", userAndFriedsIds),
+        Query.equal("creator", userAndFriedsIds),
         Query.offset(pageParam * 10),
         Query.orderDesc("$createdAt"),
       ],
@@ -144,8 +144,6 @@ export async function getRecentLikedPosts(pageParam: number, userId: string) {
   }
 }
 export async function createPost(post: INewPost) {
-  console.log(post);
-
   try {
     const uploadedFiles = await handleFileOperation(
       uploadFiles,

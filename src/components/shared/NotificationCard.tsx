@@ -4,7 +4,7 @@ import { Card, CardContent } from "../ui/card";
 import { Link } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "../ui/use-toast";
-import { useAddFriend } from "@/lib/react-query/queriesAndMutations/Profile";
+import { useAddFriend } from "@/lib/react-query/queriesAndMutations/friendship";
 import {
   useRemoveFriendRequest,
   useDeleteNotification,
@@ -46,7 +46,7 @@ const NotificationCard = ({
     try {
       await addFriend({
         userId: user?.id || "",
-        friendId: notification.sender,
+        friendId: notification.sender?.$id,
       });
       toast({
         title: "Friend request accepted!",
