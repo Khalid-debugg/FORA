@@ -50,9 +50,10 @@ const GamePost = ({ post, isOne }) => {
   const handleJoin = async () => {
     try {
       const res = await joinGame({
+        game: post,
+        waitingGame: waitingGame,
         userId: user.id,
-        postId: post?.$id,
-        playersNumber: post?.playersNumber,
+        userName: user.name,
       });
       if (res instanceof Error) throw new Error(res.message);
       toast({

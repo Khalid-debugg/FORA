@@ -92,14 +92,16 @@ export const useGetGame = (postId: string) => {
 export const useJoinGame = (gameId: string) => {
   return useMutation({
     mutationFn: ({
+      game,
+      waitingGame,
       userId,
-      postId,
-      playersNumber,
+      userName,
     }: {
+      game: any;
+      waitingGame: any;
       userId: string;
-      postId: string;
-      playersNumber: number;
-    }) => joinGame({ userId, postId, playersNumber }),
+      userName: string;
+    }) => joinGame({ game, waitingGame, userId, userName }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`${gameId + QueryKeys.WaitingGame}`],

@@ -175,45 +175,35 @@ export async function leaveGame({
 }
 
 export async function joinGame({
+  game,
+  waitingGame,
   userId,
-  postId,
-  playersNumber,
+  userName,
 }: {
+  game: any;
+  waitingGame: any;
   userId: string;
-  postId: string;
-  playersNumber: number;
+  userName: string;
 }) {
   try {
-    const game = await databases.getDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.gamesID,
-      postId,
-    );
+    await createNotification({
+      type: "JOIN_GAME_REQUEST",
+      sender: userId,
+      receiver: game.creator.$id,
+      game: game.$id,
+      message: `${userName} wants to join your game`,
+    });
 
-    if (!game) throw new Error("Game not found");
-    if (game.creator !== userId) {
-      await createNotification({
-        type: "JOIN_GAME_REQUEST",
-        senderId: userId,
-        receiverId: game.creator,
-        gameId: postId,
-        message: `${userId} wants to join your game`,
-        sender: userId,
-      });
-    }
-
-    const waitingGame = await databases.createDocument(
+    const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
-      ID.unique(),
+      waitingGame.$id,
       {
-        gameId: postId,
-        waitingPlayers: [userId],
-        playersNumber: playersNumber,
+        waitingPlayers: [...waitingGame.waitingPlayers, userId],
       },
     );
-
-    return waitingGame;
+    if (!updatedWaitingGame) return new Error();
+    return updatedWaitingGame;
   } catch (err) {
     console.log(err);
   }
