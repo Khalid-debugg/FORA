@@ -55,7 +55,7 @@ export const getFriends = async (userId: string) => {
       ],
     );
     const friendsDocs = friendships.documents.map((friendship) => {
-      if (friendship.actor === userId) {
+      if (friendship.actor.$id === userId) {
         return friendship.receiver;
       } else {
         return friendship.actor;
@@ -72,6 +72,8 @@ export const getFriends = async (userId: string) => {
   }
 };
 export async function addFriend(userId: string, friendId: string) {
+  console.log(userId, friendId);
+
   try {
     const friendShip = await databases.createDocument(
       appwriteConfig.databaseID,

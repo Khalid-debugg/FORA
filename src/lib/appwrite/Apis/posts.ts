@@ -99,7 +99,6 @@ export async function getRecentPostsAndGames(
         Query.orderDesc("$createdAt"),
       ],
     );
-
     return [...posts.documents, ...games.documents];
   } catch (err) {
     console.log(err);
