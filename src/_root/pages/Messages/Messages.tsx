@@ -35,11 +35,11 @@ const Messages = () => {
 
   const { mutateAsync: editChat } = useEditChat(chatId, user?.id);
   const getChatImage = (chat: any) => {
-    if (chat.lastMessage?.sender?.$id !== user?.id) {
-      return chat.lastMessage?.sender?.imageUrl;
+    if (chat?.lastMessage?.sender?.$id !== user?.id && chat?.lastMessage) {
+      return chat?.lastMessage?.sender?.imageUrl;
     }
 
-    const otherParticipant = chat.participants.find(
+    const otherParticipant = chat?.participants.find(
       (p: any) => p.$id !== user?.id,
     );
 
@@ -52,6 +52,7 @@ const Messages = () => {
       .map((p) => p.name)
       .join(", ");
   };
+
   const unreadChats = useMemo(() => {
     if (!chats || !user?.id) return [];
     return chats.filter(
