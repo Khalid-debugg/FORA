@@ -107,12 +107,20 @@ const NotificationCard = ({
     <Card className="w-full">
       <CardContent className="p-4">
         <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-start">
-            <p className="text-sm text-gray-600">{notification.message}</p>
+          <div className="flex gap-3 items-center justify-between">
+            <div className="flex gap-4 items-center">
+              <Link to={`/profile/${notification.sender?.$id}`}>
+                <img
+                  className="h-10 w-10 rounded-full"
+                  src={notification.sender?.imageUrl}
+                  alt="profile-pic"
+                />
+              </Link>
+              <p className="text-sm text-gray-600">{notification.message}</p>
+            </div>
             <Button
-              variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-8 w-8 justify-end"
               onClick={() => {
                 setIsDeleting(true);
                 setShowUndo(true);
@@ -135,7 +143,7 @@ const NotificationCard = ({
             </Button>
           </div>
           {notification.type === "FRIEND_REQUEST" && (
-            <div className="flex gap-2">
+            <div className="flex self-center gap-2">
               <Button
                 onClick={handleAcceptFriendRequest}
                 className="bg-green-500 text-white hover:bg-green-600"
