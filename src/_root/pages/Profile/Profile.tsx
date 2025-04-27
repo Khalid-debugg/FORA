@@ -37,6 +37,10 @@ const Profile = () => {
     );
   const { mutateAsync: removeFriendRequest, isPending: isRemovingRequest } =
     useRemoveFriendRequest(currentUser?.id || "", visitedUser?.$id || "");
+  const { data: chatId } = useGetChatId(
+    currentUser?.id || "",
+    visitedUser?.$id || "",
+  );
   const { mutateAsync: unFriend, isPending: isUnfriending } = useUnfriend(
     visitedUser?.$id || "",
     currentUser?.id || "",
@@ -46,10 +50,6 @@ const Profile = () => {
     currentUser?.id || "",
   );
   const { data: isFriendRequestSent } = useCheckIsFriendRequestSent(
-    currentUser?.id || "",
-    visitedUser?.$id || "",
-  );
-  const { data: chatId, refetch: getChatId } = useGetChatId(
     currentUser?.id || "",
     visitedUser?.$id || "",
   );
@@ -115,8 +115,7 @@ const Profile = () => {
           )}
           {currentUser.id !== visitedUser?.$id && (
             <Button
-              onClick={async () => {
-                await getChatId();
+              onClick={() => {
                 if (chatId) {
                   navigate(`/messages/${chatId}`);
                 }

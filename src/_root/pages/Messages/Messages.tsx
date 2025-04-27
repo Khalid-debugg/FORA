@@ -9,7 +9,6 @@ import { CiEdit } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { get } from "http";
 
 const Messages = () => {
   const { user } = useUserContext();

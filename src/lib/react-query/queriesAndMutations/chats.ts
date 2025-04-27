@@ -41,6 +41,6 @@ export const useGetChatId = (userId: string, friendId: string) => {
   return useQuery({
     queryKey: ["chatId", userId, friendId],
     queryFn: () => getChatId(userId, friendId),
-    enabled: false,
+    enabled: !!userId && !!friendId,
   });
 };
