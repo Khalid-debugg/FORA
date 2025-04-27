@@ -51,6 +51,7 @@ export async function editChat({ chatId, newChat }) {
   }
 }
 export async function getChatId(userId: string, friendId: string) {
+  if (userId === friendId) return;
   try {
     const chat = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -65,17 +66,14 @@ export async function getChatId(userId: string, friendId: string) {
     if (!chat) throw new Error("Something went wrong");
 
     const theirChat = chat.documents.find(
-      (doc) => doc.participants.length === 2,
+      (doc) => doc.participantsIds.length === 2,
     );
-    if (theirChat) return theirChat.$id;
-    else return getNewChatId(userId, friendId);
+    return theirChat?.$id;
   } catch (err) {
     console.log(err);
   }
 }
-export async function getNewChatId(userId: string, friendId: string) {
-  console.log(userId, friendId);
-
+export async function createNewChat(userId: string, friendId: string) {
   try {
     const newChat = await databases.createDocument(
       appwriteConfig.databaseID,

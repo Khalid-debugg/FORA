@@ -21,7 +21,10 @@ import {
   useCheckIsFriend,
   useUnfriend,
 } from "@/lib/react-query/queriesAndMutations/friendship";
-import { useGetChatId } from "@/lib/react-query/queriesAndMutations/chats";
+import {
+  useCreateNewChat,
+  useGetChatId,
+} from "@/lib/react-query/queriesAndMutations/chats";
 
 const Profile = () => {
   const { id } = useParams();
@@ -41,6 +44,9 @@ const Profile = () => {
     currentUser?.id || "",
     visitedUser?.$id || "",
   );
+  const { mutateAsync: createNewChat, isPending: isCreatingChat } =
+    useCreateNewChat(currentUser?.id || "");
+
   const { mutateAsync: unFriend, isPending: isUnfriending } = useUnfriend(
     visitedUser?.$id || "",
     currentUser?.id || "",
@@ -115,14 +121,20 @@ const Profile = () => {
           )}
           {currentUser.id !== visitedUser?.$id && (
             <Button
-              onClick={() => {
+              onClick={async () => {
                 if (chatId) {
                   navigate(`/messages/${chatId}`);
+                } else {
+                  const newChatId = await createNewChat({
+                    userId: currentUser?.id || "",
+                    friendId: visitedUser?.$id || "",
+                  });
+                  navigate(`/messages/${newChatId}`);
                 }
               }}
               variant="outline"
               className="flex gap-2 rounded-full shad-button_ghost transition-all duration-100 ease-in-out"
-              disabled={isUnfriending}
+              disabled={isCreatingChat}
             >
               <RiMessageFill size={20} />
               <p>Message</p>

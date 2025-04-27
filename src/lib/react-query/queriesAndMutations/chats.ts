@@ -1,4 +1,5 @@
 import {
+  createNewChat,
   editChat,
   getChat,
   getChatId,
@@ -43,6 +44,17 @@ export const useGetChatId = (userId: string, friendId: string) => {
     queryKey: ["chatId", userId, friendId],
     queryFn: () => getChatId(userId, friendId),
     enabled: !!userId && !!friendId,
+  });
+};
+export const useCreateNewChat = (userId: string) => {
+  return useMutation({
+    mutationFn: ({ userId, friendId }: { userId: string; friendId: string }) =>
+      createNewChat(userId, friendId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Chats + userId],
+      });
+    },
   });
 };
 export const useMakeChatRead = (chatId: string, userId: string) => {
