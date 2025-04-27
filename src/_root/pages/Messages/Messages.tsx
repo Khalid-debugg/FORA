@@ -4,6 +4,7 @@ import { useUserContext } from "@/context/AuthContext";
 import {
   useEditChat,
   useGetChats,
+  useMakeChatRead,
 } from "@/lib/react-query/queriesAndMutations/chats";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
@@ -13,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const Messages = () => {
   const { user } = useUserContext();
   const { chatId } = useParams();
+  const { mutateAsync: makeChatRead } = useMakeChatRead(chatId || "", user?.id);
   const navigate = useNavigate();
   const {
     data,
@@ -74,7 +76,10 @@ const Messages = () => {
       findChat();
     }
   }, [chatId, chats, data, fetchNextPage, hasNextPage, selectedChat]);
-
+  useEffect(() => {
+    if (unreadChats.length > 0 && unreadChats.some((c) => c.$id === chatId))
+      makeChatRead();
+  }, [chatId, makeChatRead, unreadChats]);
   const handleChatSelection = (chat: any) => {
     navigate(`/messages/${chat.$id}`);
     setIsEditingChatName(false);

@@ -3,6 +3,7 @@ import {
   getChat,
   getChatId,
   getChats,
+  makeChatRead,
 } from "@/lib/appwrite/Apis/chats";
 import { QueryKeys } from "@/lib/react-query/queryKeys";
 import { queryClient } from "@/main";
@@ -42,5 +43,15 @@ export const useGetChatId = (userId: string, friendId: string) => {
     queryKey: ["chatId", userId, friendId],
     queryFn: () => getChatId(userId, friendId),
     enabled: !!userId && !!friendId,
+  });
+};
+export const useMakeChatRead = (chatId: string, userId: string) => {
+  return useMutation({
+    mutationFn: () => makeChatRead(chatId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["hasNewMessages", userId],
+      });
+    },
   });
 };

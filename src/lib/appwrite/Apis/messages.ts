@@ -23,8 +23,6 @@ export const hasNewMessages = async (userId: string) => {
         const readBy = chat.lastMessage?.readBy.map((user) => user.$id) ?? [];
         return !readBy.includes(userId);
       });
-    console.log(chats);
-
     return newMessages;
   } catch (error: unknown) {
     if (error instanceof Error) {

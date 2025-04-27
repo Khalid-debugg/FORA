@@ -92,3 +92,25 @@ export async function getNewChatId(userId: string, friendId: string) {
     console.log(err);
   }
 }
+export async function makeChatRead(chatId: string, userId: string) {
+  try {
+    if (!chatId) return;
+    const chat = await databases.getDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.chatsID,
+      chatId,
+    );
+    if (!chat) throw new Error("Something went wrong");
+    const readMessages = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.messagesID,
+      chat.lastMessage.$id,
+      {
+        readBy: [...chat.lastMessage.readBy, userId],
+      },
+    );
+    return readMessages;
+  } catch (err) {
+    console.log(err);
+  }
+}
