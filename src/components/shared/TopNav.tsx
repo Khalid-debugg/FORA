@@ -6,7 +6,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   return (
     <nav className="border-b-2 bg-white border-primary-500 shadow-lg flex items-center justify-between px-5 py-4 w-full md:hidden sticky top-0 z-20">
-      <Link to="/profile">
+      <Link to={`/profile/${user.id}`}>
         <img
           src={user.imageUrl}
           alt="profile picture"
