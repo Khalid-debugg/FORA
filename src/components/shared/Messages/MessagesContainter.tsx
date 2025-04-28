@@ -69,9 +69,9 @@ const MessagesContainter = ({ selectedChat }) => {
                   alt="avatar"
                 />
               )}
-              <div>
+              <div className="flex flex-col">
                 <p
-                  className={`px-4 py-2 max-w-xs rounded-lg ${
+                  className={`px-4 py-2 max-w-xs rounded-lg text-wrap break-words ${
                     message?.sender?.$id === user?.id
                       ? "bg-green-500 text-white"
                       : "bg-gray-100 text-black"
@@ -93,7 +93,7 @@ const MessagesContainter = ({ selectedChat }) => {
                     Your browser does not support the video tag.
                   </video>
                 )}
-                <p className="text-[0.65rem] text-gray-500">
+                <p className="text-[0.65rem] text-gray-500 self-end">
                   {formatDate(message?.$createdAt)}
                 </p>
               </div>
