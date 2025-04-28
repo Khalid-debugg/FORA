@@ -112,8 +112,8 @@ export type NotificationType =
   | "LIKE_COMMENT"
   | "LIKE_REPLY"
   | "COMMENT"
-  | "REPLY";
-
+  | "REPLY"
+  | "STATUS";
 export type INotification = {
   $id: string;
   $createdAt: string;

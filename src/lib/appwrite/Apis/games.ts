@@ -289,51 +289,51 @@ export async function rejectPlayer({
 }
 
 export async function acceptPlayer({
-  gameId,
+  game,
+  joinedGame,
+  waitingGame,
   userId,
-  waitingGameId,
-  waitingPlayers,
 }: {
+  game: any;
+  joinedGame: any;
+  waitingGame: any;
   userId: string;
-  gameId: string;
-  waitingGameId: string;
-  waitingPlayers: any[];
 }) {
   try {
-    const game = await databases.getDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.gamesID,
-      gameId,
-    );
-
-    if (!game) throw new Error("Game not found");
-    await createNotification({
-      type: "JOIN_GAME_REQUEST",
-      senderId: game.creator,
-      receiverId: userId,
-      gameId: gameId,
-      message: `Your request to join the game has been accepted`,
-    });
-
-    const updatedGame = await databases.updateDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.gamesID,
-      gameId,
-      {
-        joinedPlayers: [...game.joinedPlayers, userId],
-      },
-    );
-
+    console.log(game, joinedGame, waitingGame, userId);
     const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
-      waitingGameId,
+      waitingGame.$id,
       {
-        waitingPlayers: waitingPlayers.filter((player) => player !== userId),
+        waitingPlayers: waitingGame.waitingPlayers
+          .filter((player) => player.$id !== userId)
+          .map((player) => player.$id),
       },
     );
+    if (!updatedWaitingGame) throw new Error();
+    const updateJoinedGame = await databases.updateDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.joinedGamesID,
+      joinedGame.$id,
+      {
+        joinedPlayers: [
+          ...joinedGame.joinedPlayers.map((player) => player.$id),
+          userId,
+        ],
+      },
+    );
+    if (!updateJoinedGame) throw new Error();
 
-    return { updatedGame, updatedWaitingGame };
+    const newNotification = await createNotification({
+      type: "STATUS",
+      sender: game.creator.$id,
+      receiver: userId,
+      game: game.$id,
+      message: `Your request to join the game has been accepted`,
+    });
+
+    return newNotification;
   } catch (err) {
     console.log(err);
   }

@@ -168,16 +168,16 @@ export const useRejectPlayer = (gameId: string) => {
 export const useAcceptPlayer = (gameId: string) => {
   return useMutation({
     mutationFn: ({
-      gameId,
+      game,
+      joinedGame,
+      waitingGame,
       userId,
-      waitingGameId,
-      waitingPlayers,
     }: {
-      gameId: string;
+      game: any;
+      joinedGame: any;
+      waitingGame: any;
       userId: string;
-      waitingGameId: string;
-      waitingPlayers: unknown[];
-    }) => acceptPlayer({ gameId, userId, waitingGameId, waitingPlayers }),
+    }) => acceptPlayer({ game, joinedGame, waitingGame, userId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`${gameId + QueryKeys.WaitingGame}`],

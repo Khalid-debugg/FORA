@@ -159,21 +159,21 @@ const NotificationCard = ({
             </div>
           )}
           {notification.type === "LIKE_POST" && notification.post && (
-            <Link to={`/normal-post/${notification.post.$id}`}>
+            <Link to={`/normal-post/${notification.post}`}>
               <Button variant="outline" className="w-full">
                 View Post
               </Button>
             </Link>
           )}
           {notification.type === "COMMENT" && notification.post && (
-            <Link to={`/normal-post/${notification.post.$id}`}>
+            <Link to={`/normal-post/${notification.post}`}>
               <Button variant="outline" className="w-full">
                 View Comment
               </Button>
             </Link>
           )}
           {notification.type === "JOIN_GAME_REQUEST" && notification.game && (
-            <Link to={`/game-post/${notification.game.$id}`}>
+            <Link to={`/game-post/${notification.game}`}>
               <Button variant="outline" className="w-full">
                 View Game
               </Button>

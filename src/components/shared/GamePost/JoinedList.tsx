@@ -12,7 +12,6 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
   const { user } = useUserContext();
   const restPlayers = post?.playersNumber - joinedPlayers?.length;
   const restPlayerPlaceholders = Array.from({ length: restPlayers });
-  console.log(joinedPlayers);
 
   return (
     <div
@@ -30,18 +29,18 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
               <HoverCard key={i}>
                 <HoverCardTrigger className="flex items-center h-12 w-12 justify-center outline outline-slate-300 bg-white rounded-full">
                   <Avatar className="h-12 w-12 hover:cursor-pointer">
-                    <AvatarImage src={player.imageURL} />
-                    <AvatarFallback>{player.username[0]}</AvatarFallback>
+                    <AvatarImage src={player.imageUrl} />
+                    <AvatarFallback>{player.name[0]}</AvatarFallback>
                   </Avatar>
                 </HoverCardTrigger>
                 <HoverCardContent className="border border-primary-500 bg-white">
                   <div className="underline font-bold flex gap-2 items-center">
                     <img
-                      src={player.imageURL}
+                      src={player.imageUrl}
                       alt="profile pic"
                       className="w-10 h-10 rounded-full"
                     />
-                    <Link to={`/profile/${player.$id}`}>{player.username}</Link>
+                    <Link to={`/profile/${player.$id}`}>{player.name}</Link>
                   </div>
                   <p>{player.bio}</p>
                 </HoverCardContent>

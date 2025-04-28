@@ -26,7 +26,7 @@ import {
   useAcceptPlayer,
 } from "@/lib/react-query/queriesAndMutations/games";
 
-const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
+const WaitingList = ({ waitingGame, joinedGame, isLoadingWaiting, post }) => {
   const [maxVisiblePlayers, setMaxVisiblePlayers] = useState(0);
   const { mutateAsync: handleReject } = useRejectPlayer(post?.$id);
   const { mutateAsync: handleAccept } = useAcceptPlayer(post?.$id);
@@ -52,10 +52,10 @@ const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
   };
   const acceptPlayer = async (player) => {
     const res = await handleAccept({
-      gameId: post?.$id,
+      game: post,
+      joinedGame: joinedGame,
+      waitingGame: waitingGame,
       userId: player.$id,
-      waitingGameId: waitingGame.$id,
-      waitingPlayers: waitingGame.waitingPlayers,
     });
     if (res instanceof Error) {
       toast({
@@ -98,8 +98,8 @@ const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
                 <HoverCard key={i}>
                   <HoverCardTrigger className="flex relative items-center h-12 w-12 justify-center bg-white rounded-full">
                     <Avatar className="h-12 w-12 hover:cursor-pointer">
-                      <AvatarImage src={player.imageURL} />
-                      <AvatarFallback>{player.username[0]}</AvatarFallback>
+                      <AvatarImage src={player.imageUrl} />
+                      <AvatarFallback>{player.name[0]}</AvatarFallback>
                     </Avatar>
                     {user?.id === post.creator.$id && (
                       <>
@@ -113,8 +113,8 @@ const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
                                 Are you absolutely sure?
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                This action will remove {player.username} from
-                                the waiting list
+                                This action will remove {player.name} from the
+                                waiting list
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -157,13 +157,11 @@ const WaitingList = ({ waitingGame, isLoadingWaiting, post }) => {
                   <HoverCardContent className="border border-primary-500 bg-white absolute top-0 left-0">
                     <div className="underline font-bold flex gap-2 items-center">
                       <img
-                        src={player.imageURL}
+                        src={player.imageUrl}
                         alt="profile pic"
                         className="w-10 h-10 rounded-full"
                       />
-                      <Link to={`/profile/${player.$id}`}>
-                        {player.username}
-                      </Link>
+                      <Link to={`/profile/${player.$id}`}>{player.name}</Link>
                     </div>
                     <p>{player.bio}</p>
                   </HoverCardContent>

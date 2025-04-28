@@ -21,7 +21,6 @@ export const useGetNotifications = (
     enabled: options?.enabled ?? true,
   });
 };
-
 export const useAddFriendRequest = (
   userId: string,
   userName: string,
