@@ -70,8 +70,6 @@ export const checkIsFriendRequestSent = async (
   userId: string,
   friendId: string,
 ) => {
-  console.log(userId, friendId);
-
   try {
     const friendShip = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -81,6 +79,32 @@ export const checkIsFriendRequestSent = async (
           Query.equal("type", "FRIEND_REQUEST"),
           Query.equal("senderId", userId),
           Query.equal("receiverId", friendId),
+        ]),
+      ],
+    );
+    if (!friendShip) throw new Error("Something went wrong!!");
+    return friendShip.documents.length > 0;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    return false;
+  }
+};
+
+export const checkIsFriendRequestReceived = async (
+  userId: string,
+  friendId: string,
+) => {
+  try {
+    const friendShip = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.notificationsID,
+      [
+        Query.and([
+          Query.equal("type", "FRIEND_REQUEST"),
+          Query.equal("senderId", friendId),
+          Query.equal("receiverId", userId),
         ]),
       ],
     );

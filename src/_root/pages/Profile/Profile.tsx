@@ -14,10 +14,12 @@ import CoverImage from "@/components/shared/Profile/CoverImage";
 import ProfileSections from "@/components/shared/Profile/ProfileSections/ProfileSections";
 import {
   useAddFriendRequest,
+  useCheckIsFriendRequestReceived,
   useCheckIsFriendRequestSent,
   useRemoveFriendRequest,
 } from "@/lib/react-query/queriesAndMutations/notifications";
 import {
+  useAddFriend,
   useCheckIsFriend,
   useUnfriend,
 } from "@/lib/react-query/queriesAndMutations/friendship";
@@ -36,6 +38,7 @@ const Profile = () => {
     useAddFriendRequest(currentUser, visitedUser);
   const { mutateAsync: removeFriendRequest, isPending: isRemovingRequest } =
     useRemoveFriendRequest(currentUser?.id || "", visitedUser?.$id || "");
+  const { mutateAsync: addFriend, isPending: isAddingFriend } = useAddFriend();
   const { data: chatId } = useGetChatId(
     currentUser?.id || "",
     visitedUser?.$id || "",
@@ -55,6 +58,10 @@ const Profile = () => {
     currentUser?.id || "",
     visitedUser?.$id || "",
   );
+  const { data: isFriendRequestReceived } = useCheckIsFriendRequestReceived(
+    currentUser?.id || "",
+    visitedUser?.$id || "",
+  );
   if (isGettingUser || !currentUser)
     return (
       <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
@@ -67,7 +74,7 @@ const Profile = () => {
       <div className="relative px-4 flex flex-col gap-2">
         <ProfilePicture user={visitedUser} currentUser={currentUser} />
         <div className="flex flex-col min-w-1/6 gap-2 self-end mt-4">
-          {currentUser.id === visitedUser?.$id ? (
+          {currentUser.id === visitedUser?.$id && (
             <Dialog open={isSetupOpen} onOpenChange={setIsSetupOpen}>
               <DialogTrigger asChild>
                 <Button
@@ -82,8 +89,10 @@ const Profile = () => {
                 <SetupForm user={visitedUser} setIsSetupOpen={setIsSetupOpen} />
               </DialogContent>
             </Dialog>
-          ) : !data?.isFriend ? (
-            isFriendRequestSent ? (
+          )}
+          {currentUser.id !== visitedUser?.$id &&
+            !data?.isFriend &&
+            (isFriendRequestSent ? (
               <Button
                 onClick={() => removeFriendRequest()}
                 variant="outline"
@@ -93,6 +102,29 @@ const Profile = () => {
                 <MdPersonRemove size={20} />
                 <p>Remove Friend Request</p>
               </Button>
+            ) : isFriendRequestReceived ? (
+              <div className="flex">
+                <Button
+                  onClick={() => removeFriendRequest()}
+                  variant="outline"
+                  className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
+                  disabled={isRemovingRequest}
+                >
+                  <MdPersonRemove size={20} />
+                  <p>Decline</p>
+                </Button>
+                <Button
+                  onClick={() =>
+                    addFriend({ user: currentUser, friendId: visitedUser.$id })
+                  }
+                  variant="outline"
+                  className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
+                  disabled={isAddingFriend}
+                >
+                  <IoPersonAddSharp size={20} />
+                  <p>Accept</p>
+                </Button>
+              </div>
             ) : (
               <Button
                 onClick={() => addFriendRequest()}
@@ -103,8 +135,8 @@ const Profile = () => {
                 <IoPersonAddSharp size={20} />
                 <p>Add Friend</p>
               </Button>
-            )
-          ) : (
+            ))}
+          {currentUser.id !== visitedUser?.$id && data?.isFriend && (
             <Button
               onClick={() => unFriend(data.friendShipId)}
               variant="outline"
