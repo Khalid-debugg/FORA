@@ -8,7 +8,7 @@ import { toast } from "../../ui/use-toast";
 import { useEffect, useState } from "react";
 import WaitingList from "./WaitingList";
 import JoinedList from "./JoinedList";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   useGetJoinedGame,
   useGetWaitingGame,
@@ -111,9 +111,9 @@ const GamePost = ({ post, isOne }) => {
             </div>
           </div>
         )}
-      <button
+      <div
         onClick={() => navigate(`/game-post/${post?.$id}`)}
-        className="flex p-4 justify-between items-center hover:bg-slate-100"
+        className="flex p-4 justify-between items-center hover:bg-slate-100 cursor-pointer"
       >
         <div className="flex gap-3 items-center">
           <img
@@ -121,7 +121,13 @@ const GamePost = ({ post, isOne }) => {
             className="rounded-full w-14 h-14 border border-black"
             alt="profile pic"
           />
-          <p className="text-xl font-medium">{post?.creator?.name}</p>
+          <Link
+            to={`/profile/${post?.creator?.$id}`}
+            className="hover:underline z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-xl font-medium">{post?.creator?.name}</p>
+          </Link>
         </div>
         <div className="flex flex-col w-1/2">
           <div className="flex items-center gap-2">
@@ -140,7 +146,7 @@ const GamePost = ({ post, isOne }) => {
             <p>{playersNeeded}</p>
           </div>
         </div>
-      </button>
+      </div>
 
       {post?.caption && (
         <div className="p-4">
