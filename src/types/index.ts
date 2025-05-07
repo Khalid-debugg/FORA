@@ -118,13 +118,13 @@ export type INotification = {
   $id: string;
   $createdAt: string;
   type: NotificationType;
-  sender: string;
-  receiver: string;
+  senderId: string;
+  senderName: string;
+  senderImageUrl: string;
+  receiverId: string;
   isRead: boolean;
-  post?: string;
-  game?: string;
-  comment?: string;
-  reply?: string;
+  postId?: string;
+  gameId?: string;
   message: string;
 };
 

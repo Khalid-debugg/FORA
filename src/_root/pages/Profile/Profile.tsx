@@ -33,11 +33,7 @@ const Profile = () => {
   const { data: visitedUser, isPending: isGettingUser } = useGetUser(id!);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
   const { mutateAsync: addFriendRequest, isPending: isAddingRequest } =
-    useAddFriendRequest(
-      currentUser?.id || "",
-      currentUser?.name || "",
-      visitedUser?.$id || "",
-    );
+    useAddFriendRequest(currentUser, visitedUser);
   const { mutateAsync: removeFriendRequest, isPending: isRemovingRequest } =
     useRemoveFriendRequest(currentUser?.id || "", visitedUser?.$id || "");
   const { data: chatId } = useGetChatId(

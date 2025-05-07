@@ -20,7 +20,7 @@ const NotificationCard = ({
   const { mutateAsync: addFriend } = useAddFriend();
   const { mutateAsync: removeFriendRequest } = useRemoveFriendRequest(
     user?.id || "",
-    notification.sender,
+    notification.senderId,
   );
   const { mutate: deleteNotification } = useDeleteNotification(
     notification.$id,
@@ -45,8 +45,8 @@ const NotificationCard = ({
   const handleAcceptFriendRequest = async () => {
     try {
       await addFriend({
-        userId: user?.id || "",
-        friendId: notification.sender?.$id,
+        user: user,
+        friendId: notification.senderId,
       });
       toast({
         title: "Friend request accepted!",
@@ -64,7 +64,7 @@ const NotificationCard = ({
 
   const handleRejectFriendRequest = async () => {
     try {
-      await removeFriendRequest();
+      await removeFriendRequest(notification.$id);
       toast({
         title: "Friend request rejected",
         variant: "default",
@@ -109,10 +109,10 @@ const NotificationCard = ({
         <div className="flex flex-col gap-2">
           <div className="flex gap-3 items-center justify-between">
             <div className="flex gap-4 items-center">
-              <Link to={`/profile/${notification.sender?.$id}`}>
+              <Link to={`/profile/${notification.senderId}`}>
                 <img
                   className="h-10 w-10 rounded-full"
-                  src={notification.sender?.imageUrl}
+                  src={notification.senderImageUrl}
                   alt="profile-pic"
                 />
               </Link>
@@ -158,24 +158,17 @@ const NotificationCard = ({
               </Button>
             </div>
           )}
-          {notification.type === "LIKE_POST" && notification.post && (
-            <Link to={`/normal-post/${notification.post}`}>
-              <Button variant="outline" className="w-full">
-                View Post
-              </Button>
-            </Link>
-          )}
-          {notification.type === "COMMENT" && notification.post && (
-            <Link to={`/normal-post/${notification.post}`}>
-              <Button variant="outline" className="w-full">
-                View Comment
-              </Button>
-            </Link>
-          )}
-          {notification.type === "JOIN_GAME_REQUEST" && notification.game && (
-            <Link to={`/game-post/${notification.game}`}>
+          {notification.gameId && (
+            <Link to={`/game-post/${notification.gameId}`}>
               <Button variant="outline" className="w-full">
                 View Game
+              </Button>
+            </Link>
+          )}
+          {notification.postId && (
+            <Link to={`/normal-post/${notification.postId}`}>
+              <Button variant="outline" className="w-full">
+                View Post
               </Button>
             </Link>
           )}

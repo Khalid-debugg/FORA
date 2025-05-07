@@ -52,8 +52,7 @@ const GamePost = ({ post, isOne }) => {
       const res = await joinGame({
         game: post,
         waitingGame: waitingGame,
-        userId: user.id,
-        userName: user.name,
+        user: user,
       });
       if (res instanceof Error) throw new Error(res.message);
       toast({

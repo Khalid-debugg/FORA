@@ -21,23 +21,20 @@ export const useGetNotifications = (
     enabled: options?.enabled ?? true,
   });
 };
-export const useAddFriendRequest = (
-  userId: string,
-  userName: string,
-  friendId: string,
-) => {
+export const useAddFriendRequest = (user: any, friend: any) => {
   return useMutation({
-    mutationFn: () => sendFriendRequest(userId, userName, friendId),
+    mutationFn: () => sendFriendRequest(user, friend),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["isFriendRequestSent", userId, friendId],
+        queryKey: ["isFriendRequestSent", user.id, friend.$id],
       });
     },
   });
 };
 export const useRemoveFriendRequest = (userId: string, friendId: string) => {
   return useMutation({
-    mutationFn: () => removeFriendRequest(userId, friendId),
+    mutationFn: (notificationId: string) =>
+      removeFriendRequest(userId, friendId, notificationId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["isFriendRequestSent", userId, friendId],

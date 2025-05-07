@@ -177,29 +177,31 @@ export async function leaveGame({
 export async function joinGame({
   game,
   waitingGame,
-  userId,
-  userName,
+  user,
 }: {
   game: any;
   waitingGame: any;
-  userId: string;
-  userName: string;
+  user: any;
 }) {
   try {
     await createNotification({
       type: "JOIN_GAME_REQUEST",
-      sender: userId,
-      receiver: game.creator.$id,
-      game: game.$id,
-      message: `${userName} wants to join your game`,
+      senderId: user.id,
+      senderName: user.name,
+      senderImageUrl: user.imageUrl,
+      receiverId: game.creator.$id,
+      gameId: game.$id,
+      message: `${user.name} wants to join your game`,
     });
-
     const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
       waitingGame.$id,
       {
-        waitingPlayers: [...waitingGame.waitingPlayers, userId],
+        waitingPlayers: [
+          ...waitingGame.waitingPlayers.map((player) => player.$id),
+          user.id,
+        ],
       },
     );
     if (!updatedWaitingGame) return new Error();
@@ -260,28 +262,34 @@ export async function getJoinedGame(gameId: string) {
 }
 
 export async function rejectPlayer({
-  waitingGameId,
-  userId,
-  waitingPlayers,
+  user,
+  waitingGame,
 }: {
-  waitingGameId: string;
-  userId: string;
-  waitingPlayers: any[];
+  user: any;
+  waitingGame: any;
 }) {
   try {
-    if (!waitingPlayers.some((player) => player.$id === userId))
+    if (!waitingGame.waitingPlayers.some((player) => player.$id === user.$id))
       return new Error("Player is not in the waiting list anymore");
     const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
-      waitingGameId,
+      waitingGame.$id,
       {
-        waitingPlayers: waitingPlayers
-          .filter((player) => player.$id !== userId)
+        waitingPlayers: waitingGame.waitingPlayers
+          .filter((player) => player.$id !== user.$id)
           .map((player) => player.$id),
       },
     );
     if (!updatedWaitingGame) throw new Error();
+    await createNotification({
+      type: "STATUS",
+      sender: user.$id,
+      post: undefined,
+      receiver: waitingGame.game.creator.$id,
+      game: waitingGame.game.$id,
+      message: `${user.name} has rejected your join request`,
+    });
     return updatedWaitingGame;
   } catch (err) {
     console.log(err);
@@ -292,22 +300,21 @@ export async function acceptPlayer({
   game,
   joinedGame,
   waitingGame,
-  userId,
+  user,
 }: {
   game: any;
   joinedGame: any;
   waitingGame: any;
-  userId: string;
+  user: any;
 }) {
   try {
-    console.log(game, joinedGame, waitingGame, userId);
     const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.waitingGamesID,
       waitingGame.$id,
       {
         waitingPlayers: waitingGame.waitingPlayers
-          .filter((player) => player.$id !== userId)
+          .filter((player) => player.$id !== user.$id)
           .map((player) => player.$id),
       },
     );
@@ -319,7 +326,7 @@ export async function acceptPlayer({
       {
         joinedPlayers: [
           ...joinedGame.joinedPlayers.map((player) => player.$id),
-          userId,
+          user.$id,
         ],
       },
     );
@@ -327,9 +334,11 @@ export async function acceptPlayer({
 
     const newNotification = await createNotification({
       type: "STATUS",
-      sender: game.creator.$id,
-      receiver: userId,
-      game: game.$id,
+      senderId: game.creator.$id,
+      senderName: game.creator.name,
+      senderImageUrl: game.creator.imageUrl,
+      receiverId: user.$id,
+      gameId: game.$id,
       message: `Your request to join the game has been accepted`,
     });
 

@@ -34,9 +34,8 @@ const WaitingList = ({ waitingGame, joinedGame, isLoadingWaiting, post }) => {
   const { user } = useUserContext();
   const rejectPlayer = async (player) => {
     const res = await handleReject({
-      waitingGameId: waitingGame.$id,
-      userId: player.$id,
-      waitingPlayers: waitingGame.waitingPlayers,
+      user: player,
+      waitingGame: waitingGame,
     });
     if (res instanceof Error) {
       toast({
@@ -55,7 +54,7 @@ const WaitingList = ({ waitingGame, joinedGame, isLoadingWaiting, post }) => {
       game: post,
       joinedGame: joinedGame,
       waitingGame: waitingGame,
-      userId: player.$id,
+      user: player,
     });
     if (res instanceof Error) {
       toast({

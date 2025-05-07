@@ -1,5 +1,6 @@
 import { Query, ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
+import { createNotification } from "./notifications";
 
 export const checkIsFriend = async (userId: string, friendId: string) => {
   try {
@@ -71,19 +72,26 @@ export const getFriends = async (userId: string) => {
     throw error;
   }
 };
-export async function addFriend(userId: string, friendId: string) {
-  console.log(userId, friendId);
-
+export async function addFriend(user: any, friendId: string) {
   try {
     const friendShip = await databases.createDocument(
       appwriteConfig.databaseID,
       appwriteConfig.friendShipID,
       ID.unique(),
       {
-        actor: userId,
+        actor: user.id,
         receiver: friendId,
       },
     );
+    if (!friendShip) throw new Error("Something went wrong!!");
+    await createNotification({
+      senderId: user.id,
+      senderName: user.name,
+      senderImageUrl: user.imageUrl,
+      receiverId: friendId,
+      type: "STATUS",
+      message: `${user.name} accepted your friend request`,
+    });
     return friendShip;
   } catch (err) {
     console.log(err);

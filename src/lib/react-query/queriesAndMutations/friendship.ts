@@ -34,7 +34,7 @@ export const useGetFriends = (userId: string) => {
 };
 export const useAddFriend = () => {
   return useMutation({
-    mutationFn: ({ userId, friendId }: { userId: string; friendId: string }) =>
-      addFriend(userId, friendId),
+    mutationFn: ({ user, friendId }: { user: any; friendId: string }) =>
+      addFriend(user, friendId),
   });
 };
