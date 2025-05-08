@@ -20,6 +20,8 @@ export async function createUserAccount(user: INewUser) {
       email: user.email,
       username: user.username,
       imageUrl: initialImage,
+      governorate: user.governorate,
+      city: user.city,
     });
   } catch (error) {
     return error;
@@ -31,6 +33,8 @@ export async function createUserInDB(user: {
   email: string;
   username: string;
   imageUrl: URL;
+  governorate: string;
+  city: string;
 }) {
   try {
     const uniqueUserId = ID.unique();
@@ -90,6 +94,30 @@ export async function getUser(id: string) {
     );
     if (!currentUser) throw new Error();
     return currentUser.documents[0];
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getUsersYouMayKnow(
+  pageParam: number,
+  user: any,
+  friends: any[],
+) {
+  try {
+    const friendsIds = friends.map((friend) => friend.$id);
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.usersID,
+      [
+        Query.limit(5),
+        Query.offset(pageParam * 5),
+        Query.equal("governorate", user.governorate),
+        Query.notEqual("$id", user.id),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+    if (!users) throw new Error();
+    return users.documents.filter((user) => !friendsIds.includes(user.$id));
   } catch (err) {
     console.log(err);
   }

@@ -2,7 +2,7 @@ import TopNav from "@/components/shared/TopNav";
 import BottomNav from "@/components/shared/BottomNav";
 import SideNav from "@/components/shared/SideNav";
 import { Outlet } from "react-router-dom";
-import AdditionalContent from "@/components/shared/AdditionalContent";
+import AdditionalContent from "@/components/shared/AdditionalContent/AdditionalContent";
 import { useHasNewNotifications } from "@/lib/react-query/queriesAndMutations/notifications";
 import { useUserContext } from "@/context/AuthContext";
 import { useHasNewMessages } from "@/lib/react-query/queriesAndMutations/messages";

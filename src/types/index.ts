@@ -66,6 +66,8 @@ export type IUser = {
   email: string;
   imageUrl: string;
   bio: string;
+  governorate: string;
+  city: string;
 };
 
 export type INewUser = {
@@ -74,6 +76,8 @@ export type INewUser = {
   email: string;
   username: string;
   password: string;
+  governorate: string;
+  city: string;
 };
 export type IRegisteredUser = {
   email: string;

@@ -14,10 +14,10 @@ export const hasNewMessages = async (userId: string) => {
       appwriteConfig.chatsID,
       [Query.contains("participantsIds", userId)],
     );
-    if (!chats) throw new Error("Something went wrong!!");
+    if (!chats || !chats.documents) throw new Error("Something went wrong!!");
 
     const newMessages = chats.documents
-      .filter((chat) => chat.lastMessage.sender.$id !== userId)
+      .filter((chat) => chat?.lastMessage?.sender?.$id !== userId)
       .some((chat) => {
         if (!chat.lastMessage) return false;
         const readBy = chat.lastMessage?.readBy.map((user) => user.$id) ?? [];
