@@ -1,32 +1,45 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { IoPeopleSharp } from "react-icons/io5";
+import { Button } from "@/components/ui/button";
 
-const PeopleYouMayKnow = ({ peopleYouMayKnow }) => {
-  console.log(peopleYouMayKnow);
-
+const PeopleYouMayKnow = ({ peopleYouMayKnow, isGettingUsers }) => {
+  const navigate = useNavigate();
   return (
     <div className=" rounded-lg border-2 divide-y-2 divide-primary-500 border-primary-500">
-      <h2 className="p-2">People You May Know</h2>
+      <div className="p-2 flex gap-3 items-center">
+        <IoPeopleSharp size={30} color="#30cc42" />
+        <h2 className="font-bold">People You May Know</h2>
+      </div>
       <div className="p-2 flex flex-col gap-2">
-        {peopleYouMayKnow.map((user) => (
-          <div
-            key={user.username}
-            className="p-4 border border-slate-200 flex gap-4 items-center rounded-lg"
-          >
-            <Avatar className="hover:cursor-pointer">
-              <AvatarImage
-                className="h-12 w-12 rounded-full outline outline-slate-200"
-                src={user.imageUrl}
-              />
-            </Avatar>
-            <Link
-              to={`/profile/${user.$id}`}
-              className="text-lg font-medium hover:underline hover:cursor-pointer"
+        {isGettingUsers && <p className="text-center animate-spin">⚽</p>}
+        {!isGettingUsers &&
+          peopleYouMayKnow.map((user) => (
+            <div
+              key={user.username}
+              className="p-4 border border-slate-200 flex gap-4 items-center rounded-lg  justify-between"
             >
-              {user.name}
-            </Link>
-          </div>
-        ))}
+              <div className="flex gap-2 items-center">
+                <Avatar className="hover:cursor-pointer">
+                  <AvatarImage
+                    className="h-10 w-10 rounded-full outline outline-slate-200"
+                    src={user.imageUrl}
+                  />
+                </Avatar>
+                <p className="text-lg font-medium">{user.name}</p>
+              </div>
+              <Button
+                className="shad-button_primary hover:shad-button_ghost"
+                onClick={() => {
+                  navigate(`/profile/${user.$id}`);
+                }}
+                variant="outline"
+                size="sm"
+              >
+                View
+              </Button>
+            </div>
+          ))}
       </div>
     </div>
   );

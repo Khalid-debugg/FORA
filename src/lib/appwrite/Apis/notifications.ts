@@ -32,6 +32,8 @@ export const removeFriendRequest = async (
   friendId: string,
   notificationId?: string,
 ) => {
+  console.log(userId, friendId, notificationId);
+
   try {
     if (notificationId) {
       const deletedRequest = await databases.deleteDocument(
@@ -46,16 +48,17 @@ export const removeFriendRequest = async (
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
       [
-        Query.equal("senderId", friendId),
+        Query.equal("senderId", userId),
         Query.equal("type", "FRIEND_REQUEST"),
-        Query.equal("receiverId", userId),
+        Query.equal("receiverId", friendId),
       ],
     );
+
     if (!friendRequest) throw new Error("Something went wrong!!");
     const deletedRequest = await databases.deleteDocument(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
-      friendRequest?.documents[0].$id,
+      friendRequest?.documents[0]?.$id,
     );
     if (!deletedRequest) throw new Error("Something went wrong!!");
     return deletedRequest;
