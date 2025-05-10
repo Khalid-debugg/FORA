@@ -159,6 +159,7 @@ const GamePost = ({ post, isOne }) => {
           joinedPlayers={joinedGame?.joinedPlayers}
           isLoadingJoined={isLoadingJoined}
           post={post}
+          isOne={isOne}
         />
 
         <div className="w-1/2 flex flex-col max-h-[27rem] ">

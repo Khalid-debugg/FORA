@@ -8,14 +8,14 @@ import { Link } from "react-router-dom";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import { useUserContext } from "@/context/AuthContext";
 
-const JoinedList = ({ joinedPlayers, isLoadingJoined, post }) => {
+const JoinedList = ({ joinedPlayers, isLoadingJoined, post, isOne }) => {
   const { user } = useUserContext();
   const restPlayers = post?.playersNumber - joinedPlayers?.length;
   const restPlayerPlaceholders = Array.from({ length: restPlayers });
 
   return (
     <div
-      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post?.creator?.$id ? "rounded-bl-[1.125rem]" : ""}`}
+      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post?.creator?.$id && !isOne ? "rounded-bl-[1.125rem]" : ""}`}
     >
       <img
         className={`object-cover h-full w-full scale-y-[1.15] scale-x-[1.25] `}
