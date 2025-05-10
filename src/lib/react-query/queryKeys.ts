@@ -13,4 +13,5 @@ export enum QueryKeys {
   Chats = "getChats",
   Messages = "getMessages",
   UsersYouMayKnow = "getUsersYouMayKnow",
+  GamesNearby = "getGamesNearby",
 }

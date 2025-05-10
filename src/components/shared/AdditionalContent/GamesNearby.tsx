@@ -1,50 +1,47 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
-import { IoPeopleSharp } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
+import { TbSoccerField } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
-const PeopleYouMayKnow = ({
-  peopleYouMayKnow,
-  isGettingUsers,
+const GamesNearby = ({
+  gamesNearby,
+  isGettingGamesNearby,
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
 }) => {
   const navigate = useNavigate();
-
   return (
     <div className="rounded-lg border-2 divide-y-2 divide-primary-500 border-primary-500">
       <div className="p-2 flex gap-3 items-center">
-        <IoPeopleSharp size={30} color="#30cc42" />
-        <h2 className="font-bold">People You May Know</h2>
+        <TbSoccerField size={30} color="#30cc42" />
+        <h2 className="font-bold">Games Nearby</h2>
       </div>
 
       <div className="p-2 flex flex-col gap-2">
-        {isGettingUsers && <p className="text-center animate-spin">⚽</p>}
-        {!isGettingUsers &&
-          peopleYouMayKnow.map((user) => (
+        {isGettingGamesNearby && <p className="text-center animate-spin">⚽</p>}
+        {!isGettingGamesNearby &&
+          gamesNearby.map((game) => (
             <div
-              key={user.$id}
+              key={game.$id}
               className="p-4 border border-slate-200 flex gap-4 items-center rounded-lg justify-between"
             >
               <div className="flex gap-2 items-center">
                 <Avatar className="hover:cursor-pointer">
                   <AvatarImage
                     className="h-10 w-10 rounded-full outline outline-slate-200"
-                    src={user.imageUrl}
+                    src={game.creator?.imageUrl}
                   />
                 </Avatar>
                 <div>
-                  <p className="text-lg font-bold">{user.name}</p>
-                  <p className="text-sm text-slate-600">
-                    {"@" + user.username}
-                  </p>
-                </div>{" "}
+                  <p className="text-lg font-bold">{game.caption}</p>
+                  <p className="text-sm text-slate-600">{game.location}</p>
+                </div>
               </div>
               <Button
                 className="shad-button_primary hover:shad-button_ghost"
                 onClick={() => {
-                  navigate(`/profile/${user.$id}`);
+                  navigate(`/game-post/${game.$id}`);
                 }}
                 variant="outline"
                 size="sm"
@@ -68,4 +65,4 @@ const PeopleYouMayKnow = ({
   );
 };
 
-export default PeopleYouMayKnow;
+export default GamesNearby;

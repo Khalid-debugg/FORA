@@ -7,6 +7,7 @@ import {
   deleteGame,
   editGamePost,
   getGame,
+  getGamesNearby,
   getJoinedGame,
   getRecentGames,
   getWaitingGame,
@@ -177,5 +178,17 @@ export const useAcceptPlayer = (gameId: string) => {
         queryKey: [`${gameId + QueryKeys.JoinedGame}`],
       });
     },
+  });
+};
+export const useGetGamesNearby = (user) => {
+  return useInfiniteQuery({
+    queryKey: [QueryKeys.GamesNearby],
+    queryFn: ({ pageParam = 0 }) => getGamesNearby(pageParam, user),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage?.length === 5 ? allPages.length : undefined,
+    initialPageParam: 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    enabled: !!user.id,
   });
 };

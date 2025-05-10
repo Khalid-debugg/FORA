@@ -347,3 +347,24 @@ export async function acceptPlayer({
     console.log(err);
   }
 }
+export async function getGamesNearby(pageParam: number, user: any) {
+  try {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.gamesID,
+      [
+        Query.limit(5),
+        Query.offset(pageParam * 5),
+        Query.notEqual("creator", user.id),
+        Query.contains("location", user.governorate),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+    console.log(users);
+
+    if (!users) throw new Error();
+    return users.documents;
+  } catch (err) {
+    console.log(err);
+  }
+}
