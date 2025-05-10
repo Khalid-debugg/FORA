@@ -104,7 +104,6 @@ export async function getUsersYouMayKnow(
   friends: any[],
 ) {
   try {
-    const friendsIds = friends.map((friend) => friend.$id);
     const users = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.usersID,
@@ -116,8 +115,10 @@ export async function getUsersYouMayKnow(
         Query.orderDesc("$createdAt"),
       ],
     );
+    console.log(users);
+
     if (!users) throw new Error();
-    return users.documents.filter((user) => !friendsIds.includes(user.$id));
+    return users.documents.filter((u) => !friends.includes(u.$id));
   } catch (err) {
     console.log(err);
   }

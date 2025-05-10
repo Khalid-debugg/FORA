@@ -1,6 +1,7 @@
 import { Query, ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
 import { createNotification } from "./notifications";
+import { log } from "console";
 
 export const checkIsFriend = async (userId: string, friendId: string) => {
   try {
@@ -62,7 +63,6 @@ export const getFriends = async (userId: string) => {
         return friendship.actor;
       }
     });
-
     if (!friendsDocs) throw new Error("Something went wrong!!");
     return friendsDocs;
   } catch (error: unknown) {
