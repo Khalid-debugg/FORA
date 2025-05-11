@@ -5,6 +5,7 @@ import PeopleYouMayKnow from "./PeopleYouMayKnow";
 import { useGetFriends } from "@/lib/react-query/queriesAndMutations/friendship";
 import { useGetGamesNearby } from "@/lib/react-query/queriesAndMutations/games";
 import GamesNearby from "./GamesNearby";
+import HypeCorner from "./HypeCorner";
 
 const AdditionalContent = () => {
   const { user } = useUserContext();
@@ -28,6 +29,7 @@ const AdditionalContent = () => {
 
   return (
     <div className="fixed right-0 top-0 p-2 w-1/3 max-w-1/3 h-screen hidden md:flex flex-col gap-5">
+      <HypeCorner />
       {peopleYouMayKnow.length > 0 && (
         <PeopleYouMayKnow
           peopleYouMayKnow={peopleYouMayKnow}
