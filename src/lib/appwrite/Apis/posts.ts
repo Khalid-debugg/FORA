@@ -77,7 +77,7 @@ export async function getRecentPostsAndGames(
 ) {
   try {
     if (!friends) return [];
-    const userAndFriedsIds = [userId, ...friends.map((friend) => friend.$id)];
+    const userAndFriedsIds = [userId, ...friends];
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
@@ -99,7 +99,11 @@ export async function getRecentPostsAndGames(
         Query.orderDesc("$createdAt"),
       ],
     );
-    return [...posts.documents, ...games.documents];
+    return [...posts.documents, ...games.documents].sort((a, b) => {
+      return (
+        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      );
+    });
   } catch (err) {
     console.log(err);
     return [];

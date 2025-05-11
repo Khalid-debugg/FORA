@@ -34,7 +34,7 @@ export const useGetRecentPostsAndGames = (friends: any[], userId: string) => {
     initialPageParam: 0,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    enabled: !!friends,
+    enabled: !!friends && !!userId,
   });
 };
 
