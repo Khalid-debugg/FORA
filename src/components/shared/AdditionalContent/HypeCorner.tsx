@@ -10,7 +10,7 @@ const HypeCorner = () => {
     if (stored) {
       setGifIndex(Number(stored));
     } else {
-      const random = Math.floor(Math.random() * 6);
+      const random = Math.floor(Math.random() * 21);
       sessionStorage.setItem("hypeGifIndex", String(random));
       setGifIndex(random);
     }
@@ -25,14 +25,16 @@ const HypeCorner = () => {
         <h2 className=" text-lg font-semibold">Hype Corner</h2>
       </div>
       <div className="p-2 flex flex-col gap-3">
-        <img
-          src={`/assets/images/hype/${gifIndex}.gif`}
-          alt="Football moment"
-          className="w-full rounded-md"
+        <video
+          src={`/assets/videos/hype/${gifIndex}.mp4`}
+          controls={false}
+          className="w-full"
+          autoPlay
+          loop
         />
         <Button
           className="shad-button_primary hover:shad-button_ghost self-end"
-          onClick={() => setGifIndex(Math.floor(Math.random() * 6))}
+          onClick={() => setGifIndex(Math.floor(Math.random() * 21))}
         >
           Shuffle
         </Button>
