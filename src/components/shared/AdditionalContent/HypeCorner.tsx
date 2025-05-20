@@ -10,7 +10,7 @@ const HypeCorner = () => {
     if (stored) {
       setGifIndex(Number(stored));
     } else {
-      const random = Math.floor(Math.random() * 21);
+      const random = Math.floor(Math.random() * 20);
       sessionStorage.setItem("hypeGifIndex", String(random));
       setGifIndex(random);
     }
@@ -28,13 +28,17 @@ const HypeCorner = () => {
         <video
           src={`/assets/videos/hype/${gifIndex}.mp4`}
           controls={false}
-          className="w-full"
-          autoPlay
+          className="w-full h-full object-contain"
+          autoPlay={true}
+          muted
           loop
         />
         <Button
           className="shad-button_primary hover:shad-button_ghost self-end"
-          onClick={() => setGifIndex(Math.floor(Math.random() * 21))}
+          onClick={() => {
+            const random = Math.floor(Math.random() * 20);
+            setGifIndex(random);
+          }}
         >
           Shuffle
         </Button>
