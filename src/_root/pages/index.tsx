@@ -1,7 +1,12 @@
-export { default as Home } from "./Home/Home";
-export { default as CreatePost } from "./Home/CreatePost";
-export { default as Profile } from "./Profile/Profile";
-export { default as OneNormalPost } from "./NormalPost/OneNormalPost";
-export { default as OneGamePost } from "./GamePost/OneGamePost";
-export { default as Notifications } from "./Notifications/Notifications";
-export { default as Explore } from "./Explore/Explore";
+import { lazy } from "react";
+
+export const Home = lazy(() => import("./Home/Home"));
+export const CreatePost = lazy(() => import("./Home/CreatePost"));
+export const Profile = lazy(() => import("./Profile/Profile"));
+export const OneNormalPost = lazy(() => import("./NormalPost/OneNormalPost"));
+export const OneGamePost = lazy(() => import("./GamePost/OneGamePost"));
+export const Notifications = lazy(
+  () => import("./Notifications/Notifications"),
+);
+export const Explore = lazy(() => import("./Explore/Explore"));
+export const Messages = lazy(() => import("./Messages/Messages"));
