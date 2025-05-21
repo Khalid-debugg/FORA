@@ -14,7 +14,7 @@ export const SignupValidation = z
       .min(2, { message: "Too short" })
       .max(15, { message: "That's too much, maximum 15 characters" }),
     email: z.string().email({ message: "Please enter a valid email" }),
-    password: z.string().min(8, { message: "Too short" }),
+    password: z.string().min(6, { message: "Too short" }),
     confirmPassword: z.string(),
     governorate: z.string().nonempty("Governorate is required"),
     city: z.string(),
@@ -32,6 +32,23 @@ export const SigninValidation = z.object({
   email: z.string().email({ message: "Please enter a valid email" }),
   password: z.string(),
 });
+export const ResetPasswordValidation = z.object({
+  email: z.string().email({ message: "Please enter a valid email" }),
+});
+export const SetNewPasswordValidation = z
+  .object({
+    password: z.string().min(6, { message: "Too short" }),
+    confirmPassword: z.string(),
+  })
+  .refine(
+    (values) => {
+      return values.password === values.confirmPassword;
+    },
+    {
+      message: "Passwords must match!",
+      path: ["confirmPassword"],
+    },
+  );
 export const gameValidation = z.object({
   caption: z
     .string()

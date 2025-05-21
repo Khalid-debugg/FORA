@@ -92,7 +92,15 @@ const SignInForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <div className="flex w-full items-center justify-between">
+                  <FormLabel>Password</FormLabel>
+                  <Link
+                    className="text-primary-500 underline text-sm"
+                    to={"/reset-password"}
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
                 <FormControl>
                   <Input
                     type="password"

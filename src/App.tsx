@@ -14,6 +14,8 @@ import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
 import { Toaster } from "@/components/ui/toaster";
 import Messages from "./_root/pages/Messages/Messages";
+import ResetPassword from "./_auth/forms/ResetPassword";
+import SetNewPassword from "./_auth/forms/SetNewPassword";
 
 const App = () => {
   return (
@@ -22,6 +24,11 @@ const App = () => {
         <Route element={<AuthLayout />}>
           <Route path="/signin" element={<SignInForm />} />
           <Route path="/signup" element={<SignUpForm />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/set-new-password/:userId?/:secret?"
+            element={<SetNewPassword />}
+          />
         </Route>
         <Route element={<RootLayout />}>
           <Route path="/" element={<Home />} />

@@ -56,7 +56,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (
       (localStorage.getItem("cookieFallback") === "[]" ||
         localStorage.getItem("cookieFallback") === null) &&
-      currentRoute.pathname !== "/signup"
+      currentRoute.pathname !== "/signup" &&
+      !currentRoute.pathname.includes("/set-new-password") &&
+      !currentRoute.pathname.includes("/reset-password")
     )
       navigate("/signin");
     checkAuthUser();

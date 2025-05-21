@@ -123,3 +123,37 @@ export async function getUsersYouMayKnow(
     console.log(err);
   }
 }
+export async function createRecovery(email: string) {
+  try {
+    const recovery = await account.createRecovery(
+      email,
+      `${import.meta.env.VITE_DOMAIN}/set-new-password`,
+    );
+    return recovery;
+  } catch (err) {
+    return err;
+  }
+}
+export async function updateRecovery(
+  userId: string,
+  secret: string,
+  newPassword: string,
+) {
+  try {
+    const recovery = await account.updateRecovery(userId, secret, newPassword);
+    return recovery;
+  } catch (err) {
+    return err;
+  }
+}
+export async function createLoginSessionWithRecovery(
+  userId: string,
+  secret: string,
+) {
+  try {
+    const newUserSession = await account.createSession(userId, secret);
+    return newUserSession;
+  } catch (err) {
+    return err;
+  }
+}
