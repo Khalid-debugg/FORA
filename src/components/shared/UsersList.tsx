@@ -9,20 +9,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarImage } from "../ui/avatar";
+import { GoHeart } from "react-icons/go";
+import { Link } from "react-router-dom";
 
 const UsersList = ({
   listTitle,
-  buttonTitle,
   listItems,
 }: {
   listTitle: string;
-  buttonTitle?: string;
   listItems: any[];
 }) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger className="hover:underline">
-        {buttonTitle}
+      <AlertDialogTrigger className="hover:underline flex gap-1 items-center">
+        <p>{listItems.length}</p> <GoHeart size={25} fill="green" />
       </AlertDialogTrigger>
       <AlertDialogContent className="">
         <AlertDialogHeader>
@@ -30,18 +30,21 @@ const UsersList = ({
           <AlertDialogDescription className="flex flex-col gap-2 pr-2 max-h-[80vh] overflow-auto">
             {listItems.map((user) => (
               <div
-                key={user.username}
+                key={user.$id}
                 className="p-4 border border-primary-500 flex gap-4 items-center rounded-lg"
               >
                 <Avatar className="hover:cursor-pointer">
                   <AvatarImage
-                    className="h-12 w-12 rounded-full outline outline-slate-200"
+                    className="h-10 w-10 rounded-full outline outline-slate-200"
                     src={user.imageUrl}
                   />
                 </Avatar>
-                <p className="text-lg font-medium hover:underline hover:cursor-pointer">
-                  {user.username}
-                </p>
+                <Link
+                  to={`/profile/${user.$id}`}
+                  className="text-lg font-medium hover:underline hover:cursor-pointer"
+                >
+                  {user.name}
+                </Link>
               </div>
             ))}
           </AlertDialogDescription>

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useGetReplies } from "@/lib/react-query/queriesAndMutations/replies";
 import { appwriteConfig, storage } from "@/lib/appwrite/config";
-import Reply from "./Reply";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-
+const Reply = lazy(
+  () => import("@/components/shared/NormalPost/RepliesSection/Reply"),
+);
 const Replies = ({ comment, replyRef }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetReplies(comment?.$id);
@@ -82,13 +83,18 @@ const Replies = ({ comment, replyRef }) => {
         <>
           <div className="flex flex-col gap-4">
             {allReplies?.map((reply, idx) => (
-              <Reply
-                replyRef={replyRef}
-                key={reply?.$id || idx}
-                reply={reply}
-                commentId={comment?.$id}
-                mimeType={mimeTypes[idx]?.mimeType}
-              />
+              <Suspense
+                fallback={<div className="animate-spin text-center">⚽</div>}
+                key={reply?.$id}
+              >
+                <Reply
+                  replyRef={replyRef}
+                  key={reply?.$id}
+                  reply={reply}
+                  commentId={comment?.$id}
+                  mimeType={mimeTypes[idx]?.mimeType}
+                />
+              </Suspense>
             ))}
           </div>
           <div className="flex justify-between p-2">

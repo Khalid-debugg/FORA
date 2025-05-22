@@ -53,7 +53,7 @@ const Comments = ({ post }) => {
         {allComments?.map((comment, idx) => (
           <Comment
             postId={post?.$id}
-            key={idx}
+            key={comment?.$id}
             comment={comment}
             mimeType={mimeTypes[idx]}
           />

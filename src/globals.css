@@ -278,3 +278,64 @@
 html {
   overflow-y: scroll;
 }
+@layer utilities {
+  .animate-like-button {
+    animation: like-button 0.3s ease-in-out;
+  }
+
+  @keyframes like-button {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .animate-float-1 {
+    animation: float-up 0.7s ease-out forwards;
+    animation-delay: 0s;
+  }
+
+  .animate-float-2 {
+    animation: float-up 0.7s ease-out forwards;
+    animation-delay: 0.1s;
+  }
+
+  .animate-float-3 {
+    animation: float-up 0.7s ease-out forwards;
+    animation-delay: 0.2s;
+  }
+
+  .animate-float-4 {
+    animation: float-up 0.7s ease-out forwards;
+    animation-delay: 0.05s;
+  }
+
+  .animate-float-5 {
+    animation: float-up 0.7s ease-out forwards;
+    animation-delay: 0.15s;
+  }
+
+  .animate-float-6 {
+    animation: float-up 0.7s ease-out forwards;
+    animation-delay: 0.25s;
+  }
+
+  @keyframes float-up {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-40px);
+      opacity: 0;
+    }
+  }
+}

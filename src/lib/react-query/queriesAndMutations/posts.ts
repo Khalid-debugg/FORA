@@ -88,17 +88,37 @@ export const useEditNormalPost = () => {
     }) => editNormalPost(id, caption, fileOrFiles, mediaUrls, mediaIds),
   });
 };
-export const useLikePost = (
-  post: ICreatedPost,
-  userId: string,
-  postCreatorId: string,
-) => {
+export const useLikePost = () => {
   return useMutation({
-    mutationFn: () => likePost(post, userId, postCreatorId),
+    mutationFn: ({ sender, post }: { sender: any; post: ICreatedPost }) =>
+      likePost(sender, post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.RecentPostsAndGames],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.RecentPosts],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["search-posts"],
+      });
+    },
   });
 };
-export const useUnlikePost = (post: ICreatedPost, userId: string) => {
+export const useUnlikePost = () => {
   return useMutation({
-    mutationFn: () => unlikePost(post, userId),
+    mutationFn: ({ sender, post }: { sender: any; post: ICreatedPost }) =>
+      unlikePost(sender, post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.RecentPostsAndGames],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.RecentPosts],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["search-posts"],
+      });
+    },
   });
 };

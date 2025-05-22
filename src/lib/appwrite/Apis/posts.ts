@@ -6,7 +6,7 @@ import {
   handleFileOperation,
   uploadFiles,
 } from "./helper";
-import { ICreatedPost, INewComment, INewPost } from "@/types";
+import { ICreatedPost, INewComment, INewPost, INewReply } from "@/types";
 import { createNotification } from "./notifications";
 
 export async function getNormalPost(postId: string) {
@@ -177,27 +177,25 @@ export async function createPost(post: INewPost) {
     throw err;
   }
 }
-export async function likePost(
-  post: ICreatedPost,
-  userId: string,
-  postCreatorId: string,
-) {
+export async function likePost(sender: any, post: ICreatedPost) {
   try {
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
       post.$id,
       {
-        postLikes: [...post.postLikes, userId],
+        postLikes: [...post.postLikes, sender.id],
       },
     );
-    if (post.creator.$id !== userId) {
+    if (post.creator.$id !== sender.id) {
       await createNotification({
         type: "LIKE_POST",
-        senderId: userId,
-        receiverId: postCreatorId,
+        senderId: sender.id,
+        receiverId: post.creator.$id,
+        senderImageUrl: sender.imageUrl,
+        senderName: sender.name,
         postId: post.$id,
-        message: `${post.creator.name} liked your post`,
+        message: `${sender.name} liked your post`,
       });
     }
 
@@ -206,16 +204,15 @@ export async function likePost(
     console.log(err);
   }
 }
-export async function unlikePost(post: ICreatedPost, userId: string) {
+export async function unlikePost(sender: any, post: ICreatedPost) {
   try {
     const currentLikes = post?.postLikes?.map((like) => like.$id);
-
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,
       post.$id,
       {
-        postLikes: currentLikes.filter((like) => like !== userId) || [],
+        postLikes: currentLikes.filter((like) => like !== sender.id) || [],
       },
     );
 
@@ -229,7 +226,7 @@ export async function unlikePost(post: ICreatedPost, userId: string) {
     throw err;
   }
 }
-export async function likeReply(reply, userId) {
+export async function likeReply(reply: INewReply, userId: string) {
   try {
     const currentLikes = reply?.replyLikes?.map((like) => like.$id) || [];
 
@@ -252,7 +249,7 @@ export async function likeReply(reply, userId) {
     throw err;
   }
 }
-export async function unlikeReply(reply: INewComment, userId: string) {
+export async function unlikeReply(reply: INewReply, userId: string) {
   try {
     const currentLikes = reply?.replyLikes?.map((like) => like.$id);
 

@@ -1,5 +1,4 @@
 import { useEffect, useState, Suspense, lazy } from "react";
-import { ICreatedPost } from "@/types";
 import {
   Carousel,
   CarouselContent,
@@ -7,18 +6,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { BsCalendar2DateFill } from "react-icons/bs";
-import { appwriteConfig, storage } from "@/lib/appwrite/config";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/audio.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
-import {
-  DefaultVideoLayout,
-  defaultLayoutIcons,
-} from "@vidstack/react/player/layouts/default";
-import { BiLike } from "react-icons/bi";
-import { BiSolidLike } from "react-icons/bi";
+
 import { FaRegCommentDots } from "react-icons/fa";
 import { FaCommentDots } from "react-icons/fa6";
 import { useUserContext } from "@/context/AuthContext";
@@ -30,25 +21,26 @@ import {
   useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations/posts";
 import { useMediaFiles } from "@/lib/react-query/queriesAndMutations/helper";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Calendar } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { GoHeartFill, GoHeart } from "react-icons/go";
 
 const CommentSection = lazy(() => import("./CommentSection/CommentSection"));
 
-const NormalPost = ({
-  post,
-  isOne,
-}: {
-  post: ICreatedPost;
-  isOne?: boolean;
-}) => {
+const NormalPost = ({ post, isOne }) => {
   const { user } = useUserContext();
   const { data: mediaFiles } = useMediaFiles(post?.mediaIds || []);
   const [totalLikes, setTotalLikes] = useState(post?.postLikes?.length);
-  const date = new Date(post?.$createdAt);
-  const { mutateAsync: createLike, isPending: isLiking } = useLikePost(
-    post,
-    user?.id,
-    post?.creator?.$id,
-  );
+  const { mutateAsync: createLike, isPending: isLiking } = useLikePost();
   const { mutateAsync: deleteLike, isPending: isDisliking } = useUnlikePost(
     post,
     user?.id,
@@ -56,6 +48,7 @@ const NormalPost = ({
   const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     setIsLiked(
@@ -65,20 +58,24 @@ const NormalPost = ({
 
   const handleLike = async () => {
     try {
+      setIsAnimating(true);
       setIsLiked((prev) => !prev);
+
       if (isLiked) {
         setTotalLikes((prev) => prev - 1);
-        const response = await deleteLike();
+        const response = await deleteLike({ sender: user, post });
         if (response instanceof Error) {
           throw new Error(response.message);
         }
       } else {
         setTotalLikes((prev) => prev + 1);
-        const response = await createLike();
+        const response = await createLike({ sender: user, post });
         if (response instanceof Error) {
           throw new Error(response.message);
         }
       }
+
+      setTimeout(() => setIsAnimating(false), 300);
     } catch (error) {
       toast({
         variant: "error",
@@ -88,117 +85,182 @@ const NormalPost = ({
       setTotalLikes((prev) =>
         error.message.includes("dislike") ? prev + 1 : prev - 1,
       );
+      setIsAnimating(false);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    }).format(date);
   };
 
   const renderCarousel = () => {
     if (!mediaFiles || mediaFiles?.length === 0) return null;
+
     return mediaFiles.map((media, i) => (
       <CarouselItem key={i}>
         {media.mimeType.startsWith("image/") ? (
           <img
-            className="max-h-[500px] object-cover w-full min-h-[25rem]"
-            src={media.ref}
+            className="max-h-[500px] object-cover w-full min-h-[25rem] rounded-md"
+            src={media.ref || "/placeholder.svg"}
             alt={`photo ${i}`}
           />
         ) : media.mimeType.startsWith("video/") ? (
-          <MediaPlayer
-            src={media.ref}
-            viewType="video"
-            streamType="on-demand"
-            logLevel="warn"
-            crossOrigin
-            playsInline
-          >
-            x<MediaProvider></MediaProvider>
-            <DefaultVideoLayout icons={defaultLayoutIcons} />
-          </MediaPlayer>
+          <div className="relative rounded-md overflow-hidden">
+            <video
+              className="max-h-[500px] w-full min-h-[25rem] object-cover"
+              src={media.ref}
+              controls
+              playsInline
+              crossOrigin="anonymous"
+            />
+          </div>
         ) : (
-          <p className="text-red-500 p-10 flex justify-center items-center font-bold">
+          <div className="bg-red-50 text-red-500 p-10 flex justify-center items-center font-bold rounded-md">
             Media type is not supported
-          </p>
+          </div>
         )}
       </CarouselItem>
     ));
   };
 
   return (
-    <div
-      className={`flex flex-col w-full gap-1 divide-y-2 divide-primary-500 overflow-hidden ${!isOne ? " border-2 border-primary-500 rounded-3xl" : ""}`}
+    <Card
+      className={`w-full overflow-hidden ${isOne ? "border-0 shadow-none rounded-none" : "border-green-500 rounded-3xl"}`}
     >
-      <button
-        onClick={() => navigate(`/normal-post/${post?.$id}`)}
-        className="flex p-4 justify-between items-center hover:bg-slate-100"
-      >
-        <div className="flex gap-3 items-center">
-          <img
-            src={post?.creator?.imageUrl}
-            className="rounded-full w-14 h-14 border border-black"
-            alt="profile pic"
-          />
-          <Link
-            to={`/profile/${post?.creator?.$id}`}
-            className="text-xl font-medium hover:underline"
-            onClick={(e) => e.stopPropagation()} // Prevent button click interference
-          >
-            {post?.creator?.name}
-          </Link>
-        </div>
-      </button>
-      <div className="px-4 flex flex-col">
-        <div className="p-2">{post?.caption}</div>
-        <Carousel
-          className={`flex justify-center items-center ${mediaFiles?.length > 0 ? "border" : ""}`}
-        >
-          <CarouselContent>{renderCarousel()}</CarouselContent>
-          {mediaFiles?.length > 1 && <CarouselPrevious />}
-          {mediaFiles?.length > 1 && <CarouselNext />}
-        </Carousel>
-        {totalLikes > 0 && (
-          <div className="self-end p-2">
-            <UsersList
-              listTitle="Likes"
-              buttonTitle={`${totalLikes} ${totalLikes === 1 ? "Like" : "Likes"}`}
-              listItems={post?.postLikes}
+      <CardHeader className="p-4 cursor-pointer">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-14 w-14 border-2 border-green-500">
+            <AvatarImage
+              src={
+                post?.creator?.imageUrl || "/placeholder.svg?height=56&width=56"
+              }
+              alt={post?.creator?.name}
             />
+            <AvatarFallback>{post?.creator?.name?.[0] || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <Link
+                  to={`/profile/${post?.creator?.$id}`}
+                  className="font-semibold leading-none hover:underline"
+                >
+                  {post?.creator?.name}
+                </Link>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5 text-green-600" />
+                  <span className="text-xs text-slate-600">
+                    {formatDate(post?.$createdAt)}
+                  </span>
+                </div>
+              </div>
+              <Badge className="bg-green-50 text-green-700 hover:bg-green-100 border-green-200">
+                Post
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-0">
+        {post?.caption && (
+          <div
+            className="px-4 border-t hover:bg-slate-50 hover:cursor-pointer"
+            onClick={() => navigate(`/normal-post/${post.$id}`)}
+          >
+            <p className="text-gray-700 whitespace-pre-wrap p-2">
+              {post?.caption}
+            </p>
           </div>
         )}
-      </div>
-      <div className="flex mb-[-0.25rem] divide-x-2 divide-primary-500 justify-between items-center">
-        <button
-          disabled={isLiking || isDisliking}
-          onClick={handleLike}
-          className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
-        >
-          {isLiked && <BiSolidLike size={25} fill="green" />}
-          {!isLiked && <BiLike size={25} fill="green" />}
-          <p className="text-center">Like</p>
-        </button>
-        <button
-          disabled={isOne}
-          onClick={() => setIsCommentClicked(!isCommentClicked)}
-          className="flex justify-center items-center gap-2 flex-1 py-3 hover:bg-slate-100"
-        >
-          {isCommentClicked ? (
-            <FaCommentDots size={25} fill="green" />
-          ) : (
-            <FaRegCommentDots size={25} fill="green" />
-          )}
-          <p className="text-center">Comment</p>
-        </button>
-      </div>
-      {isCommentClicked && (
-        <Suspense
-          fallback={
-            <div className="flex justify-center items-center">
-              <div className="animate-spin">⚽</div>
+
+        {mediaFiles && mediaFiles.length > 0 && (
+          <div className="px-4 pb-4">
+            <Carousel
+              className={`w-full ${mediaFiles.length > 0 ? "border rounded-md" : ""}`}
+            >
+              <CarouselContent>{renderCarousel()}</CarouselContent>
+              {mediaFiles.length > 1 && <CarouselPrevious />}
+              {mediaFiles.length > 1 && <CarouselNext />}
+            </Carousel>
+          </div>
+        )}
+
+        {totalLikes > 0 && (
+          <div className="px-4 pb-3 flex items-center justify-end">
+            <UsersList listTitle="Likes" listItems={post?.postLikes} />
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="p-0 flex flex-col">
+        <div className="grid grid-cols-2 border-t border-primary-500 divide-x divide-primary-500 w-full">
+          <div className="relative">
+            <Button
+              variant="ghost"
+              className={cn(
+                "rounded-none h-12 w-full flex items-center justify-center gap-2",
+                isAnimating && "animate-like-button",
+              )}
+              onClick={handleLike}
+              disabled={isLiking || isDisliking}
+            >
+              <div className="flex justify-center items-center gap-2">
+                {isLiked ? (
+                  <GoHeartFill
+                    size={25}
+                    fill="green"
+                    className={cn(isAnimating && "scale-125")}
+                  />
+                ) : (
+                  <GoHeart size={25} fill="green" />
+                )}
+                <p className="text-center">Like</p>
+              </div>
+              {(isLiking || isDisliking) && (
+                <div className="animate-spin ml-2">⚽</div>
+              )}
+            </Button>
+          </div>
+
+          <Button
+            variant="ghost"
+            className="rounded-none h-12 flex items-center justify-center gap-2"
+            onClick={() => !isOne && setIsCommentClicked(!isCommentClicked)}
+            disabled={isOne}
+          >
+            <div className="flex justify-center items-center gap-2">
+              {isCommentClicked ? (
+                <FaCommentDots size={25} fill="green" />
+              ) : (
+                <FaRegCommentDots size={25} fill="green" />
+              )}
+              <p className="text-center">Comment</p>
             </div>
-          }
-        >
-          <CommentSection post={post} isCommentClicked={isCommentClicked} />
-        </Suspense>
-      )}
-    </div>
+          </Button>
+        </div>
+
+        {isCommentClicked && (
+          <div className="w-full border-t">
+            <Suspense
+              fallback={
+                <div className="flex justify-center items-center p-6">
+                  <div className="animate-spin text-[2rem]">⚽</div>
+                </div>
+              }
+            >
+              <CommentSection post={post} isCommentClicked={isCommentClicked} />
+            </Suspense>
+          </div>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 

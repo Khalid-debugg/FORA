@@ -18,6 +18,8 @@ const NotificationCard = ({
 }) => {
   const { user } = useUserContext();
   const { mutateAsync: addFriend } = useAddFriend();
+  console.log(notification);
+
   const { mutateAsync: removeFriendRequest } = useRemoveFriendRequest(
     user?.id || "",
     notification.senderId,

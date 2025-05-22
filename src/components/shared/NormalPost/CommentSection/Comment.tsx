@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useEffect, useState, Suspense, lazy } from "react";
-import { BiSolidLike } from "react-icons/bi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useUserContext } from "@/context/AuthContext";
 import {
@@ -19,30 +18,28 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
+import UsersList from "../../UsersList";
 const RepliesSection = lazy(() => import("../RepliesSection/RepliesSection"));
 const Comment = ({ comment, mimeType, postId }) => {
   const { user } = useUserContext();
   const [isRepliesClicked, setIsRepliesClicked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const { mutateAsync: createLike, isPending: isLiking } = useLikeComment(
-    comment,
-    user.id,
-    comment?.creator?.$id,
-  );
-  const { mutateAsync: deleteLike, isPending: isDisliking } = useUnlikeComment(
-    comment,
-    user.id,
-  );
+  const { mutateAsync: createLike, isPending: isLiking } =
+    useLikeComment(postId);
+  const { mutateAsync: deleteLike, isPending: isDisliking } =
+    useUnlikeComment(postId);
   const { mutateAsync: editComment } = useEditComment(postId);
   const { mutateAsync: deleteComment } = useDeleteComment(postId);
-  const [content, setContent] = useState("");
-  const [mediaId, setMediaId] = useState("");
-  const [mediaUrl, setMediaUrl] = useState("");
-  const [fileType, setFileType] = useState("");
+  const [content, setContent] = useState(comment?.content);
+  const [mediaId, setMediaId] = useState(comment?.mediaId);
+  const [mediaUrl, setMediaUrl] = useState(comment?.mediaUrl);
+  const [fileType, setFileType] = useState(mimeType);
   const [newFile, setNewFile] = useState(null);
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(
+    comment?.commentLikes?.some((likedUser) => likedUser.$id === user?.id),
+  );
 
   useEffect(() => {
     const fetchMediaType = async () => {
@@ -57,16 +54,7 @@ const Comment = ({ comment, mimeType, postId }) => {
       fetchMediaType();
     }
   }, [comment, user]);
-  useEffect(() => {
-    if (comment) {
-      setContent(comment?.content);
-    }
-    if (
-      comment?.commentLikes?.some((likedUser) => likedUser.$id === user?.id)
-    ) {
-      setIsLiked(true);
-    }
-  }, [comment, user]);
+
   const handleSave = async () => {
     const res = await editComment({
       id: comment.$id,
@@ -79,13 +67,13 @@ const Comment = ({ comment, mimeType, postId }) => {
     setIsEditing(false);
   };
   const handleLikeComment = async () => {
-    const response = await createLike();
+    const response = await createLike({ comment, user });
     if (response instanceof Error) return;
     setIsLiked(true);
   };
 
   const handleUnlikeComment = async () => {
-    const response = await deleteLike();
+    const response = await deleteLike({ comment, user });
     if (response instanceof Error) return;
     setIsLiked(false);
   };
@@ -239,39 +227,42 @@ const Comment = ({ comment, mimeType, postId }) => {
                       ></video>
                     ) : null}
                   </div>
-                  <div className="flex gap-8">
-                    <button
-                      className="text-sm"
-                      onClick={() => setIsRepliesClicked((prev) => !prev)}
-                    >
-                      Reply
-                    </button>
-                    {!isLiked ? (
+                  <div className=" flex justify-between">
+                    <div className="flex gap-4 items-center">
                       <button
-                        disabled={isDisliking || isLiking}
                         className="text-sm"
-                        onClick={handleLikeComment}
+                        onClick={() => setIsRepliesClicked((prev) => !prev)}
                       >
-                        Like
+                        Reply
                       </button>
-                    ) : (
-                      <button
-                        disabled={isDisliking || isLiking}
-                        className="text-sm"
-                        onClick={handleUnlikeComment}
-                      >
-                        Unlike
-                      </button>
+                      {!isLiked ? (
+                        <button
+                          disabled={isDisliking || isLiking}
+                          className="text-sm"
+                          onClick={handleLikeComment}
+                        >
+                          Like
+                        </button>
+                      ) : (
+                        <button
+                          disabled={isDisliking || isLiking}
+                          className="text-sm"
+                          onClick={handleUnlikeComment}
+                        >
+                          Unlike
+                        </button>
+                      )}
+                    </div>
+                    {comment?.commentLikes?.length > 0 && (
+                      <div className="flex gap-2 items-center">
+                        <UsersList
+                          listTitle="Likes"
+                          listItems={comment?.commentLikes}
+                        />
+                      </div>
                     )}
                   </div>
                 </div>
-
-                {comment?.likes?.length > 0 && (
-                  <div className="flex gap-1">
-                    <p className="text-sm"> {comment?.likes?.length}</p>
-                    <BiSolidLike fill="green" size={20} />
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -290,12 +281,6 @@ const Comment = ({ comment, mimeType, postId }) => {
             </DropdownMenu>
           )}
         </div>
-        {comment?.likes?.length > 0 && (
-          <div className="flex gap-1">
-            <p className="text-sm">{comment?.likes?.length}</p>
-            <BiSolidLike fill="green" size={20} />
-          </div>
-        )}
       </div>
 
       {comment?.replies?.length > 0 && (
@@ -313,7 +298,7 @@ const Comment = ({ comment, mimeType, postId }) => {
         </button>
       )}
       {isRepliesClicked && (
-        <Suspense fallback={<div className="animate-spin">⚽</div>}>
+        <Suspense fallback={<div className="animate-spin text-center">⚽</div>}>
           <RepliesSection
             comment={comment}
             isRepliesClicked={isRepliesClicked}

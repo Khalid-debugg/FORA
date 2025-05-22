@@ -124,7 +124,7 @@ const WaitingList = ({ waitingGame, joinedGame, isLoadingWaiting, post }) => {
                     </div>
                   )}
                 </HoverCardTrigger>
-                <HoverCardContent className="border border-amber-500">
+                <HoverCardContent className="border bg-white border-amber-500">
                   <div className="flex gap-2 items-center">
                     <Avatar className="h-10 w-10">
                       <AvatarImage

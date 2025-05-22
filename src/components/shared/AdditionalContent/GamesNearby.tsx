@@ -12,7 +12,7 @@ const GamesNearby = ({
 }) => {
   const navigate = useNavigate();
   return (
-    <div className="rounded-lg border-2 divide-y-2 divide-primary-500 border-primary-500">
+    <div className="rounded-lg border divide-y divide-primary-500 border-primary-500">
       <div className="p-2 flex gap-3 items-center">
         <TbSoccerField size={30} color="#30cc42" />
         <h2 className="font-bold">Games Nearby</h2>

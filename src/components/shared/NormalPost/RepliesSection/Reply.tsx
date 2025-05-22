@@ -9,8 +9,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useEffect, useState } from "react";
 import { SlOptions } from "react-icons/sl";
-import { BiSolidLike } from "react-icons/bi";
-import { appwriteConfig, storage } from "@/lib/appwrite/config";
 import { Input } from "@/components/ui/input";
 import { IoCamera } from "react-icons/io5";
 import { MediaPlayer, MediaProvider } from "@vidstack/react";
@@ -18,13 +16,16 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
+import UsersList from "../../UsersList";
 const Reply = ({ reply, mimeType, replyRef, commentId }) => {
   const { user } = useUserContext();
-  const { mutateAsync: likeReply } = useLikeReply(reply, user?.id);
-  const { mutateAsync: unikeReply } = useUnlikeReply(reply, user?.id);
+  const { mutateAsync: likeReply } = useLikeReply(commentId);
+  const { mutateAsync: unLikeReply } = useUnlikeReply(commentId);
   const { mutateAsync: editReply } = useEditReply(commentId);
   const { mutateAsync: deleteReply } = useDeleteReply(commentId);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(
+    reply?.replyLikes?.some((like) => like.$id === user?.id),
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(reply?.content);
   const [mediaId, setMediaId] = useState(reply?.mediaId);
@@ -33,6 +34,7 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
   const [newFile, setNewFile] = useState(null);
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
+  console.log(isLiked);
 
   const handleSave = async () => {
     const res = await editReply({
@@ -46,12 +48,12 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
     setIsEditing(false);
   };
   const handleLike = async () => {
-    const res = await likeReply();
+    const res = await likeReply({ reply, userId: user?.id });
     if (res instanceof Error) return;
     setIsLiked(true);
   };
   const handleUnlike = async () => {
-    const res = await unikeReply();
+    const res = await unLikeReply({ reply, userId: user?.id });
     if (res instanceof Error) return;
     setIsLiked(false);
   };
@@ -214,34 +216,35 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
                 </DropdownMenu>
               )}
             </div>
-            {reply?.likes?.length > 0 && (
-              <div className="flex gap-1">
-                <p className="text-sm"> {reply?.likes?.length}</p>
-                <BiSolidLike fill="green" size={20} />
-              </div>
-            )}
           </div>
-          <div className="flex gap-8 pl-16">
-            <button
-              className="text-sm"
-              onClick={() => {
-                replyRef.current.scrollIntoView({ behavior: "smooth" });
-                replyRef.current.children[0].focus();
-                replyRef.current.children[0].value =
-                  "@" + reply?.creator?.username + " ";
-              }}
-            >
-              Reply
-            </button>
+          <div className="px-16 flex justify-between">
+            <div className="flex gap-4 items-center">
+              <button
+                className="text-sm"
+                onClick={() => {
+                  replyRef.current.scrollIntoView({ behavior: "smooth" });
+                  replyRef.current.children[0].focus();
+                  replyRef.current.children[0].value =
+                    "@" + reply?.creator?.username + " ";
+                }}
+              >
+                Reply
+              </button>
 
-            {!isLiked ? (
-              <button className="text-sm" onClick={handleLike}>
-                Like
-              </button>
-            ) : (
-              <button className="text-sm" onClick={handleUnlike}>
-                Unlike
-              </button>
+              {!isLiked ? (
+                <button className="text-sm" onClick={handleLike}>
+                  Like
+                </button>
+              ) : (
+                <button className="text-sm" onClick={handleUnlike}>
+                  Unlike
+                </button>
+              )}
+            </div>
+            {reply?.replyLikes?.length > 0 && (
+              <div className="flex gap-2 items-center">
+                <UsersList listTitle="Likes" listItems={reply?.replyLikes} />
+              </div>
             )}
           </div>
         </div>

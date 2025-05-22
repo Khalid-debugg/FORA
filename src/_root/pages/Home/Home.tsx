@@ -64,7 +64,7 @@ const Home = () => {
        )`,
                     }}
                   >
-                    <span className="p-6 rounded-lg bg-white text-2xl border border-primary-500">
+                    <span className="p-6 rounded-lg bg-white text-[1.75rem] border border-primary-500">
                       Create Game
                     </span>
                   </div>
@@ -78,14 +78,14 @@ const Home = () => {
                     style={{
                       backgroundImage: `repeating-linear-gradient(
          135deg,
-         white,
-         white 10px,
+         #30cc42,
          #30cc42 10px,
-         #30cc42 20px
+         white 10px,
+         white 20px
        )`,
                     }}
                   >
-                    <span className="p-6 rounded-lg bg-white text-2xl border border-primary-500">
+                    <span className="p-6 rounded-lg bg-white text-[1.75rem] border border-primary-500">
                       Create Post
                     </span>
                   </div>
@@ -106,9 +106,9 @@ const Home = () => {
 
         {allPosts.map((doc, i) =>
           doc.hasOwnProperty("playersNumber") ? (
-            <GamePost key={i} post={doc} isOne={false} />
+            <GamePost key={doc.$id} post={doc} isOne={false} />
           ) : (
-            <NormalPost key={i} post={doc} />
+            <NormalPost key={doc.$id} post={doc} />
           ),
         )}
 

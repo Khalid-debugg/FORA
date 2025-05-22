@@ -57,28 +57,32 @@ export async function createComment(comment: INewComment) {
     throw err;
   }
 }
-export async function likeComment(
-  comment: INewComment,
-  userId: string,
-  commentCreatorId: string,
-) {
+export async function likeComment(comment: INewComment, user: any) {
+  console.log(comment);
+
   try {
-    const currentLikes = comment?.commentLikes?.map((like) => like.$id) || [];
+    const currentLikes = comment?.commentLikes?.map((like) => like.$id);
+    console.log(currentLikes);
+
     const updatedComment = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.commentsID,
       comment?.$id,
       {
-        commentLikes: [...currentLikes, userId],
+        commentLikes: [...currentLikes, user.id],
       },
     );
-    if (comment?.creator.$id !== userId) {
+    console.log(updatedComment);
+
+    if (comment?.creator.$id !== user.id) {
       await createNotification({
         type: "LIKE_COMMENT",
-        senderId: userId,
-        receiverId: commentCreatorId,
-        commentId: comment?.$id,
-        message: `${comment.creator.name} liked your comment`,
+        senderId: user.id,
+        receiverId: comment.creator.$id,
+        senderImageUrl: user.imageUrl,
+        senderName: user.name,
+        postId: comment?.post.$id,
+        message: `${user.name} liked your comment`,
       });
     }
     if (!updatedComment) {
@@ -91,17 +95,15 @@ export async function likeComment(
     throw err;
   }
 }
-export async function unlikeComment(comment: INewComment, userId: string) {
+export async function unlikeComment(comment: INewComment, user: any) {
   try {
     const currentLikes = comment?.commentLikes?.map((like) => like.$id);
-    console.log(currentLikes);
-
     const updatedPost = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.commentsID,
       comment.$id,
       {
-        commentLikes: currentLikes.filter((like) => like !== userId) || [],
+        commentLikes: currentLikes.filter((like) => like !== user.id),
       },
     );
 

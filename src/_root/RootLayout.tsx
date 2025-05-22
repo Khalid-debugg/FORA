@@ -15,7 +15,7 @@ const RootLayout = () => {
   return (
     <>
       <TopNav />
-      <div className="flex md:flex-row flex-col min-h-screen md:divide-x-2 divide-primary-500">
+      <div className="flex md:flex-row flex-col min-h-screen md:divide-x divide-primary-500">
         <SideNav
           user={user}
           hasNewNotifications={hasNewNotifications}

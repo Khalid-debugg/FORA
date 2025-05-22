@@ -19,7 +19,7 @@ const HypeCorner = () => {
   if (gifIndex === null) return null;
 
   return (
-    <div className=" divide-y-2 divide-primary-500 bg-white rounded-xl shadow-sm border-2 border-primary-500">
+    <div className=" divide-y divide-primary-500 bg-white rounded-xl shadow-sm border border-primary-500">
       <div className="p-2 flex gap-2 items-center">
         <SlEnergy size={25} color="#30cc42" />
         <h2 className=" text-lg font-semibold">Hype Corner</h2>
