@@ -15,7 +15,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post, isOne }) => {
 
   return (
     <div
-      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post?.creator?.$id && !isOne ? "rounded-bl-[1.125rem]" : ""}`}
+      className={`relative gap-4 w-1/2 overflow-hidden ${user.id === post?.creator?.$id && !isOne ? "rounded-bl-[0.5rem]" : ""}`}
     >
       <img
         className={`object-cover h-full w-full scale-y-[1.15] scale-x-[1.25] `}
