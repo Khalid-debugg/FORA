@@ -52,16 +52,42 @@ const Home = () => {
               <DialogTrigger onClick={() => setPostType("game")} asChild>
                 <button className="relative overflow-hidden w-full rounded-lg shadow-md flex items-center justify-center border-2 border-primary-500 group">
                   <VideoHover src="../../assets/videos/Game.mp4" />
-                  <div className="absolute top-0 left-0 z-10 bg-white w-3/4 h-full ml-20 group-hover:ml-96 text-[2.2vw] font-bold text-wrap text-primary-500 transition-all duration-500 ease-in-out">
-                    Create Game
+                  <div
+                    className="absolute top-0 left-0 z-10 h-full w-full flex items-center justify-center font-bold text-xl text-primary-500 transition-transform duration-500 ease-in-out group-hover:-translate-x-full"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(
+         45deg,
+         white,
+         white 10px,
+         #30cc42 10px,
+         #30cc42 20px
+       )`,
+                    }}
+                  >
+                    <span className="p-6 rounded-lg bg-white text-2xl border border-primary-500">
+                      Create Game
+                    </span>
                   </div>
                 </button>
               </DialogTrigger>
               <DialogTrigger onClick={() => setPostType("post")} asChild>
                 <button className="relative overflow-hidden w-full rounded-lg shadow-md flex items-center justify-center border-2 border-primary-500 group">
                   <VideoHover src="../../assets/videos/Post.mp4" />
-                  <div className="absolute top-0 left-0 z-10 bg-white w-3/4 h-full ml-20 group-hover:ml-96 text-[2.2vw] font-bold text-wrap text-primary-500 transition-all duration-500 ease-in-out">
-                    Create Post
+                  <div
+                    className="absolute top-0 left-0 z-10 h-full w-full flex items-center justify-center font-bold text-xl text-primary-500 transition-transform duration-500 ease-in-out group-hover:translate-x-full"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(
+         135deg,
+         white,
+         white 10px,
+         #30cc42 10px,
+         #30cc42 20px
+       )`,
+                    }}
+                  >
+                    <span className="p-6 rounded-lg bg-white text-2xl border border-primary-500">
+                      Create Post
+                    </span>
                   </div>
                 </button>
               </DialogTrigger>
