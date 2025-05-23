@@ -203,7 +203,10 @@ const GamePost = ({ post, isOne }) => {
       </CardContent>
 
       <CardFooter className="p-0">
-        {user?.id !== post?.creator?.$id && !isWaiting && !isJoined ? (
+        {user?.id !== post?.creator?.$id &&
+        !isWaiting &&
+        !isJoined &&
+        playersNeeded > 0 ? (
           <Button
             disabled={isJoining}
             onClick={handleJoin}

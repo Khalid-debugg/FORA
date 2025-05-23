@@ -113,7 +113,7 @@ const EditGamePost = ({ post, setIsEditing }) => {
             >
               <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12 hover:cursor-pointer rounded-full overflow-hidden">
-                  <AvatarImage src={player.imageURL} />
+                  <AvatarImage src={player.imageUrl} />
                   <AvatarFallback>{player.username[0]}</AvatarFallback>
                 </Avatar>
 
