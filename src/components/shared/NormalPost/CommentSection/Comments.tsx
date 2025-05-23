@@ -60,12 +60,6 @@ const Comments = ({ post }) => {
         ))}
       </div>
       <div className="flex justify-between p-2">
-        {allComments?.length > 0 && (
-          <p>
-            {allComments.length} out of {post?.comments?.length + " "}
-            comment(s)
-          </p>
-        )}
         <div className="flex gap-2">
           {hasNextPage || visiblePageCount < data?.pages.length ? (
             <button

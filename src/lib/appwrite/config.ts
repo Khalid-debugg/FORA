@@ -17,6 +17,7 @@ export const appwriteConfig = {
   notificationsID: import.meta.env.VITE_APPWRITE_NOTIFICATIONS_ID,
   chatsID: import.meta.env.VITE_APPWRITE_CHATS_ID,
   messagesID: import.meta.env.VITE_APPWRITE_MESSAGES_ID,
+  LikesID: import.meta.env.VITE_APPWRITE_LIKES_ID,
 };
 export const client = new Client();
 

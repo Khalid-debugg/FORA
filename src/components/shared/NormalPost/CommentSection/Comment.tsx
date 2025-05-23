@@ -38,7 +38,7 @@ const Comment = ({ comment, mimeType, postId }) => {
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
   const [isLiked, setIsLiked] = useState(
-    comment?.commentLikes?.some((likedUser) => likedUser.$id === user?.id),
+    comment?.commentLikes?.some((likedUser) => likedUser === user?.id),
   );
 
   useEffect(() => {

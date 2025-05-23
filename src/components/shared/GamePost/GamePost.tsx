@@ -119,7 +119,7 @@ const GamePost = ({ post, isOne }) => {
       )}
       <CardHeader className="p-4">
         <div className="flex items-center gap-3 ">
-          <Avatar className="h-12 w-12 border-2 border-green-500">
+          <Avatar className="h-14 w-14 border-2 border-green-500">
             <AvatarImage
               src={
                 post?.creator?.imageUrl || "/placeholder.svg?height=48&width=48"
@@ -160,7 +160,7 @@ const GamePost = ({ post, isOne }) => {
 
       <CardContent className="p-0">
         {post?.caption && (
-          <div className="px-4 pb-3">
+          <div className="px-4 py-3 border-t">
             <p className="text-gray-700 whitespace-pre-wrap">{post?.caption}</p>
           </div>
         )}

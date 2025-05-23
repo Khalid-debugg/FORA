@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -17,6 +17,7 @@ import { toast } from "../../ui/use-toast";
 import UsersList from "../UsersList";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  useGetLikes,
   useLikePost,
   useUnlikePost,
 } from "@/lib/react-query/queriesAndMutations/posts";
@@ -33,58 +34,57 @@ import { Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { GoHeartFill, GoHeart } from "react-icons/go";
+import { set } from "date-fns";
 
 const CommentSection = lazy(() => import("./CommentSection/CommentSection"));
 
 const NormalPost = ({ post, isOne }) => {
   const { user } = useUserContext();
   const { data: mediaFiles } = useMediaFiles(post?.mediaIds || []);
-  const [totalLikes, setTotalLikes] = useState(post?.postLikes?.length);
-  const { mutateAsync: createLike, isPending: isLiking } = useLikePost();
-  const { mutateAsync: deleteLike, isPending: isDisliking } = useUnlikePost(
-    post,
-    user?.id,
-  );
+  const { mutateAsync: createLike, isPending: isLiking } = useLikePost(post);
+  const { mutateAsync: deleteLike, isPending: isDisliking } =
+    useUnlikePost(post);
+  const {
+    data: listItems,
+    isPending: isLoadingLikes,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetLikes(post.$id);
   const navigate = useNavigate();
   const [isCommentClicked, setIsCommentClicked] = useState(isOne || false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(
+    listItems?.pages.flat().some((like) => like.userId === user?.id),
+  );
   const [isAnimating, setIsAnimating] = useState(false);
-
   useEffect(() => {
-    setIsLiked(
-      post?.postLikes?.some((likedUser) => likedUser.$id === user?.id),
-    );
-  }, [post, user]);
-
-  const handleLike = async () => {
+    if (listItems?.pages) {
+      setIsLiked(
+        listItems?.pages.flat().some((like) => like.userId === user?.id),
+      );
+    }
+  }, [listItems, user?.id]);
+  const handleLike = async (action: string) => {
     try {
       setIsAnimating(true);
-      setIsLiked((prev) => !prev);
-
-      if (isLiked) {
-        setTotalLikes((prev) => prev - 1);
+      if (action === "dislike") {
         const response = await deleteLike({ sender: user, post });
         if (response instanceof Error) {
           throw new Error(response.message);
         }
+        setIsLiked(false);
       } else {
-        setTotalLikes((prev) => prev + 1);
         const response = await createLike({ sender: user, post });
         if (response instanceof Error) {
           throw new Error(response.message);
         }
+        setIsLiked(true);
       }
-
       setTimeout(() => setIsAnimating(false), 300);
     } catch (error) {
       toast({
         variant: "error",
         title: error.message,
       });
-      setIsLiked((prev) => !prev);
-      setTotalLikes((prev) =>
-        error.message.includes("dislike") ? prev + 1 : prev - 1,
-      );
       setIsAnimating(false);
     }
   };
@@ -131,7 +131,7 @@ const NormalPost = ({ post, isOne }) => {
 
   return (
     <Card
-      className={`w-full overflow-hidden ${isOne ? "border-0 shadow-none rounded-none" : "border-green-500 rounded-3xl"}`}
+      className={`w-full overflow-hidden ${isOne ? "border-0 shadow-none rounded-none" : "border-green-500"}`}
     >
       <CardHeader className="p-4 cursor-pointer">
         <div className="flex items-center gap-3">
@@ -191,42 +191,56 @@ const NormalPost = ({ post, isOne }) => {
             </Carousel>
           </div>
         )}
-
-        {totalLikes > 0 && (
-          <div className="px-4 pb-3 flex items-center justify-end">
-            <UsersList listTitle="Likes" listItems={post?.postLikes} />
-          </div>
-        )}
+        <div className="px-4 pb-3 flex items-center justify-end">
+          <UsersList
+            listItems={listItems}
+            isLoadingLikes={isLoadingLikes}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+          />
+        </div>
       </CardContent>
 
       <CardFooter className="p-0 flex flex-col">
-        <div className="grid grid-cols-2 border-t border-primary-500 divide-x divide-primary-500 w-full">
+        <div className="grid grid-cols-2 border-t divide-x w-full">
           <div className="relative">
-            <Button
-              variant="ghost"
-              className={cn(
-                "rounded-none h-12 w-full flex items-center justify-center gap-2",
-                isAnimating && "animate-like-button",
-              )}
-              onClick={handleLike}
-              disabled={isLiking || isDisliking}
-            >
-              <div className="flex justify-center items-center gap-2">
-                {isLiked ? (
+            {isLiked ? (
+              <Button
+                variant="ghost"
+                className={cn(
+                  "rounded-none h-12 w-full flex items-center justify-center gap-2",
+                  isAnimating && "animate-like-button",
+                )}
+                onClick={() => handleLike("dislike")}
+                disabled={isDisliking}
+              >
+                <div className="flex justify-center items-center gap-2">
                   <GoHeartFill
                     size={25}
                     fill="green"
                     className={cn(isAnimating && "scale-125")}
                   />
-                ) : (
-                  <GoHeart size={25} fill="green" />
+                  <p className="text-center">Like</p>
+                </div>
+                {isDisliking && <div className="animate-spin ml-2">⚽</div>}
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                className={cn(
+                  "rounded-none h-12 w-full flex items-center justify-center gap-2",
+                  isAnimating && "animate-like-button",
                 )}
-                <p className="text-center">Like</p>
-              </div>
-              {(isLiking || isDisliking) && (
-                <div className="animate-spin ml-2">⚽</div>
-              )}
-            </Button>
+                onClick={() => handleLike("like")}
+                disabled={isLiking}
+              >
+                <div className="flex justify-center items-center gap-2">
+                  <GoHeart size={25} fill="green" />
+                  <p className="text-center">Like</p>
+                </div>
+                {isLiking && <div className="animate-spin ml-2">⚽</div>}
+              </Button>
+            )}
           </div>
 
           <Button

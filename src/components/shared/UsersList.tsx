@@ -11,42 +11,59 @@ import {
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { GoHeart } from "react-icons/go";
 import { Link } from "react-router-dom";
+import { useGetLikes } from "@/lib/react-query/queriesAndMutations/posts";
+import { Button } from "../ui/button";
+import { useUserContext } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 const UsersList = ({
-  listTitle,
   listItems,
+  isLoadingLikes,
+  isFetchingNextPage,
+  hasNextPage,
 }: {
-  listTitle: string;
-  listItems: any[];
+  listItems: any;
+  isLoadingLikes: boolean;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
 }) => {
+  const allLikes = listItems?.pages.flat() || [];
+  if (!allLikes.length) return;
+  if (isLoadingLikes)
+    return <p className="text-2xl text-center animate-spin">⚽</p>;
   return (
     <AlertDialog>
       <AlertDialogTrigger className="hover:underline flex gap-1 items-center">
-        <p>{listItems.length}</p> <GoHeart size={25} fill="green" />
+        <p>{allLikes?.length}</p> <GoHeart size={25} fill="green" />
       </AlertDialogTrigger>
       <AlertDialogContent className="">
         <AlertDialogHeader>
-          <AlertDialogTitle>{listTitle}</AlertDialogTitle>
+          <AlertDialogTitle>{"Likes"}</AlertDialogTitle>
           <AlertDialogDescription className="flex flex-col gap-2 pr-2 max-h-[80vh] overflow-auto">
-            {listItems.map((user) => (
+            {allLikes?.map((like) => (
               <div
-                key={user.$id}
+                key={like?.$id}
                 className="p-4 border border-primary-500 flex gap-4 items-center rounded-lg"
               >
                 <Avatar className="hover:cursor-pointer">
                   <AvatarImage
                     className="h-10 w-10 rounded-full outline outline-slate-200"
-                    src={user.imageUrl}
+                    src={like?.userImageUrl}
                   />
                 </Avatar>
                 <Link
-                  to={`/profile/${user.$id}`}
+                  to={`/profile/${like?.userId}`}
                   className="text-lg font-medium hover:underline hover:cursor-pointer"
                 >
-                  {user.name}
+                  {like?.userName}
                 </Link>
               </div>
             ))}
+            {hasNextPage && (
+              <Button className="shad_button-Primary hover:shad_button-ghost">
+                {isFetchingNextPage ? "Loading more..." : "Load More"}
+              </Button>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

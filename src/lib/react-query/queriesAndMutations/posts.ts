@@ -5,6 +5,7 @@ import {
   createPost,
   deleteNormalPost,
   editNormalPost,
+  getLikes,
   getNormalPost,
   getRecentLikedPosts,
   getRecentPosts,
@@ -88,37 +89,36 @@ export const useEditNormalPost = () => {
     }) => editNormalPost(id, caption, fileOrFiles, mediaUrls, mediaIds),
   });
 };
-export const useLikePost = () => {
+export const useLikePost = (post: ICreatedPost) => {
   return useMutation({
     mutationFn: ({ sender, post }: { sender: any; post: ICreatedPost }) =>
       likePost(sender, post),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.RecentPostsAndGames],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.RecentPosts],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["search-posts"],
+        queryKey: [QueryKeys.Likes + post.$id],
       });
     },
   });
 };
-export const useUnlikePost = () => {
+export const useUnlikePost = (post: ICreatedPost) => {
   return useMutation({
     mutationFn: ({ sender, post }: { sender: any; post: ICreatedPost }) =>
       unlikePost(sender, post),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.RecentPostsAndGames],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.RecentPosts],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["search-posts"],
+        queryKey: [QueryKeys.Likes + post.$id],
       });
     },
+  });
+};
+export const useGetLikes = (documentId: string) => {
+  return useInfiniteQuery({
+    queryKey: [QueryKeys.Likes + documentId],
+    queryFn: ({ pageParam = 0 }) => getLikes(pageParam, documentId),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage?.length === 10 ? allPages.length : undefined,
+    initialPageParam: 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };

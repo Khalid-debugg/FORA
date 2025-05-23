@@ -7,7 +7,7 @@ import {
   uploadFiles,
 } from "./helper";
 import { ICreatedPost, INewComment, INewPost, INewReply } from "@/types";
-import { createNotification } from "./notifications";
+import { createNotification, deleteNotification } from "./notifications";
 
 export async function getNormalPost(postId: string) {
   try {
@@ -178,13 +178,17 @@ export async function createPost(post: INewPost) {
   }
 }
 export async function likePost(sender: any, post: ICreatedPost) {
+  const id = post.$id + "-" + sender.id.slice(0, 10);
   try {
-    const updatedPost = await databases.updateDocument(
+    const updatedPost = await databases.createDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.postsID,
-      post.$id,
+      appwriteConfig.LikesID,
+      id,
       {
-        postLikes: [...post.postLikes, sender.id],
+        userId: sender.id,
+        userName: sender.name,
+        userImageUrl: sender.imageUrl,
+        postId: post.$id,
       },
     );
     if (post.creator.$id !== sender.id) {
@@ -205,27 +209,33 @@ export async function likePost(sender: any, post: ICreatedPost) {
   }
 }
 export async function unlikePost(sender: any, post: ICreatedPost) {
-  try {
-    const currentLikes = post?.postLikes?.map((like) => like.$id);
-    const updatedPost = await databases.updateDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.postsID,
-      post.$id,
-      {
-        postLikes: currentLikes.filter((like) => like !== sender.id) || [],
-      },
-    );
+  const id = post.$id + "-" + sender.id.slice(0, 10);
 
-    if (!updatedPost) {
-      return new Error("Failed to dislike the post.");
+  try {
+    await databases.deleteDocument(
+      appwriteConfig.databaseID,
+      appwriteConfig.LikesID,
+      id,
+    );
+    if (post.creator.$id !== sender.id) {
+      await deleteNotification({
+        type: "LIKE_POST",
+        senderId: sender.id,
+        senderName: sender.name,
+        senderImageUrl: sender.imageUrl,
+        receiverId: post.creator.$id,
+        postId: post.$id,
+        message: `${sender.name} liked your post`,
+      });
     }
 
-    return updatedPost;
+    return { success: true };
   } catch (err) {
-    console.error("Error creating like:", err);
+    console.error("Error unliking post:", err);
     throw err;
   }
 }
+
 export async function likeReply(reply: INewReply, userId: string) {
   try {
     const currentLikes = reply?.replyLikes?.map((like) => like.$id) || [];
@@ -296,6 +306,25 @@ export async function createComment(post: ICreatedPost, comment: INewComment) {
     }
 
     return newComment;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function getLikes(pageParam: number, documentId: string) {
+  try {
+    const likes = await databases.listDocuments(
+      appwriteConfig.databaseID,
+      appwriteConfig.LikesID,
+      [
+        Query.startsWith("$id", documentId),
+        Query.limit(10),
+        Query.offset(pageParam * 10),
+        Query.orderDesc("$createdAt"),
+      ],
+    );
+    console.log(likes.documents);
+
+    return likes.documents;
   } catch (err) {
     console.log(err);
   }
