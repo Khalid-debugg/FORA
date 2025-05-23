@@ -34,7 +34,6 @@ import { Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { GoHeartFill, GoHeart } from "react-icons/go";
-import { set } from "date-fns";
 
 const CommentSection = lazy(() => import("./CommentSection/CommentSection"));
 

@@ -25,7 +25,6 @@ export const useUnfriend = (userId: string, friendId: string) => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.UsersYouMayKnow],
       });
-      queryClient.setQueryData(["isFriend", userId, friendId], null);
     },
   });
 };
@@ -36,13 +35,21 @@ export const useGetFriends = (userId: string) => {
     enabled: !!userId,
   });
 };
-export const useAddFriend = () => {
+export const useAddFriend = (user: any, friend: any) => {
   return useMutation({
-    mutationFn: ({ user, friendId }: { user: any; friendId: string }) =>
-      addFriend(user, friendId),
+    mutationFn: () => addFriend(user, friend),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.UsersYouMayKnow],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Notifications],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["isFriendRequestReceived", user?.id, friend?.$id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["isFriend", friend?.$id, user?.id],
       });
     },
   });

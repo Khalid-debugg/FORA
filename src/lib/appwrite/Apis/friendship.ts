@@ -1,7 +1,6 @@
 import { Query, ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
-import { createNotification } from "./notifications";
-import { log } from "console";
+import { createNotification, deleteNotification } from "./notifications";
 
 export const checkIsFriend = async (userId: string, friendId: string) => {
   try {
@@ -72,7 +71,8 @@ export const getFriends = async (userId: string) => {
     throw error;
   }
 };
-export async function addFriend(user: any, friendId: string) {
+export async function addFriend(user: any, friend: any) {
+  console.log(user, friend);
   try {
     const friendShip = await databases.createDocument(
       appwriteConfig.databaseID,
@@ -80,19 +80,28 @@ export async function addFriend(user: any, friendId: string) {
       ID.unique(),
       {
         actor: user.id,
-        receiver: friendId,
+        receiver: friend.$id,
       },
     );
     if (!friendShip) throw new Error("Something went wrong!!");
-    await createNotification({
+    const notification = await createNotification({
       senderId: user.id,
       senderName: user.name,
       senderImageUrl: user.imageUrl,
-      receiverId: friendId,
+      receiverId: friend.$id,
       type: "STATUS",
       message: `${user.name} accepted your friend request`,
     });
-    return friendShip;
+    if (!notification) throw new Error("Something went wrong!!");
+    const deletedNotification = await deleteNotification({
+      type: "FRIEND_REQUEST",
+      senderId: friend.$id,
+      senderName: friend.name,
+      senderImageUrl: friend.imageUrl,
+      receiverId: user.id,
+      message: `${friend.name} accepted your friend request`,
+    });
+    return deletedNotification;
   } catch (err) {
     console.log(err);
   }

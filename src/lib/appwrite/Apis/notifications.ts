@@ -1,23 +1,17 @@
-import { ID } from "appwrite";
 import { appwriteConfig, databases } from "../config";
 import { Query } from "appwrite";
 import { INotification } from "@/types";
 
 export const sendFriendRequest = async (user: any, friend: any) => {
   try {
-    const friendRequest = databases.createDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.notificationsID,
-      ID.unique(),
-      {
-        senderId: user.id,
-        senderName: user.name,
-        senderImageUrl: user.imageUrl,
-        receiverId: friend.$id,
-        type: "FRIEND_REQUEST",
-        message: `${user.name} sent you a friend request`,
-      },
-    );
+    const friendRequest = await createNotification({
+      type: "FRIEND_REQUEST",
+      senderId: user.id,
+      senderName: user.name,
+      senderImageUrl: user.imageUrl,
+      receiverId: friend.$id,
+      message: `${user.name} sent you a friend request`,
+    });
     if (!friendRequest) throw new Error("Something went wrong!!");
     return friendRequest;
   } catch (error: unknown) {
@@ -27,39 +21,16 @@ export const sendFriendRequest = async (user: any, friend: any) => {
   }
 };
 
-export const removeFriendRequest = async (
-  userId: string,
-  friendId: string,
-  notificationId?: string,
-) => {
-  console.log(userId, friendId, notificationId);
-
+export const removeFriendRequest = async (user: any, friend: any) => {
   try {
-    if (notificationId) {
-      const deletedRequest = await databases.deleteDocument(
-        appwriteConfig.databaseID,
-        appwriteConfig.notificationsID,
-        notificationId,
-      );
-      if (!deletedRequest) throw new Error("Something went wrong!!");
-      return deletedRequest;
-    }
-    const friendRequest = await databases.listDocuments(
-      appwriteConfig.databaseID,
-      appwriteConfig.notificationsID,
-      [
-        Query.equal("senderId", userId),
-        Query.equal("type", "FRIEND_REQUEST"),
-        Query.equal("receiverId", friendId),
-      ],
-    );
-
-    if (!friendRequest) throw new Error("Something went wrong!!");
-    const deletedRequest = await databases.deleteDocument(
-      appwriteConfig.databaseID,
-      appwriteConfig.notificationsID,
-      friendRequest?.documents[0]?.$id,
-    );
+    const deletedRequest = await deleteNotification({
+      type: "FRIEND_REQUEST",
+      senderId: user.id,
+      senderName: user.name,
+      senderImageUrl: user.imageUrl,
+      receiverId: friend.$id,
+      message: `${user.name} sent you a friend request`,
+    });
     if (!deletedRequest) throw new Error("Something went wrong!!");
     return deletedRequest;
   } catch (error: unknown) {
@@ -69,24 +40,23 @@ export const removeFriendRequest = async (
   }
 };
 
-export const checkIsFriendRequestSent = async (
-  userId: string,
-  friendId: string,
-) => {
+export const checkIsFriendRequestSent = async (user: any, friend: any) => {
   try {
-    const friendShip = await databases.listDocuments(
+    const notificationId = await generateNotificationId({
+      type: "FRIEND_REQUEST",
+      senderId: user.id,
+      senderName: user.name,
+      senderImageUrl: user.imageUrl,
+      receiverId: friend.$id,
+      message: "",
+    });
+    const notification = await databases.getDocument(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
-      [
-        Query.and([
-          Query.equal("type", "FRIEND_REQUEST"),
-          Query.equal("senderId", userId),
-          Query.equal("receiverId", friendId),
-        ]),
-      ],
+      notificationId,
     );
-    if (!friendShip) throw new Error("Something went wrong!!");
-    return friendShip.documents.length > 0;
+    if (!notification) return false;
+    return true;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.log(error.message);
@@ -95,24 +65,23 @@ export const checkIsFriendRequestSent = async (
   }
 };
 
-export const checkIsFriendRequestReceived = async (
-  userId: string,
-  friendId: string,
-) => {
+export const checkIsFriendRequestReceived = async (user: any, friend: any) => {
   try {
-    const friendShip = await databases.listDocuments(
+    const notificationId = await generateNotificationId({
+      type: "FRIEND_REQUEST",
+      senderId: friend.$id,
+      senderName: friend.name,
+      senderImageUrl: friend.imageUrl,
+      receiverId: user.id,
+      message: "",
+    });
+    const friendShip = await databases.getDocument(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
-      [
-        Query.and([
-          Query.equal("type", "FRIEND_REQUEST"),
-          Query.equal("senderId", friendId),
-          Query.equal("receiverId", userId),
-        ]),
-      ],
+      notificationId,
     );
-    if (!friendShip) throw new Error("Something went wrong!!");
-    return friendShip.documents.length > 0;
+    if (!friendShip) return false;
+    return true;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.log(error.message);
@@ -236,6 +205,8 @@ export async function createNotification({
   }
 }
 export async function getNotifications(userId: string) {
+  console.log(userId);
+
   try {
     const notifications = await databases.listDocuments(
       appwriteConfig.databaseID,

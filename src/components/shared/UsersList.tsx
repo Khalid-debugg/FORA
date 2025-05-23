@@ -11,10 +11,7 @@ import {
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { GoHeart } from "react-icons/go";
 import { Link } from "react-router-dom";
-import { useGetLikes } from "@/lib/react-query/queriesAndMutations/posts";
 import { Button } from "../ui/button";
-import { useUserContext } from "@/context/AuthContext";
-import { useEffect } from "react";
 
 const UsersList = ({
   listItems,
@@ -27,7 +24,7 @@ const UsersList = ({
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
 }) => {
-  const allLikes = listItems?.pages.flat() || [];
+  const allLikes = listItems?.pages?.flat() || [];
   if (!allLikes.length) return;
   if (isLoadingLikes)
     return <p className="text-2xl text-center animate-spin">⚽</p>;

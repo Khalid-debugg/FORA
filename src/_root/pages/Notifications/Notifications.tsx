@@ -6,9 +6,7 @@ import { useGetNotifications } from "@/lib/react-query/queriesAndMutations/notif
 const Notifications = () => {
   const { user } = useUserContext();
   const { data: notifications, isPending: isGettingNotifications } =
-    useGetNotifications(user?.id || "", {
-      enabled: !!user?.id,
-    });
+    useGetNotifications(user?.id || "");
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">

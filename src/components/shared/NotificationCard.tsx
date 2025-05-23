@@ -17,16 +17,17 @@ const NotificationCard = ({
   notification: INotification;
 }) => {
   const { user } = useUserContext();
-  const { mutateAsync: addFriend } = useAddFriend();
-  console.log(notification);
-
-  const { mutateAsync: removeFriendRequest } = useRemoveFriendRequest(
-    user?.id || "",
-    notification.senderId,
-  );
-  const { mutate: deleteNotification } = useDeleteNotification(
-    notification.$id,
-  );
+  const { mutateAsync: addFriend } = useAddFriend(user, {
+    $id: notification.senderId[0],
+    name: notification.senderName[0],
+    imageUrl: notification.senderImageUrl[0],
+  });
+  const { mutateAsync: removeFriendRequest } = useRemoveFriendRequest(user, {
+    $id: notification.senderId[0],
+    name: notification.senderName[0],
+    imageUrl: notification.senderImageUrl[0],
+  });
+  const { mutate: deleteNotification } = useDeleteNotification();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showUndo, setShowUndo] = useState(false);
 
@@ -34,7 +35,16 @@ const NotificationCard = ({
     let timeoutId: NodeJS.Timeout;
     if (isDeleting) {
       timeoutId = setTimeout(() => {
-        deleteNotification();
+        deleteNotification({
+          type: notification.type,
+          senderId: notification.senderId[0],
+          senderName: notification.senderName[0],
+          senderImageUrl: notification.senderImageUrl[0],
+          receiverId: notification.receiverId,
+          postId: notification.postId,
+          gameId: notification.gameId,
+          message: notification.message,
+        });
         setIsDeleting(false);
         setShowUndo(false);
       }, 2000);
@@ -46,10 +56,7 @@ const NotificationCard = ({
 
   const handleAcceptFriendRequest = async () => {
     try {
-      await addFriend({
-        user: user,
-        friendId: notification.senderId,
-      });
+      await addFriend();
       toast({
         title: "Friend request accepted!",
         variant: "default",
@@ -66,7 +73,7 @@ const NotificationCard = ({
 
   const handleRejectFriendRequest = async () => {
     try {
-      await removeFriendRequest(notification.$id);
+      await removeFriendRequest();
       toast({
         title: "Friend request rejected",
         variant: "default",

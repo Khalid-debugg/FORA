@@ -11,15 +11,13 @@ import {
   markAllNotificationsAsRead,
   checkIsFriendRequestReceived,
 } from "@/lib/appwrite/Apis/notifications";
+import { INotification } from "@/types";
 
-export const useGetNotifications = (
-  userId: string,
-  options?: { enabled?: boolean },
-) => {
+export const useGetNotifications = (userId: string) => {
   return useQuery({
     queryKey: [QueryKeys.Notifications],
     queryFn: () => getNotifications(userId),
-    enabled: options?.enabled ?? true,
+    enabled: !!userId,
   });
 };
 export const useAddFriendRequest = (user: any, friend: any) => {
@@ -32,41 +30,62 @@ export const useAddFriendRequest = (user: any, friend: any) => {
     },
   });
 };
-export const useRemoveFriendRequest = (userId: string, friendId: string) => {
+export const useRemoveFriendRequest = (user: any, friend: any) => {
   return useMutation({
-    mutationFn: (notificationId?: string) =>
-      removeFriendRequest(userId, friendId, notificationId),
+    mutationFn: () => removeFriendRequest(user, friend),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["isFriendRequestSent", userId, friendId],
+        queryKey: ["isFriendRequestSent", user.id, friend.$id],
       });
     },
   });
 };
-export const useCheckIsFriendRequestSent = (
-  userId: string,
-  friendId: string,
-) => {
+export const useCheckIsFriendRequestSent = (user: any, friend: any) => {
   return useQuery({
-    queryKey: ["isFriendRequestSent", userId, friendId],
-    queryFn: () => checkIsFriendRequestSent(userId, friendId),
-    enabled: !!userId && !!friendId,
+    queryKey: ["isFriendRequestSent", user?.id, friend?.$id],
+    queryFn: () => checkIsFriendRequestSent(user, friend),
+    enabled: !!user && !!friend,
   });
 };
-export const useCheckIsFriendRequestReceived = (
-  userId: string,
-  friendId: string,
-) => {
+export const useCheckIsFriendRequestReceived = (user: any, friend: any) => {
   return useQuery({
-    queryKey: ["isFriendRequestReceived", userId, friendId],
-    queryFn: () => checkIsFriendRequestReceived(userId, friendId),
-    enabled: !!userId && !!friendId,
+    queryKey: ["isFriendRequestReceived", user?.id, friend?.$id],
+    queryFn: () => checkIsFriendRequestReceived(user, friend),
+    enabled: !!user && !!friend,
   });
 };
 
-export const useDeleteNotification = (notificationId: string) => {
+export const useDeleteNotification = () => {
   return useMutation({
-    mutationFn: () => deleteNotification(notificationId),
+    mutationFn: ({
+      type,
+      senderId,
+      senderName,
+      senderImageUrl,
+      receiverId,
+      postId,
+      gameId,
+      message,
+    }: {
+      type: INotification["type"];
+      senderId: string;
+      senderName: string;
+      senderImageUrl: string;
+      receiverId: string;
+      postId?: string;
+      gameId?: string;
+      message: string;
+    }) =>
+      deleteNotification({
+        type,
+        senderId,
+        senderName,
+        senderImageUrl,
+        receiverId,
+        postId,
+        gameId,
+        message,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.Notifications],

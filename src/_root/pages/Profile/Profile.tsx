@@ -37,8 +37,11 @@ const Profile = () => {
   const { mutateAsync: addFriendRequest, isPending: isAddingRequest } =
     useAddFriendRequest(currentUser, visitedUser);
   const { mutateAsync: removeFriendRequest, isPending: isRemovingRequest } =
-    useRemoveFriendRequest(currentUser?.id || "", visitedUser?.$id || "");
-  const { mutateAsync: addFriend, isPending: isAddingFriend } = useAddFriend();
+    useRemoveFriendRequest(currentUser, visitedUser);
+  const { mutateAsync: addFriend, isPending: isAddingFriend } = useAddFriend(
+    currentUser,
+    visitedUser,
+  );
   const { data: chatId } = useGetChatId(
     currentUser?.id || "",
     visitedUser?.$id || "",
@@ -55,12 +58,12 @@ const Profile = () => {
     currentUser?.id || "",
   );
   const { data: isFriendRequestSent } = useCheckIsFriendRequestSent(
-    currentUser?.id || "",
-    visitedUser?.$id || "",
+    currentUser,
+    visitedUser,
   );
   const { data: isFriendRequestReceived } = useCheckIsFriendRequestReceived(
-    currentUser?.id || "",
-    visitedUser?.$id || "",
+    currentUser,
+    visitedUser,
   );
   if (isGettingUser || !currentUser)
     return (
@@ -114,14 +117,12 @@ const Profile = () => {
                   <p>Decline</p>
                 </Button>
                 <Button
-                  onClick={() =>
-                    addFriend({ user: currentUser, friendId: visitedUser.$id })
-                  }
+                  onClick={() => addFriend()}
                   variant="outline"
                   className="flex gap-2 rounded-full shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
                   disabled={isAddingFriend}
                 >
-                  <IoPersonAddSharp size={20} />
+                  <IoPersonAddSharp size={18} />
                   <p>Accept</p>
                 </Button>
               </div>
