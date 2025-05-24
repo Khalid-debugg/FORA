@@ -1,4 +1,4 @@
-import { INotification } from "@/types";
+import type { INotification } from "@/types";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Link } from "react-router-dom";
@@ -10,6 +10,7 @@ import {
   useDeleteNotification,
 } from "@/lib/react-query/queriesAndMutations/notifications";
 import { useState, useEffect } from "react";
+import { X, Check, Eye, Undo2 } from "lucide-react";
 
 const NotificationCard = ({
   notification,
@@ -95,14 +96,22 @@ const NotificationCard = ({
 
   if (isDeleting) {
     return (
-      <Card className="w-full">
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-2">
+      <Card className="w-full border-l-4 border-l-orange-400 bg-orange-50/50 shadow-sm">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 bg-orange-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-orange-700">
+                Notification will be deleted in 2 seconds...
+              </span>
+            </div>
             {showUndo && (
               <Button
                 onClick={handleUndo}
-                className="bg-blue-500 text-white hover:bg-blue-600"
+                size="sm"
+                className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
               >
+                <Undo2 className="h-4 w-4 mr-2" />
                 Undo
               </Button>
             )}
@@ -114,80 +123,97 @@ const NotificationCard = ({
   console.log(notification);
 
   return (
-    <Card className="w-full">
-      <CardContent className="p-4">
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-3 items-center justify-between">
-            <div className="flex gap-4 items-center">
+    <Card className="w-full hover:shadow-md transition-all duration-200 border-l-4 border-l-primary-500 bg-gradient-to-r from-blue-50/30 to-transparent">
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          {/* Header with profile and delete button */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
               <Link
                 to={`/profile/${notification.senderId[notification.senderId.length - 1]}`}
+                className="flex-shrink-0 group"
               >
-                <img
-                  className="h-10 w-10 rounded-full"
-                  src={
-                    notification.senderImageUrl[
-                      notification.senderImageUrl.length - 1
-                    ]
-                  }
-                  alt="profile-pic"
-                />
+                <div className="relative">
+                  <img
+                    className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-sm group-hover:ring-blue-200 transition-all duration-200"
+                    src={
+                      notification.senderImageUrl[
+                        notification.senderImageUrl.length - 1
+                      ] || "/placeholder.svg"
+                    }
+                    alt="profile-pic"
+                  />
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-primary-500 rounded-full border-2 border-white"></div>
+                </div>
               </Link>
-              <p className="text-sm text-gray-600">{notification.message}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-700 leading-relaxed break-words">
+                  {notification.message}
+                </p>
+              </div>
             </div>
             <Button
               size="icon"
-              className="h-8 w-8 justify-end"
+              variant="ghost"
+              className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex-shrink-0"
               onClick={() => {
                 setIsDeleting(true);
                 setShowUndo(true);
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 6L6 18" />
-                <path d="M6 6l12 12" />
-              </svg>
+              <X className="h-4 w-4" />
             </Button>
           </div>
-          {notification.type === "FRIEND_REQUEST" && (
-            <div className="flex self-center gap-2">
-              <Button
-                onClick={handleAcceptFriendRequest}
-                className="bg-green-500 text-white hover:bg-green-600"
+
+          {/* Action buttons */}
+          <div className="space-y-3">
+            {notification.type === "FRIEND_REQUEST" && (
+              <div className="flex gap-3 justify-center">
+                <Button
+                  onClick={handleAcceptFriendRequest}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm flex-1 max-w-32"
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  Accept
+                </Button>
+                <Button
+                  onClick={handleRejectFriendRequest}
+                  variant="outline"
+                  className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 flex-1 max-w-32"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Decline
+                </Button>
+              </div>
+            )}
+
+            {notification.gameId && (
+              <Link to={`/game-post/${notification.gameId}`} className="block">
+                <Button
+                  variant="outline"
+                  className="w-full border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Game
+                </Button>
+              </Link>
+            )}
+
+            {notification.postId && (
+              <Link
+                to={`/normal-post/${notification.postId}`}
+                className="block"
               >
-                Accept
-              </Button>
-              <Button
-                onClick={handleRejectFriendRequest}
-                className="bg-red-500 text-white hover:bg-red-600"
-              >
-                Decline
-              </Button>
-            </div>
-          )}
-          {notification.gameId && (
-            <Link to={`/game-post/${notification.gameId}`}>
-              <Button variant="outline" className="w-full">
-                View Game
-              </Button>
-            </Link>
-          )}
-          {notification.postId && (
-            <Link to={`/normal-post/${notification.postId}`}>
-              <Button variant="outline" className="w-full">
-                View Post
-              </Button>
-            </Link>
-          )}
+                <Button
+                  variant="outline"
+                  className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Post
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
