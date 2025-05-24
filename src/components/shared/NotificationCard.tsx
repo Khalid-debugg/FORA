@@ -111,6 +111,7 @@ const NotificationCard = ({
       </Card>
     );
   }
+  console.log(notification);
 
   return (
     <Card className="w-full">
@@ -118,10 +119,16 @@ const NotificationCard = ({
         <div className="flex flex-col gap-2">
           <div className="flex gap-3 items-center justify-between">
             <div className="flex gap-4 items-center">
-              <Link to={`/profile/${notification.senderId}`}>
+              <Link
+                to={`/profile/${notification.senderId[notification.senderId.length - 1]}`}
+              >
                 <img
                   className="h-10 w-10 rounded-full"
-                  src={notification.senderImageUrl}
+                  src={
+                    notification.senderImageUrl[
+                      notification.senderImageUrl.length - 1
+                    ]
+                  }
                   alt="profile-pic"
                 />
               </Link>

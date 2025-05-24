@@ -52,7 +52,7 @@ const Comments = ({ post }) => {
       <div className="flex flex-col gap-4">
         {allComments?.map((comment, idx) => (
           <Comment
-            postId={post?.$id}
+            post={post}
             key={comment?.$id}
             comment={comment}
             mimeType={mimeTypes[idx]}

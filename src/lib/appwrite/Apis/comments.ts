@@ -7,7 +7,7 @@ import {
   handleFileOperation,
   uploadFiles,
 } from "./helper";
-import { createNotification } from "./notifications";
+import { createNotification, deleteNotification } from "./notifications";
 
 export async function getComments(postId: string, pageParam: number) {
   try {
@@ -57,63 +57,59 @@ export async function createComment(comment: INewComment) {
     throw err;
   }
 }
-export async function likeComment(comment: INewComment, user: any) {
-  console.log(comment);
-
+export async function likeComment(sender: any, comment: INewComment) {
+  const id = comment.$id + "-" + sender.id.slice(0, 10);
   try {
-    const currentLikes = comment?.commentLikes?.map((like) => like.$id);
-    console.log(currentLikes);
-
-    const updatedComment = await databases.updateDocument(
+    const likedComment = await databases.createDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.commentsID,
-      comment?.$id,
+      appwriteConfig.LikesID,
+      id,
       {
-        commentLikes: [...currentLikes, user.id],
+        userId: sender.id,
+        userName: sender.name,
+        userImageUrl: sender.imageUrl,
+        postId: comment.post.$id,
       },
     );
-    console.log(updatedComment);
-
-    if (comment?.creator.$id !== user.id) {
+    if (comment.creator.$id !== sender.id) {
       await createNotification({
         type: "LIKE_COMMENT",
-        senderId: user.id,
+        senderId: sender.id,
         receiverId: comment.creator.$id,
-        senderImageUrl: user.imageUrl,
-        senderName: user.name,
-        postId: comment?.post.$id,
-        message: `${user.name} liked your comment`,
+        senderImageUrl: sender.imageUrl,
+        senderName: sender.name,
+        postId: comment.post.$id,
+        message: `${sender.name} liked your comment`,
       });
     }
-    if (!updatedComment) {
-      return new Error("Failed to like the comment.");
-    }
 
-    return updatedComment;
+    return likedComment;
   } catch (err) {
-    console.error("Error creating like:", err);
-    throw err;
+    console.log(err);
   }
 }
-export async function unlikeComment(comment: INewComment, user: any) {
+export async function unlikeComment(sender: any, comment: INewComment) {
+  const id = comment.$id + "-" + sender.id.slice(0, 10);
   try {
-    const currentLikes = comment?.commentLikes?.map((like) => like.$id);
-    const updatedPost = await databases.updateDocument(
+    await databases.deleteDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.commentsID,
-      comment.$id,
-      {
-        commentLikes: currentLikes.filter((like) => like !== user.id),
-      },
+      appwriteConfig.LikesID,
+      id,
     );
-
-    if (!updatedPost) {
-      return new Error("Failed to dislike the comment.");
+    if (comment.creator.$id !== sender.id) {
+      await deleteNotification({
+        type: "LIKE_COMMENT",
+        senderId: sender.id,
+        senderName: sender.name,
+        senderImageUrl: sender.imageUrl,
+        receiverId: comment.creator.$id,
+        postId: comment.post.$id,
+        message: `${sender.name} liked your post`,
+      });
     }
-
-    return updatedPost;
+    return { success: true };
   } catch (err) {
-    console.error("Error creating like:", err);
+    console.error("Error unliking post:", err);
     throw err;
   }
 }

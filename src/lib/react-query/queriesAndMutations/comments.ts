@@ -5,7 +5,7 @@ import {
   getComments,
 } from "@/lib/appwrite/Apis/comments";
 import { queryClient } from "@/main";
-import { INewComment, INewUser } from "@/types";
+import { ICreatedPost, INewComment, INewUser } from "@/types";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { QueryKeys } from "../queryKeys";
 import { likeComment, unlikeComment } from "@/lib/appwrite/Apis/comments";
@@ -32,24 +32,24 @@ export const useGetComments = (postId: string) => {
     enabled: !!postId,
   });
 };
-export const useLikeComment = (postId: string) => {
+export const useLikeComment = (comment: INewComment) => {
   return useMutation({
-    mutationFn: ({ comment, user }: { comment: INewComment; user: INewUser }) =>
-      likeComment(comment, user),
+    mutationFn: ({ sender, comment }: { sender: any; comment: INewComment }) =>
+      likeComment(sender, comment),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.Comments + postId],
+        queryKey: [QueryKeys.Likes + comment?.$id],
       });
     },
   });
 };
-export const useUnlikeComment = (postId: string) => {
+export const useUnlikeComment = (comment: INewComment) => {
   return useMutation({
-    mutationFn: ({ comment, user }: { comment: INewComment; user: INewUser }) =>
-      unlikeComment(comment, user),
+    mutationFn: ({ sender, comment }: { sender: any; comment: INewComment }) =>
+      unlikeComment(sender, comment),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.Comments + postId],
+        queryKey: [QueryKeys.Likes + comment?.$id],
       });
     },
   });

@@ -19,17 +19,24 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 import UsersList from "../../UsersList";
+import { useGetLikes } from "@/lib/react-query/queriesAndMutations/posts";
 const RepliesSection = lazy(() => import("../RepliesSection/RepliesSection"));
-const Comment = ({ comment, mimeType, postId }) => {
+const Comment = ({ comment, mimeType, post }) => {
   const { user } = useUserContext();
   const [isRepliesClicked, setIsRepliesClicked] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { mutateAsync: createLike, isPending: isLiking } =
-    useLikeComment(postId);
+    useLikeComment(comment);
   const { mutateAsync: deleteLike, isPending: isDisliking } =
-    useUnlikeComment(postId);
-  const { mutateAsync: editComment } = useEditComment(postId);
-  const { mutateAsync: deleteComment } = useDeleteComment(postId);
+    useUnlikeComment(comment);
+  const {
+    data: commentLikes,
+    isPending: isLoadingLikes,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetLikes(comment?.$id);
+  const { mutateAsync: editComment } = useEditComment(post.$id);
+  const { mutateAsync: deleteComment } = useDeleteComment(post.$id);
   const [content, setContent] = useState(comment?.content);
   const [mediaId, setMediaId] = useState(comment?.mediaId);
   const [mediaUrl, setMediaUrl] = useState(comment?.mediaUrl);
@@ -38,9 +45,15 @@ const Comment = ({ comment, mimeType, postId }) => {
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
   const [isLiked, setIsLiked] = useState(
-    comment?.commentLikes?.some((likedUser) => likedUser === user?.id),
+    commentLikes?.pages.flat().some((like) => like.userId === user?.id),
   );
-
+  useEffect(() => {
+    if (commentLikes?.pages) {
+      setIsLiked(
+        commentLikes?.pages.flat().some((like) => like.userId === user?.id),
+      );
+    }
+  }, [commentLikes, user?.id]);
   useEffect(() => {
     const fetchMediaType = async () => {
       const response = await storage.getFile(
@@ -67,13 +80,13 @@ const Comment = ({ comment, mimeType, postId }) => {
     setIsEditing(false);
   };
   const handleLikeComment = async () => {
-    const response = await createLike({ comment, user });
+    const response = await createLike({ sender: user, comment });
     if (response instanceof Error) return;
     setIsLiked(true);
   };
 
   const handleUnlikeComment = async () => {
-    const response = await deleteLike({ comment, user });
+    const response = await deleteLike({ sender: user, comment });
     if (response instanceof Error) return;
     setIsLiked(false);
   };
@@ -253,11 +266,13 @@ const Comment = ({ comment, mimeType, postId }) => {
                         </button>
                       )}
                     </div>
-                    {comment?.commentLikes?.length > 0 && (
+                    {commentLikes && (
                       <div className="flex gap-2 items-center">
                         <UsersList
-                          listTitle="Likes"
-                          listItems={comment?.commentLikes}
+                          listItems={commentLikes}
+                          isLoadingLikes={isLoadingLikes}
+                          isFetchingNextPage={isFetchingNextPage}
+                          hasNextPage={hasNextPage}
                         />
                       </div>
                     )}

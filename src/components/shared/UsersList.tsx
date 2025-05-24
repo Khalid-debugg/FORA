@@ -31,7 +31,8 @@ const UsersList = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger className="hover:underline flex gap-1 items-center">
-        <p>{allLikes?.length}</p> <GoHeart size={25} fill="green" />
+        <p className="text-sm">{allLikes?.length}</p>{" "}
+        <GoHeart size={20} fill="green" />
       </AlertDialogTrigger>
       <AlertDialogContent className="">
         <AlertDialogHeader>
