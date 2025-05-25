@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import MenuItem from "./MenuItem";
 import { Skeleton } from "../ui/skeleton";
 import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
 import { IUser } from "@/types";
+import MenuItem from "./MenuItem";
 const sideLinks = [
   { logoUrl: "home", label: "Home", path: "/" },
   { logoUrl: "chat", label: "Messages", path: "/messages" },
