@@ -28,9 +28,9 @@ export async function getComments(postId: string, pageParam: number) {
     console.log(err);
   }
 }
-export async function createComment(comment: INewComment) {
+export async function createComment(sender, post, values) {
   try {
-    const uploadedFile = await handleFileOperation(uploadFiles, comment.media);
+    const uploadedFile = await handleFileOperation(uploadFiles, values.media);
     const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);
 
     const newComment = await databases.createDocument(
@@ -38,19 +38,26 @@ export async function createComment(comment: INewComment) {
       appwriteConfig.commentsID,
       ID.unique(),
       {
-        creator: comment.userId,
-        content: comment.comment,
-        post: comment.postId,
+        creator: sender.id,
+        content: values.comment,
+        post: post.$id,
         mediaUrl: fileUrl,
         mediaId: uploadedFile?.$id || null,
       },
     );
-
     if (!newComment) {
       await handleFileOperation(deleteFiles, uploadedFile);
       throw new Error("Failed to create the comment.");
     }
-
+    await createNotification({
+      type: "COMMENT",
+      senderId: sender.id,
+      senderName: sender.name,
+      senderImageUrl: sender.imageUrl,
+      receiverId: post.creator.$id,
+      postId: post.$id,
+      message: `${sender.name.split(" ")[0]} commented on your post`,
+    });
     return newComment;
   } catch (err) {
     console.error("Error creating comment:", err);
@@ -79,7 +86,7 @@ export async function likeComment(sender: any, comment: INewComment) {
         senderImageUrl: sender.imageUrl,
         senderName: sender.name,
         postId: comment.post.$id,
-        message: `${sender.name} liked your comment`,
+        message: `${sender.name.split(" ")[0]} liked your comment`,
       });
     }
 
@@ -104,7 +111,7 @@ export async function unlikeComment(sender: any, comment: INewComment) {
         senderImageUrl: sender.imageUrl,
         receiverId: comment.creator.$id,
         postId: comment.post.$id,
-        message: `${sender.name} liked your post`,
+        message: `${sender.name.split(" ")[0]} liked your post`,
       });
     }
     return { success: true };
@@ -137,20 +144,29 @@ export async function editComment(
         mediaId: newUploadedFile?.$id || mediaId || null,
       },
     );
-    if (!updatedComment) throw new Error("Post not found");
+    if (!updatedComment) throw new Error("Comment not found");
     return updatedComment;
   } catch (err) {
     console.log(err);
   }
 }
-export async function deleteComment(id: string) {
+export async function deleteComment(sender, comment) {
   try {
     const deletedComment = await databases.deleteDocument(
       appwriteConfig.databaseID,
       appwriteConfig.commentsID,
-      id,
+      comment.$id,
     );
-    if (!deletedComment) throw new Error("Post not found");
+    if (!deletedComment) throw new Error("Comment not found");
+    await deleteNotification({
+      type: "COMMENT",
+      senderId: comment.creator.$id,
+      senderName: comment.creator.name,
+      senderImageUrl: comment.creator.imageUrl,
+      receiverId: comment.post.creator.$id,
+      postId: comment.post.$id,
+      message: `${comment.creator.name.split(" ")[0]} commented on your post`,
+    });
     return deletedComment;
   } catch (err) {
     console.log(err);

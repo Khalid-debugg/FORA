@@ -38,13 +38,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
 
   async function onSubmit(values: z.infer<typeof commentValidation>) {
     try {
-      const postVariables = {
-        userId: user.id,
-        postId: post?.$id,
-        ...values,
-      };
-      const newComment = await createComment(postVariables);
-
+      const newComment = await createComment({ sender: user, post, values });
       if (newComment) {
         form.reset();
         setFile(undefined);

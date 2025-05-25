@@ -199,7 +199,7 @@ export async function likePost(sender: any, post: ICreatedPost) {
         senderImageUrl: sender.imageUrl,
         senderName: sender.name,
         postId: post.$id,
-        message: `${sender.name} liked your post`,
+        message: `${sender.name.split(" ")[0]} liked your post`,
       });
     }
 
@@ -282,26 +282,32 @@ export async function unlikeReply(reply: INewReply, userId: string) {
     throw err;
   }
 }
-export async function createComment(post: ICreatedPost, comment: INewComment) {
+export async function createComment(
+  sender: INewUser,
+  post: ICreatedPost,
+  values: INewComment,
+) {
   try {
     const newComment = await databases.createDocument(
       appwriteConfig.databaseID,
       appwriteConfig.commentsID,
       ID.unique(),
       {
-        ...comment,
+        creator: sender.id,
+        content: values.comment,
+        post: post.$id,
         postId: post.$id,
       },
     );
-    if (post.creator.$id !== comment.userId) {
+    if (post.creator.$id !== sender.id) {
       await createNotification({
         type: "COMMENT",
-        senderId: comment.userId,
+        senderId: sender.id,
+        senderName: sender.name,
+        senderImageUrl: sender.imageUrl,
         receiverId: post.creator.$id,
         postId: post.$id,
-        commentId: newComment.$id,
-        message: `${comment.userId} commented on your post`,
-        sender: comment.userId,
+        message: `${sender.name.split(" ")[0]} commented on your post`,
       });
     }
 
@@ -322,8 +328,6 @@ export async function getLikes(pageParam: number, documentId: string) {
         Query.orderDesc("$createdAt"),
       ],
     );
-    console.log(likes.documents);
-
     return likes.documents;
   } catch (err) {
     console.log(err);

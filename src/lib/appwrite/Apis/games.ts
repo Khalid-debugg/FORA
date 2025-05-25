@@ -191,7 +191,7 @@ export async function joinGame({
       senderImageUrl: user.imageUrl,
       receiverId: game.creator.$id,
       gameId: game.$id,
-      message: `${user.name} wants to join your game`,
+      message: `${user.name.split(" ")[0]} wants to join your game`,
     });
     const updatedWaitingGame = await databases.updateDocument(
       appwriteConfig.databaseID,

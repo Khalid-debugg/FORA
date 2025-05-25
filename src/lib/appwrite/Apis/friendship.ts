@@ -90,7 +90,7 @@ export async function addFriend(user: any, friend: any) {
       senderImageUrl: user.imageUrl,
       receiverId: friend.$id,
       type: "STATUS",
-      message: `${user.name} accepted your friend request`,
+      message: `${user.name.split(" ")[0]} accepted your friend request`,
     });
     if (!notification) throw new Error("Something went wrong!!");
     const deletedNotification = await deleteNotification({

@@ -10,7 +10,7 @@ export const sendFriendRequest = async (user: any, friend: any) => {
       senderName: user.name,
       senderImageUrl: user.imageUrl,
       receiverId: friend.$id,
-      message: `${user.name} sent you a friend request`,
+      message: `${user.name.split(" ")[0]} sent you a friend request`,
     });
     if (!friendRequest) throw new Error("Something went wrong!!");
     return friendRequest;
@@ -151,22 +151,33 @@ export async function createNotification({
       appwriteConfig.notificationsID,
       id,
     );
-    const updatedSenderId = [...existing.senderId, senderId];
-    const updatedSenderName = [...existing.senderName, senderName];
-    const firstNames = updatedSenderName.map((full) => full.split(" ")[0]);
-    const updatedSenderImageUrl = [...existing.senderImageUrl, senderImageUrl];
+    const existingSenderIds = existing.senderId || [];
+    const existingSenderNames = existing.senderName || [];
+    const existingSenderImageUrls = existing.senderImageUrl || [];
+
+    const updatedSenderId = [...existingSenderIds];
+    const updatedSenderName = [...existingSenderNames];
+    const updatedSenderImageUrl = [...existingSenderImageUrls];
+
+    if (!existingSenderIds.includes(senderId)) {
+      updatedSenderId.push(senderId);
+      updatedSenderName.push(senderName.split(" ")[0]);
+      updatedSenderImageUrl.push(senderImageUrl);
+    }
     const parts = message.split(" ");
     const action = parts[1];
     const rest = parts.slice(2).join(" ");
+
     const count = updatedSenderName.length;
     let updatedMessage = "";
     if (count === 1) {
-      updatedMessage = `${firstNames[0]} ${action} ${rest}`;
+      updatedMessage = `${updatedSenderName[0]} ${action} ${rest}`;
     } else if (count === 2) {
-      updatedMessage = `${firstNames[0]} and ${firstNames[1]} ${action} ${rest}`;
+      updatedMessage = `${updatedSenderName[0]} and ${updatedSenderName[1]} ${action} ${rest}`;
     } else {
-      updatedMessage = `${firstNames[0]} and ${count - 1} others ${action} ${rest}`;
+      updatedMessage = `${updatedSenderName[0]} and ${count - 1} others ${action} ${rest}`;
     }
+
     const updated = await databases.updateDocument(
       appwriteConfig.databaseID,
       appwriteConfig.notificationsID,
@@ -178,6 +189,7 @@ export async function createNotification({
         message: updatedMessage,
       },
     );
+
     return updated;
   } catch (error: any) {
     if (error.code === 404) {
@@ -188,7 +200,7 @@ export async function createNotification({
         {
           type,
           senderId: [senderId],
-          senderName: [senderName],
+          senderName: [senderName.split(" ")[0]],
           senderImageUrl: [senderImageUrl],
           receiverId,
           postId,
@@ -304,7 +316,7 @@ export async function deleteNotification({
       (id: string) => id !== senderId,
     );
     const updatedSenderName = existing.senderName.filter(
-      (name: string) => name !== senderName,
+      (name: string) => name !== senderName.split(" ")[0],
     );
     const updatedSenderImageUrl = existing.senderImageUrl.filter(
       (url: string) => url !== senderImageUrl,
@@ -317,8 +329,6 @@ export async function deleteNotification({
       );
       return { deleted: true };
     }
-
-    const firstNames = updatedSenderName.map((full) => full.split(" ")[0]);
     const parts = message.split(" ");
     const action = parts[1];
     const rest = parts.slice(2).join(" ");
@@ -326,11 +336,11 @@ export async function deleteNotification({
 
     let updatedMessage = "";
     if (count === 1) {
-      updatedMessage = `${firstNames[0]} ${action} ${rest}`;
+      updatedMessage = `${updatedSenderName[0]} ${action} ${rest}`;
     } else if (count === 2) {
-      updatedMessage = `${firstNames[0]} and ${firstNames[1]} ${action} ${rest}`;
+      updatedMessage = `${updatedSenderName[0]} and ${updatedSenderName[1]} ${action} ${rest}`;
     } else {
-      updatedMessage = `${firstNames[0]} and ${count - 1} others ${action} ${rest}`;
+      updatedMessage = `${updatedSenderName[0]} and ${count - 1} others ${action} ${rest}`;
     }
 
     const updated = await databases.updateDocument(

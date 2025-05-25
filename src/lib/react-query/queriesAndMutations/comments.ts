@@ -12,7 +12,15 @@ import { likeComment, unlikeComment } from "@/lib/appwrite/Apis/comments";
 
 export const useCreateComment = (postId: string) => {
   return useMutation({
-    mutationFn: (comment: INewComment) => createComment(comment),
+    mutationFn: ({
+      sender,
+      post,
+      values,
+    }: {
+      sender: INewUser;
+      post: ICreatedPost;
+      values: any;
+    }) => createComment(sender, post, values),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.Comments + postId],
@@ -76,9 +84,10 @@ export const useEditComment = (postId) => {
     },
   });
 };
-export const useDeleteComment = (postId) => {
+export const useDeleteComment = (postId: string) => {
   return useMutation({
-    mutationFn: (id: string) => deleteComment(id),
+    mutationFn: ({ sender, comment }: { sender: any; comment: INewComment }) =>
+      deleteComment(sender, comment),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.Comments + postId],

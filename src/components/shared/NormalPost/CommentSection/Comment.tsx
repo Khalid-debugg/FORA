@@ -289,7 +289,9 @@ const Comment = ({ comment, mimeType, post }) => {
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={async () => await deleteComment(comment.$id)}
+                onClick={async () =>
+                  await deleteComment({ sender: user, comment })
+                }
               >
                 Delete
               </DropdownMenuItem>
