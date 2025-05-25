@@ -1,4 +1,13 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import type { IUser } from "@/types";
+import BottomNavItem from "./BottomNavItem";
+
+const bottomLinks = [
+  { logoUrl: "home", label: "Home", path: "/" },
+  { logoUrl: "chat", label: "Messages", path: "/messages" },
+  { logoUrl: "notifications", label: "Notifications", path: "/notifications" },
+  { logoUrl: "search", label: "Explore", path: "/explore" },
+];
 
 const BottomNav = ({
   user,
@@ -9,40 +18,35 @@ const BottomNav = ({
   hasNewNotifications: boolean;
   hasNewMessages: boolean;
 }) => {
-  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
   return (
-    <nav className="border-t-2 bg-white border-primary-500 flex items-center justify-center w-full md:hidden divide-x fixed bottom-0 z-50">
-      <button className="flex-1 p-5" onClick={() => navigate("/")}>
-        <img
-          src="/assets/icons/home.svg"
-          alt="Home icon"
-          className="h-10 hover:bg-gray-300 mx-auto"
-        />
-      </button>
-      <button className="flex-1 p-5" onClick={() => navigate("/messages")}>
-        <img
-          src="/assets/icons/chat.svg"
-          alt="Messages icon"
-          className="h-10 hover:bg-gray-300 mx-auto"
-        />
-      </button>
-      <button
-        className="flex-1 p-5"
-        onClick={() => navigate("/create-post/normal")}
-      >
-        <img
-          src="/assets/icons/add-post.svg"
-          alt="Add post icon"
-          className="mx-auto"
-        />
-      </button>
-      <button className="flex-1 p-5" onClick={() => navigate("/explore")}>
-        <img
-          src="/assets/icons/search.svg"
-          alt="Search icon"
-          className="h-10 hover:bg-gray-300 mx-auto"
-        />
-      </button>
+    <nav
+      className="
+      sticky bottom-0 left-0 right-0 z-[60]
+      bg-white/95 backdrop-blur-lg border-t border-gray-200/50
+      shadow-lg shadow-gray-900/5
+      md:hidden
+    "
+    >
+      <div className="flex items-center justify-center w-full">
+        {bottomLinks.map((link) => (
+          <BottomNavItem
+            key={link.label}
+            logoUrl={link.logoUrl}
+            label={link.label}
+            pagePath={link.path}
+            isActive={pathname === link.path}
+            showNotificationsIndicator={
+              link.label === "Notifications" && hasNewNotifications
+            }
+            showMessagesIndicator={link.label === "Messages" && hasNewMessages}
+          />
+        ))}
+      </div>
+
+      {/* Gradient overlay for extra depth */}
+      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none" />
     </nav>
   );
 };

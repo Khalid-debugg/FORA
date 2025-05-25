@@ -48,7 +48,7 @@ const SideNav = ({
               <img
                 src={user.imageUrl}
                 alt="profile picture"
-                className="h-12 w-12 rounded-full border border-black"
+                className="h-12 w-12 rounded-full border border-primary-500"
               />
               <div className="flex flex-col items-start">
                 <p className="font-[600] text-lg">{user.name}</p>
