@@ -1,4 +1,6 @@
+import type React from "react";
 import { Navigate, Outlet } from "react-router-dom";
+
 const quotes: string[] = [
   "Feel the adrenaline rush as you step onto the football pitch. Every match is a chance to make history.",
   "In the game of football, every pass, every tackle, every goal, is a moment that defines greatness.",
@@ -6,10 +8,12 @@ const quotes: string[] = [
   "On the football field, legends are born. Every player has the opportunity to write their own story.",
   "From grassroots to glory, the journey of football is one of passion, dedication, and endless possibilities.",
 ];
+
 const generateQuote = (): string => {
   const quoteIndex = Math.round(Math.random() * 5) - 1;
   return quotes[quoteIndex];
 };
+
 const AuthLayout: React.FC = () => {
   const isAuthenticated = false;
 

@@ -2,54 +2,125 @@ import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import AuthLayout from "./_auth/AuthLayout";
+import RootLayout from "./_root/RootLayout";
 
 const SignInForm = lazy(() => import("./_auth/forms/SignInForm"));
 const SignUpForm = lazy(() => import("./_auth/forms/SignUpForm"));
 const ResetPassword = lazy(() => import("./_auth/forms/ResetPassword"));
 const SetNewPassword = lazy(() => import("./_auth/forms/SetNewPassword"));
-const AuthLayout = lazy(() => import("./_auth/AuthLayout"));
-const RootLayout = lazy(() => import("./_root/RootLayout"));
-import {
-  Home,
-  Profile,
-  OneNormalPost,
-  OneGamePost,
-  Notifications,
-  Explore,
-  Messages,
-} from "./_root/pages";
+
+import Home from "./_root/pages/Home/Home";
+import Profile from "./_root/pages/Profile/Profile";
+import OneNormalPost from "./_root/pages/NormalPost/OneNormalPost";
+import OneGamePost from "./_root/pages/GamePost/OneGamePost";
+import Notifications from "./_root/pages/Notifications/Notifications";
+import Explore from "./_root/pages/Explore/Explore";
+import Messages from "./_root/pages/Messages/Messages";
+
+const LoadingSpinner = () => (
+  <div className="w-full h-64 flex items-center justify-center">
+    <div className="text-4xl animate-spin">⚽</div>
+  </div>
+);
 
 const App = () => {
   return (
     <main>
-      <Suspense
-        fallback={
-          <div className="w-full h-screen flex items-center justify-center text-4xl text-center animate-spin">
-            ⚽
-          </div>
-        }
-      >
-        <Routes>
-          <Route element={<AuthLayout />}>
-            <Route path="/signin" element={<SignInForm />} />
-            <Route path="/signup" element={<SignUpForm />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route
-              path="/set-new-password/:userId?/:secret?"
-              element={<SetNewPassword />}
-            />
-          </Route>
-          <Route element={<RootLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/normal-post/:id" element={<OneNormalPost />} />
-            <Route path="/game-post/:id" element={<OneGamePost />} />
-            <Route path="/profile/:id" element={<Profile />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/messages/:chatId?" element={<Messages />} />
-          </Route>
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route
+            path="/signin"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <SignInForm />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <SignUpForm />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <ResetPassword />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/set-new-password/:userId?/:secret?"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <SetNewPassword />
+              </Suspense>
+            }
+          />
+        </Route>
+        <Route element={<RootLayout />}>
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <Home />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/explore"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <Explore />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/normal-post/:id"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <OneNormalPost />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/game-post/:id"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <OneGamePost />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/profile/:id"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <Profile />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <Notifications />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/messages/:chatId?"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <Messages />
+              </Suspense>
+            }
+          />
+        </Route>
+      </Routes>
       <Toaster />
     </main>
   );
