@@ -49,6 +49,9 @@ export const useCreateGame = () => {
     mutationFn: (post: INewGame) => createGame(post),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.RecentPosts] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.RecentPostsAndGames],
+      });
     },
   });
 };

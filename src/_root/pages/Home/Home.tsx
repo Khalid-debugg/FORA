@@ -22,6 +22,8 @@ const Home = () => {
   const navigate = useNavigate();
   const [postType, setPostType] = useState("post");
   const [allPosts, setAllPosts] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   useEffect(() => {
     if (posts) {
       setAllPosts(posts.pages.flat());
@@ -43,13 +45,23 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  const handlePostCreated = () => {
+    setIsDialogOpen(false);
+  };
+
   return (
     <>
       <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto items-center">
         {!isPending && (
           <div className="flex w-full h-[10rem] justify-center gap-2">
-            <Dialog>
-              <DialogTrigger onClick={() => setPostType("game")} asChild>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger
+                onClick={() => {
+                  setPostType("game");
+                  setIsDialogOpen(true);
+                }}
+                asChild
+              >
                 <button className="relative overflow-hidden w-full rounded-lg shadow-md flex items-center justify-center border-2 border-primary-500 group">
                   <VideoHover src="../../assets/videos/Game.mp4" />
                   <div
@@ -70,7 +82,13 @@ const Home = () => {
                   </div>
                 </button>
               </DialogTrigger>
-              <DialogTrigger onClick={() => setPostType("post")} asChild>
+              <DialogTrigger
+                onClick={() => {
+                  setPostType("post");
+                  setIsDialogOpen(true);
+                }}
+                asChild
+              >
                 <button className="relative overflow-hidden w-full rounded-lg shadow-md flex items-center justify-center border-2 border-primary-500 group">
                   <VideoHover src="../../assets/videos/Post.mp4" />
                   <div
@@ -92,7 +110,11 @@ const Home = () => {
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[1024px]">
-                <CreatePost type={postType} setType={setPostType} />
+                <CreatePost
+                  type={postType}
+                  setType={setPostType}
+                  onPostCreated={handlePostCreated}
+                />
               </DialogContent>
             </Dialog>
           </div>

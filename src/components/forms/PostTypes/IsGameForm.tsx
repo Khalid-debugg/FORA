@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -19,21 +12,30 @@ import { gameValidation } from "@/lib/validation";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormField,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { z } from "zod";
+import type { z } from "zod";
 import { useUserContext } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   useCreateGame,
   useGetCities,
 } from "@/lib/react-query/queriesAndMutations/games";
 
-const IsGameForm = () => {
+const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
   const { toast } = useToast();
   const { user } = useUserContext();
   const { data: governorates } = useGetCities();
   const { mutateAsync: createGame, isPending: postIsPending } = useCreateGame();
   const [cities, setCities] = useState([]);
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof gameValidation>>({
     resolver: zodResolver(gameValidation),
     defaultValues: {
@@ -57,7 +59,7 @@ const IsGameForm = () => {
       const newPost = await createGame(postVariables);
       if (!newPost) {
         toast({
-          variant: "error",
+          variant: "destructive",
           title: "Uh oh! Something went wrong.",
           description: "There was a problem with your request.",
         });
@@ -68,7 +70,8 @@ const IsGameForm = () => {
           variant: "default",
           title: "Your game is shared successfully!",
         });
-        window.location.href = "/";
+        onPostCreated?.(); // Close the dialog
+        navigate("/");
       }
     } catch (err) {
       console.log(err);
