@@ -91,7 +91,7 @@ const Replies = ({ comment, replyRef }) => {
                   replyRef={replyRef}
                   key={reply?.$id}
                   reply={reply}
-                  commentId={comment?.$id}
+                  comment={comment}
                   mimeType={mimeTypes[idx]?.mimeType}
                 />
               </Suspense>

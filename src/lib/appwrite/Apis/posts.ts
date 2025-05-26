@@ -236,49 +236,63 @@ export async function unlikePost(sender: any, post: ICreatedPost) {
   }
 }
 
-export async function likeReply(reply: INewReply, userId: string) {
-  try {
-    const currentLikes = reply?.replyLikes?.map((like) => like.$id) || [];
+export async function likeReply(sender: any, reply: INewReply, comment: any) {
+  const id = reply.$id + "-" + sender.id.slice(0, 10);
+  console.log(id);
 
-    const updatedReply = await databases.updateDocument(
+  try {
+    const updatedReply = await databases.createDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.repliesID,
-      reply?.$id,
+      appwriteConfig.LikesID,
+      id,
       {
-        replyLikes: [...currentLikes, userId],
+        userId: sender.id,
+        userName: sender.name,
+        userImageUrl: sender.imageUrl,
+        postId: comment.post.$id,
       },
     );
-
-    if (!updatedReply) {
-      return new Error("Failed to like the reply.");
+    if (reply.creator.$id !== sender.id) {
+      await createNotification({
+        type: "LIKE_REPLY",
+        senderId: sender.id,
+        senderImageUrl: sender.imageUrl,
+        senderName: sender.name,
+        receiverId: reply.creator.$id,
+        postId: comment.post.$id,
+        message: `${sender.name.split(" ")[0]} liked your reply`,
+      });
     }
 
     return updatedReply;
   } catch (err) {
-    console.error("Error creating reply:", err);
-    throw err;
+    console.log(err);
   }
 }
-export async function unlikeReply(reply: INewReply, userId: string) {
+export async function unlikeReply(sender: any, reply: INewReply, comment: any) {
+  const id = reply.$id + "-" + sender.id.slice(0, 10);
+  console.log(id);
+
   try {
-    const currentLikes = reply?.replyLikes?.map((like) => like.$id);
-
-    const updatedReply = await databases.updateDocument(
+    await databases.deleteDocument(
       appwriteConfig.databaseID,
-      appwriteConfig.repliesID,
-      reply.$id,
-      {
-        replyLikes: currentLikes.filter((like) => like !== userId) || [],
-      },
+      appwriteConfig.LikesID,
+      id,
     );
-
-    if (!updatedReply) {
-      return new Error("Failed to dislike the reply.");
+    if (reply.creator.$id !== sender.id) {
+      await deleteNotification({
+        type: "LIKE_REPLY",
+        senderId: sender.id,
+        senderImageUrl: sender.imageUrl,
+        senderName: sender.name,
+        receiverId: reply.creator.$id,
+        postId: comment.post.$id,
+        message: `${sender.name.split(" ")[0]} liked your reply`,
+      });
     }
-
-    return updatedReply;
+    return { success: true };
   } catch (err) {
-    console.error("Error creating reply:", err);
+    console.error("Error unliking post:", err);
     throw err;
   }
 }

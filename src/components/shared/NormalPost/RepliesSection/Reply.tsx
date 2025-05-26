@@ -17,14 +17,21 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 import UsersList from "../../UsersList";
-const Reply = ({ reply, mimeType, replyRef, commentId }) => {
+import { useGetLikes } from "@/lib/react-query/queriesAndMutations/posts";
+const Reply = ({ reply, mimeType, replyRef, comment }) => {
   const { user } = useUserContext();
-  const { mutateAsync: likeReply } = useLikeReply(commentId);
-  const { mutateAsync: unLikeReply } = useUnlikeReply(commentId);
-  const { mutateAsync: editReply } = useEditReply(commentId);
-  const { mutateAsync: deleteReply } = useDeleteReply(commentId);
+  const { mutateAsync: likeReply } = useLikeReply(reply);
+  const { mutateAsync: unLikeReply } = useUnlikeReply(reply);
+  const { mutateAsync: editReply } = useEditReply(comment.$id);
+  const { mutateAsync: deleteReply } = useDeleteReply(comment.$id);
+  const {
+    data: likes,
+    isPending: isLoadingLikes,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetLikes(reply.$id);
   const [isLiked, setIsLiked] = useState(
-    reply?.replyLikes?.some((like) => like.$id === user?.id),
+    likes?.pages.flat().some((like) => like.userId === user?.id),
   );
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(reply?.content);
@@ -34,8 +41,11 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
   const [newFile, setNewFile] = useState(null);
   const [newMediaUrl, setNewMediaUrl] = useState("");
   const [newFileType, setNewFileType] = useState("");
-  console.log(isLiked);
-
+  useEffect(() => {
+    if (likes) {
+      setIsLiked(likes?.pages.flat().some((like) => like.userId === user?.id));
+    }
+  }, [likes, user?.id]);
   const handleSave = async () => {
     const res = await editReply({
       id: reply.$id,
@@ -48,12 +58,12 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
     setIsEditing(false);
   };
   const handleLike = async () => {
-    const res = await likeReply({ reply, userId: user?.id });
+    const res = await likeReply({ sender: user, reply, comment });
     if (res instanceof Error) return;
     setIsLiked(true);
   };
   const handleUnlike = async () => {
-    const res = await unLikeReply({ reply, userId: user?.id });
+    const res = await unLikeReply({ sender: user, reply, comment });
     if (res instanceof Error) return;
     setIsLiked(false);
   };
@@ -241,9 +251,14 @@ const Reply = ({ reply, mimeType, replyRef, commentId }) => {
                 </button>
               )}
             </div>
-            {reply?.replyLikes?.length > 0 && (
+            {likes && (
               <div className="flex gap-2 items-center">
-                <UsersList listTitle="Likes" listItems={reply?.replyLikes} />
+                <UsersList
+                  listItems={likes}
+                  isLoadingLikes={isLoadingLikes}
+                  hasNextPage={hasNextPage}
+                  isFetchingNextPage={isFetchingNextPage}
+                />
               </div>
             )}
           </div>

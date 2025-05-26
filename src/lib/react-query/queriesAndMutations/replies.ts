@@ -28,24 +28,38 @@ export const useGetReplies = (commentId: string) => {
       lastPage?.documents.length === 5 ? allPages.length : undefined,
   });
 };
-export const useLikeReply = (commentId: string) => {
+export const useLikeReply = (reply: any) => {
   return useMutation({
-    mutationFn: ({ reply, userId }: { reply: INewReply; userId: string }) =>
-      likeReply(reply, userId),
+    mutationFn: ({
+      sender,
+      reply,
+      comment,
+    }: {
+      sender: any;
+      reply: INewReply;
+      comment: INewComment;
+    }) => likeReply(sender, reply, comment),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.Replies + commentId],
+        queryKey: [QueryKeys.Likes + reply.$id],
       });
     },
   });
 };
-export const useUnlikeReply = (commentId: string) => {
+export const useUnlikeReply = (reply: any) => {
   return useMutation({
-    mutationFn: ({ reply, userId }: { reply: INewReply; userId: string }) =>
-      unlikeReply(reply, userId),
+    mutationFn: ({
+      sender,
+      reply,
+      comment,
+    }: {
+      sender: any;
+      reply: INewReply;
+      comment: INewComment;
+    }) => unlikeReply(sender, reply, comment),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.Replies + commentId],
+        queryKey: [QueryKeys.Likes + reply.$id],
       });
     },
   });
