@@ -1,9 +1,11 @@
 import { useUserContext } from "@/context/AuthContext";
+import { useDeleteSession } from "@/lib/react-query/queriesAndMutations/users";
 import { Link, useNavigate } from "react-router-dom";
 
 const NavBar = () => {
   const { user } = useUserContext();
   const navigate = useNavigate();
+  const { mutateAsync: deleteSession } = useDeleteSession();
   return (
     <nav className="border-b-2 bg-white border-primary-500 shadow-lg flex items-center justify-between px-5 py-4 w-full md:hidden sticky top-0 z-[60]">
       <Link to={`/profile/${user.id}`}>
@@ -26,6 +28,7 @@ const NavBar = () => {
       </Link>
       <button
         onClick={() => {
+          deleteSession();
           localStorage.setItem("cookieFallback", "[]");
           navigate("/signin");
         }}

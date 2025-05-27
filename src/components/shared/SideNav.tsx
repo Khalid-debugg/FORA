@@ -21,8 +21,8 @@ const SideNav = ({
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { mutateAsync: deleteSession, isPending } = useDeleteSession();
-  const logout = () => {
-    deleteSession();
+  const logout = async () => {
+    await deleteSession();
     localStorage.clear();
     navigate("/signin");
   };
