@@ -8,7 +8,8 @@ export const SignupValidation = z
     lastName: z
       .string()
       .min(2, { message: "Too short" })
-      .max(15, { message: "That's too much, maximum 15 characters" }),
+      .max(15, { message: "That's too much, maximum 15 characters" })
+      .or(z.literal("")),
     username: z
       .string()
       .min(2, { message: "Too short" })

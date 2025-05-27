@@ -4,8 +4,8 @@ import "./globals.css";
 const Toaster = lazy(() =>
   import("@/components/ui/toaster").then((mod) => ({ default: mod.Toaster })),
 );
-const AuthLayout = lazy(() => import("./_auth/AuthLayout"));
-const RootLayout = lazy(() => import("./_root/RootLayout"));
+import AuthLayout from "./_auth/AuthLayout";
+import RootLayout from "./_root/RootLayout";
 const SignInForm = lazy(() => import("./_auth/forms/SignInForm"));
 const SignUpForm = lazy(() => import("./_auth/forms/SignUpForm"));
 const ResetPassword = lazy(() => import("./_auth/forms/ResetPassword"));
