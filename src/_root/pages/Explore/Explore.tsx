@@ -13,6 +13,7 @@ import { BsGrid3X3 } from "react-icons/bs";
 import { BsPostcard } from "react-icons/bs";
 import { TbPlayFootball } from "react-icons/tb";
 import { IoPeople } from "react-icons/io5";
+import { Helmet } from "react-helmet-async";
 
 const Explore = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,6 +60,9 @@ const Explore = () => {
 
   return (
     <div className="flex flex-col gap-2 py-2 px-4 md:w-1/3 w-full mx-auto">
+      <Helmet>
+        <title>Explore</title>
+      </Helmet>
       <div className="mb-8">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />

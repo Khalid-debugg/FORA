@@ -22,6 +22,7 @@ import {
   useDeleteNormalPost,
   useGetNormalPost,
 } from "@/lib/react-query/queriesAndMutations/posts";
+import { Helmet } from "react-helmet-async";
 const OneNormalPost = () => {
   const { user } = useUserContext();
   const { id } = useParams();
@@ -47,6 +48,9 @@ const OneNormalPost = () => {
   };
   return (
     <div className="flex flex-col gap-2 md:w-1/3 w-full mx-auto items-center">
+      <Helmet>
+        <title>Post</title>
+      </Helmet>
       <div className="flex items-center justify-between p-4 w-full gap-4 shadow-md">
         <div className="flex items-center">
           <button

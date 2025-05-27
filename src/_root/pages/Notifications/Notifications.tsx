@@ -2,6 +2,7 @@ import NotificationCard from "@/components/shared/NotificationCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserContext } from "@/context/AuthContext";
 import { useGetNotifications } from "@/lib/react-query/queriesAndMutations/notifications";
+import { Helmet } from "react-helmet-async";
 
 const Notifications = () => {
   const { user } = useUserContext();
@@ -10,6 +11,9 @@ const Notifications = () => {
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
+      <Helmet>
+        <title>Notifications</title>
+      </Helmet>
       <div className="flex items-center w-full shadow-md">
         <h1 className="text-xl px-4 py-8">Notifications</h1>
       </div>

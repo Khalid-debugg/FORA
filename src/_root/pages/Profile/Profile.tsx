@@ -27,6 +27,7 @@ import {
   useCreateNewChat,
   useGetChatId,
 } from "@/lib/react-query/queriesAndMutations/chats";
+import { Helmet } from "react-helmet-async";
 
 const Profile = () => {
   const { id } = useParams();
@@ -73,6 +74,9 @@ const Profile = () => {
     );
   return (
     <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
+      <Helmet>
+        <title>Profile</title>
+      </Helmet>
       <CoverImage user={visitedUser} currentUser={currentUser} />
       <div className="relative px-4 flex flex-col gap-2">
         <ProfilePicture user={visitedUser} currentUser={currentUser} />

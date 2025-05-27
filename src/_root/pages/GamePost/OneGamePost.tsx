@@ -25,6 +25,7 @@ import {
   useDeleteGamePost,
   useGetGame,
 } from "@/lib/react-query/queriesAndMutations/games";
+import { Helmet } from "react-helmet-async";
 
 const OneGamePost = () => {
   const { user } = useUserContext();
@@ -53,6 +54,9 @@ const OneGamePost = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Game</title>
+      </Helmet>
       {isPending ? (
         <div className="flex flex-col space-y-3">
           <Skeleton className="h-[125px] w-[250px] rounded-xl" />

@@ -7,6 +7,7 @@ import { useGetRecentPostsAndGames } from "@/lib/react-query/queriesAndMutations
 import { useGetFriends } from "@/lib/react-query/queriesAndMutations/friendship";
 import { useUserContext } from "@/context/AuthContext";
 import { LoadingSpinner } from "@/App";
+import { Helmet } from "react-helmet-async";
 const CreatePost = lazy(() => import("./CreatePost"));
 const VideoHover = lazy(() => import("@/components/ui/video-hover"));
 const Home = () => {
@@ -51,6 +52,9 @@ const Home = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Home</title>
+      </Helmet>
       <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto items-center">
         {!isPending && (
           <div className="flex w-full h-[10rem] justify-center gap-2">

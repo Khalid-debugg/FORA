@@ -10,6 +10,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdOutlineCancel } from "react-icons/md";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const Messages = () => {
   const { user } = useUserContext();
@@ -87,6 +88,9 @@ const Messages = () => {
 
   return (
     <div className="flex flex-col gap-4 md:w-1/3 w-full mx-auto items-center">
+      <Helmet>
+        <title>Messages</title>
+      </Helmet>
       <div className="flex h-full w-full">
         <div className="w-full md:w-1/3 border-r border-green-200 flex flex-col">
           <div className="p-4 border-b border-green-200">
