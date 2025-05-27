@@ -23,7 +23,7 @@ const Explore = lazy(() => import("./_root/pages/Explore/Explore"));
 const Messages = lazy(() => import("./_root/pages/Messages/Messages"));
 
 export const LoadingSpinner = () => (
-  <div className="w-full h-64 flex items-center justify-center">
+  <div className="w-1/3 h-64 flex items-center justify-center">
     <div className="text-4xl animate-spin">⚽</div>
   </div>
 );

@@ -1,7 +1,9 @@
+"use client";
+
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
-import { IoPeopleSharp } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
+import { Users, Eye, AtSign } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PeopleYouMayKnow = ({
   peopleYouMayKnow,
@@ -11,58 +13,95 @@ const PeopleYouMayKnow = ({
   isFetchingNextPage,
 }) => {
   const navigate = useNavigate();
-
   return (
-    <div className="rounded-lg border divide-y divide-primary-500 border-primary-500">
-      <div className="p-2 flex gap-3 items-center">
-        <IoPeopleSharp size={30} color="#30cc42" />
-        <h2 className="font-bold">People You May Know</h2>
+    <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border-2 border-primary-500/20 hover:border-primary-500/40 transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent pointer-events-none" />
+      <div className="relative p-4 border-b border-primary-500/20 bg-gradient-to-r from-primary-500/10 to-transparent">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary-500/10 rounded-xl border border-primary-500/20">
+            <Users size={20} className="text-primary-500" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">
+              People You May Know
+            </h2>
+            <p className="text-sm text-gray-600">Connect with others</p>
+          </div>
+        </div>
       </div>
+      <div className="relative p-4">
+        <div className="flex flex-col gap-3">
+          {isGettingUsers && (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-2xl animate-spin">⚽</div>
+              <span className="ml-2 text-gray-600">Finding people...</span>
+            </div>
+          )}
 
-      <div className="p-2 flex flex-col gap-2">
-        {isGettingUsers && <p className="text-center animate-spin">⚽</p>}
-        {!isGettingUsers &&
-          peopleYouMayKnow.map((user) => (
-            <div
-              key={user.$id}
-              className="p-4 border border-slate-200 flex gap-4 items-center rounded-lg justify-between"
-            >
-              <div className="flex gap-2 items-center">
-                <Avatar className="hover:cursor-pointer">
-                  <AvatarImage
-                    className="h-10 w-10 rounded-full outline outline-slate-200"
-                    src={user.imageUrl}
-                  />
-                </Avatar>
-                <div>
-                  <p className="text-lg font-bold">{user.name}</p>
-                  <p className="text-sm text-slate-600">
-                    {"@" + user.username}
-                  </p>
-                </div>{" "}
-              </div>
-              <Button
-                className="shad-button_primary hover:shad-button_ghost"
-                onClick={() => {
-                  navigate(`/profile/${user.$id}`);
-                }}
-                variant="outline"
-                size="sm"
+          {!isGettingUsers &&
+            peopleYouMayKnow.map((user) => (
+              <div
+                key={user.$id}
+                className="group relative p-4 bg-white/50 border-2 border-primary-500/10 hover:border-primary-500/30 rounded-xl transition-all duration-200 hover:shadow-md"
               >
-                View
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl pointer-events-none" />
+
+                <div className="relative flex gap-4 items-center justify-between">
+                  <div className="flex gap-3 items-center">
+                    <div className="relative">
+                      <Avatar className="hover:cursor-pointer ring-2 ring-primary-500/20 hover:ring-primary-500/40 transition-all duration-200">
+                        <AvatarImage
+                          className="h-10 w-10 rounded-full"
+                          src={user.imageUrl || "/placeholder.svg"}
+                        />
+                      </Avatar>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-200">
+                        {user.name}
+                      </p>
+                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                        <AtSign size={12} className="text-primary-500" />
+                        {user.username}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    className="bg-primary-500/10 hover:bg-primary-500 text-primary-600 hover:text-white border-primary-500/20 hover:border-primary-500 shadow-sm hover:shadow-md transition-all duration-200 rounded-xl px-4"
+                    onClick={() => {
+                      navigate(`/profile/${user.$id}`);
+                    }}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Eye size={14} className="mr-2" />
+                    View
+                  </Button>
+                </div>
+              </div>
+            ))}
+
+          {hasNextPage && (
+            <div className="flex justify-center mt-4">
+              <Button
+                className="bg-primary-500 hover:bg-primary-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl px-8"
+                onClick={fetchNextPage}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                    Loading...
+                  </>
+                ) : (
+                  "Show More"
+                )}
               </Button>
             </div>
-          ))}
-
-        {hasNextPage && (
-          <Button
-            className="mt-4 self-center"
-            onClick={fetchNextPage}
-            disabled={isFetchingNextPage}
-          >
-            {isFetchingNextPage ? "Loading..." : "Show More"}
-          </Button>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
