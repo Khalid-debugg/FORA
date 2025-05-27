@@ -98,7 +98,10 @@ export async function createGame(post: INewGame) {
         caption: post.caption,
         playersNumber: post.playersNumber,
         location:
-          post.governorate + " - " + post.city + " - " + post.playgroundName,
+          post.governorate +
+          (post.city ? " - " + post.city : "") +
+          (post.playgroundName ? " - " + post.playgroundName : ""),
+
         date: post.dateTime.replace("T", " | "),
       },
     );

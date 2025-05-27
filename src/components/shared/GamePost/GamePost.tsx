@@ -150,7 +150,7 @@ const GamePost = ({ post, isOne }) => {
                 className="bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
               >
                 {playersNeeded > 0
-                  ? `${playersNeeded} spots left`
+                  ? `${playersNeeded} ${playersNeeded === 1 ? "spot" : "spots"} left`
                   : "Full Game"}
               </Badge>
             </div>
