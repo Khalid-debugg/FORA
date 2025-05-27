@@ -21,6 +21,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post, isOne }) => {
         className={`object-cover h-full w-full scale-y-[1.15] scale-x-[1.25] `}
         src="../../assets/images/football-pitch.svg"
         alt=""
+        loading="lazy"
       />
       {!isLoadingJoined && (
         <div className="flex flex-wrap justify-center gap-8 px-3 py-8 items-center overflow-auto absolute top-0 left-0 z-20 w-full h-full">
@@ -39,6 +40,7 @@ const JoinedList = ({ joinedPlayers, isLoadingJoined, post, isOne }) => {
                       src={player.imageUrl}
                       alt="profile pic"
                       className="w-10 h-10 rounded-full"
+                      loading="lazy"
                     />
                     <Link to={`/profile/${player.$id}`}>{player.name}</Link>
                   </div>

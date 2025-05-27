@@ -11,6 +11,7 @@ const NavBar = () => {
           src={user.imageUrl}
           alt="profile picture"
           className="h-12 rounded-full border border-black"
+          loading="lazy"
         />
       </Link>
       <Link to="/">
@@ -19,6 +20,7 @@ const NavBar = () => {
             src="/assets/brand-logo/svg/logo-no-background.svg"
             alt="FORA Logo"
             className="h-8 "
+            loading="lazy"
           />
         </header>
       </Link>
@@ -32,6 +34,7 @@ const NavBar = () => {
           src="/assets/icons/logout.svg"
           className="h-10"
           alt="Logout icon"
+          loading="lazy"
         />
       </button>
     </nav>

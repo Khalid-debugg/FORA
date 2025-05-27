@@ -29,6 +29,7 @@ const AuthLayout: React.FC = () => {
                 className="object-cover h-screen w-full"
                 src="/assets/images/AuthBackground.jpg"
                 alt="People playing football"
+                loading="lazy"
               />
               <div className="inset-0 absolute top-0 left-0 bg-gradient-to-b from-transparent from-80% to-slate-900 ">
                 <h2 className=" absolute bottom-10 stroke-2 stroke-white bg-gradient-to-br from-slate-50 to-teal-600 bg-clip-text text-transparent h1-bold p-10 ">

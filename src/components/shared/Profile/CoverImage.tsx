@@ -37,6 +37,7 @@ const CoverImage = ({ user, currentUser }) => {
         src={image}
         alt="Cover Image"
         className="w-full h-full object-cover"
+        loading="lazy"
       />
       {currentUser?.id === user?.$id && (
         <>
@@ -69,6 +70,7 @@ const CoverImage = ({ user, currentUser }) => {
                 ref={imageRef}
                 src={tempImage || "/placeholder.svg"}
                 alt="Temp"
+                className="w-full h-full object-cover"
               />
             </ReactCrop>
           )}

@@ -157,6 +157,7 @@ const MessageForm = ({ selectedChat }) => {
               src={URL.createObjectURL(file)}
               alt="preview"
               className="h-40 w-40 object-cover rounded-md"
+              loading="lazy"
             />
           ) : (
             <video

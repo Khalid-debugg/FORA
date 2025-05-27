@@ -109,6 +109,7 @@ const EditNormalPost = ({ post, setIsEditing }) => {
                 src={post?.creator.imageURL}
                 className="rounded-full w-14 h-14 border border-black"
                 alt="profile pic"
+                loading="lazy"
               />
               <p className="text-xl font-medium">{post?.creator.username}</p>
             </div>
@@ -147,6 +148,7 @@ const EditNormalPost = ({ post, setIsEditing }) => {
                           src={url}
                           alt="media preview"
                           className="object-cover w-full h-full"
+                          loading="lazy"
                         />
                       )}
                       <button
@@ -179,6 +181,7 @@ const EditNormalPost = ({ post, setIsEditing }) => {
                           src={url}
                           alt="media preview"
                           className="object-cover w-full h-full"
+                          loading="lazy"
                         />
                       )}
                       <button

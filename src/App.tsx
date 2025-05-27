@@ -1,24 +1,28 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import AuthLayout from "./_auth/AuthLayout";
-import RootLayout from "./_root/RootLayout";
-
+const Toaster = lazy(() =>
+  import("@/components/ui/toaster").then((mod) => ({ default: mod.Toaster })),
+);
+const AuthLayout = lazy(() => import("./_auth/AuthLayout"));
+const RootLayout = lazy(() => import("./_root/RootLayout"));
 const SignInForm = lazy(() => import("./_auth/forms/SignInForm"));
 const SignUpForm = lazy(() => import("./_auth/forms/SignUpForm"));
 const ResetPassword = lazy(() => import("./_auth/forms/ResetPassword"));
 const SetNewPassword = lazy(() => import("./_auth/forms/SetNewPassword"));
+const Home = lazy(() => import("./_root/pages/Home/Home"));
+const Profile = lazy(() => import("./_root/pages/Profile/Profile"));
+const OneNormalPost = lazy(
+  () => import("./_root/pages/NormalPost/OneNormalPost"),
+);
+const OneGamePost = lazy(() => import("./_root/pages/GamePost/OneGamePost"));
+const Notifications = lazy(
+  () => import("./_root/pages/Notifications/Notifications"),
+);
+const Explore = lazy(() => import("./_root/pages/Explore/Explore"));
+const Messages = lazy(() => import("./_root/pages/Messages/Messages"));
 
-import Home from "./_root/pages/Home/Home";
-import Profile from "./_root/pages/Profile/Profile";
-import OneNormalPost from "./_root/pages/NormalPost/OneNormalPost";
-import OneGamePost from "./_root/pages/GamePost/OneGamePost";
-import Notifications from "./_root/pages/Notifications/Notifications";
-import Explore from "./_root/pages/Explore/Explore";
-import Messages from "./_root/pages/Messages/Messages";
-
-const LoadingSpinner = () => (
+export const LoadingSpinner = () => (
   <div className="w-full h-64 flex items-center justify-center">
     <div className="text-4xl animate-spin">⚽</div>
   </div>

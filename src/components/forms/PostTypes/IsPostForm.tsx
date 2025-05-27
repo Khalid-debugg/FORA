@@ -226,6 +226,7 @@ const IsPostForm = ({
                                         }
                                         alt={`Preview ${index + 1}`}
                                         className="max-h-[500px] object-cover w-full min-h-[25rem]"
+                                        loading="lazy"
                                       />
                                     ) : file.type.startsWith("video/") ? (
                                       <video

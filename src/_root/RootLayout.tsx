@@ -1,12 +1,14 @@
-import TopNav from "@/components/shared/TopNav";
-import BottomNav from "@/components/shared/BottomNav";
-import SideNav from "@/components/shared/SideNav";
 import { Outlet } from "react-router-dom";
-import AdditionalContent from "@/components/shared/AdditionalContent/AdditionalContent";
 import { useHasNewNotifications } from "@/lib/react-query/queriesAndMutations/notifications";
 import { useUserContext } from "@/context/AuthContext";
 import { useHasNewMessages } from "@/lib/react-query/queriesAndMutations/messages";
-
+import { lazy } from "react";
+const TopNav = lazy(() => import("@/components/shared/TopNav"));
+const BottomNav = lazy(() => import("@/components/shared/BottomNav"));
+const SideNav = lazy(() => import("@/components/shared/SideNav"));
+const AdditionalContent = lazy(
+  () => import("@/components/shared/AdditionalContent/AdditionalContent"),
+);
 const RootLayout = () => {
   const { user } = useUserContext();
   const { data: hasNewNotifications } = useHasNewNotifications(user?.id);

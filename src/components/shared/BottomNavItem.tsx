@@ -86,6 +86,7 @@ const BottomNavItem: React.FC<{
               transition-all duration-300
               ${isActive ? "w-5 h-5 brightness-0 invert" : "w-4 h-4 group-hover:scale-110"}
             `}
+            loading="lazy"
           />
 
           {isActive && (

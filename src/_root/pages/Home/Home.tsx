@@ -1,14 +1,14 @@
 import GamePost from "@/components/shared/GamePost/GamePost";
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
 import { Outlet, useNavigate } from "react-router-dom";
-import VideoHover from "@/components/ui/video-hover";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import CreatePost from "./CreatePost";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { useGetRecentPostsAndGames } from "@/lib/react-query/queriesAndMutations/posts";
 import { useGetFriends } from "@/lib/react-query/queriesAndMutations/friendship";
 import { useUserContext } from "@/context/AuthContext";
-
+import { LoadingSpinner } from "@/App";
+const CreatePost = lazy(() => import("./CreatePost"));
+const VideoHover = lazy(() => import("@/components/ui/video-hover"));
 const Home = () => {
   const { user } = useUserContext();
   const { data: friends } = useGetFriends(user?.id);
@@ -63,7 +63,9 @@ const Home = () => {
                 asChild
               >
                 <button className="relative overflow-hidden w-full rounded-lg shadow-md flex items-center justify-center border-2 border-primary-500 group">
-                  <VideoHover src="../../assets/videos/Game.mp4" />
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <VideoHover src="../../assets/videos/Game.mp4" />
+                  </Suspense>
                   <div
                     className="absolute top-0 left-0 z-10 h-full w-full flex items-center justify-center font-bold text-xl text-primary-500 transition-transform duration-500 ease-in-out group-hover:-translate-x-full"
                     style={{
@@ -90,7 +92,9 @@ const Home = () => {
                 asChild
               >
                 <button className="relative overflow-hidden w-full rounded-lg shadow-md flex items-center justify-center border-2 border-primary-500 group">
-                  <VideoHover src="../../assets/videos/Post.mp4" />
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <VideoHover src="../../assets/videos/Post.mp4" />
+                  </Suspense>
                   <div
                     className="absolute top-0 left-0 z-10 h-full w-full flex items-center justify-center font-bold text-xl text-primary-500 transition-transform duration-500 ease-in-out group-hover:translate-x-full"
                     style={{
@@ -110,11 +114,13 @@ const Home = () => {
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[1024px]">
-                <CreatePost
-                  type={postType}
-                  setType={setPostType}
-                  onPostCreated={handlePostCreated}
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <CreatePost
+                    type={postType}
+                    setType={setPostType}
+                    onPostCreated={handlePostCreated}
+                  />
+                </Suspense>
               </DialogContent>
             </Dialog>
           </div>

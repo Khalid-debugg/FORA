@@ -108,6 +108,7 @@ const NormalPost = ({ post, isOne }) => {
             className="max-h-[500px] object-cover w-full min-h-[25rem] rounded-md"
             src={media.ref || "/placeholder.svg"}
             alt={`photo ${i}`}
+            loading="lazy"
           />
         ) : media.mimeType.startsWith("video/") ? (
           <div className="relative rounded-md overflow-hidden">

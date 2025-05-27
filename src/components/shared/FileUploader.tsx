@@ -17,7 +17,6 @@ const FileUploader = ({ fieldChange, mediaUrl }: any) => {
 
   const onDrop = useCallback(
     async (acceptedFiles) => {
-      
       await setFile((prev) => prev.concat(acceptedFiles));
       fieldChange(file);
       const urls = acceptedFiles.map((file) => ({
@@ -77,6 +76,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: any) => {
                           src={url}
                           className="w-full max-w-xl max-h-[500px] object-cover object-center"
                           alt=""
+                          loading="lazy"
                         />
                       ) : (
                         <video
@@ -99,6 +99,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: any) => {
                 src="./assets/icons/file-upload.svg"
                 alt=""
                 className="mx-auto"
+                loading="lazy"
               />
               <p className="text-lg font-[600] text-center">
                 Upload your media

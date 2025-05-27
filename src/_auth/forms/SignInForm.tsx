@@ -68,6 +68,7 @@ const SignInForm = () => {
           src="/assets/brand-logo/svg/logo-no-background.svg"
           alt="FORA Logo"
           className="w-[300px]"
+          loading="lazy"
         />
         <form
           onSubmit={form.handleSubmit(onSubmit)}

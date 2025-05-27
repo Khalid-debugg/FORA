@@ -49,6 +49,7 @@ const SideNav = ({
                 src={user.imageUrl}
                 alt="profile picture"
                 className="h-12 w-12 rounded-full border border-primary-500"
+                loading="lazy"
               />
               <div className="flex flex-col items-start">
                 <p className="font-[600] text-lg">{user.name}</p>
@@ -92,12 +93,14 @@ const SideNav = ({
           src="/assets/icons/logout-white.svg"
           alt="logout"
           className="group-hover:hidden"
+          loading="lazy"
         />
         {isPending && <div className=" animate-spin">⚽</div>}
         <img
           src="/assets/icons/logout.svg"
           alt="logout"
           className="hidden group-hover:inline"
+          loading="lazy"
         />
       </button>
     </nav>

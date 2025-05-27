@@ -108,6 +108,7 @@ const Reply = ({ reply, mimeType, replyRef, comment }) => {
                     src={mediaUrl}
                     alt="media preview"
                     className="object-cover w-full h-full"
+                    loading="lazy"
                   />
                 )}
                 <button
@@ -140,6 +141,7 @@ const Reply = ({ reply, mimeType, replyRef, comment }) => {
                     src={newMediaUrl}
                     alt="media preview"
                     className="object-cover w-full h-full"
+                    loading="lazy"
                   />
                 )}
                 <button
@@ -204,6 +206,7 @@ const Reply = ({ reply, mimeType, replyRef, comment }) => {
                     src={reply?.mediaUrl}
                     alt="comment"
                     className="w-32 h-32 object-cover rounded-lg"
+                    loading="lazy"
                   />
                 ) : reply?.mediaUrl && mimeType?.includes("video") ? (
                   <video

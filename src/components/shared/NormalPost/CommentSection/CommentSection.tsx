@@ -147,6 +147,7 @@ const CommentSection = ({ post, isCommentClicked }) => {
                 src={URL.createObjectURL(file)}
                 alt={`preview file`}
                 className="h-48 w-48 object-cover rounded"
+                loading="lazy"
               />
             ) : (
               <video

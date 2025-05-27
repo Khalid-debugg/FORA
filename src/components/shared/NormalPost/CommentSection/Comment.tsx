@@ -133,6 +133,7 @@ const Comment = ({ comment, mimeType, post }) => {
                         src={mediaUrl}
                         alt="media preview"
                         className="object-cover w-full h-full"
+                        loading="lazy"
                       />
                     )}
                     <button
@@ -165,6 +166,7 @@ const Comment = ({ comment, mimeType, post }) => {
                         src={newMediaUrl}
                         alt="media preview"
                         className="object-cover w-full h-full"
+                        loading="lazy"
                       />
                     )}
                     <button
@@ -230,6 +232,7 @@ const Comment = ({ comment, mimeType, post }) => {
                         src={comment?.mediaUrl}
                         alt="comment"
                         className="w-32 h-32 object-cover rounded-lg"
+                        loading="lazy"
                       />
                     ) : comment?.mediaUrl &&
                       mimeType?.mimeType?.includes("video") ? (

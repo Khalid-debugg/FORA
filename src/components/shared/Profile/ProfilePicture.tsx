@@ -42,6 +42,7 @@ const ProfilePicture = ({ user, currentUser }) => {
           width={80}
           height={80}
           className="absolute right-5 top-1/2 -translate-y-1/2 !bg-transparent"
+          loading="lazy"
         />
         <p
           className={`absolute top-16 left-6 text-xs font-extrabold ${user?.FifaCard === "TOTY" || user?.FifaCard === "FUTURE" ? "text-white" : "text-[#594d2c]"}`}
@@ -52,6 +53,7 @@ const ProfilePicture = ({ user, currentUser }) => {
           src={`/assets/images/${user?.FifaCard}.png`}
           alt="FIFA CARD"
           className="w-[10rem]"
+          loading="lazy"
         />
       </div>
       {currentUser?.id === user?.$id && (
@@ -85,6 +87,7 @@ const ProfilePicture = ({ user, currentUser }) => {
                 ref={imageRef}
                 src={tempImage || "/placeholder.svg"}
                 alt="Temp"
+                loading="lazy"
               />
             </ReactCrop>
           )}

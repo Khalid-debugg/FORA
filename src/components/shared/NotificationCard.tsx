@@ -142,6 +142,7 @@ const NotificationCard = ({
                       ] || "/placeholder.svg"
                     }
                     alt="profile-pic"
+                    loading="lazy"
                   />
                   <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-primary-500 rounded-full border-2 border-white"></div>
                 </div>

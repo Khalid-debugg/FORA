@@ -80,6 +80,7 @@ const MenuItem: React.FC<{
               transition-all duration-300
               ${isActive ? "w-6 h-6 brightness-0 invert" : "w-5 h-5 group-hover:scale-110"}
             `}
+            loading="lazy"
           />
           {isActive && (
             <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl blur-md opacity-30 -z-10" />
