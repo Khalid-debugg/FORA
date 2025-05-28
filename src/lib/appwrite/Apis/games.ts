@@ -352,6 +352,7 @@ export async function acceptPlayer({
 }
 export async function getGamesNearby(pageParam: number, user: any) {
   try {
+    const today = new Date().toISOString().split("T")[0];
     const users = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.gamesID,
@@ -361,6 +362,7 @@ export async function getGamesNearby(pageParam: number, user: any) {
         Query.notEqual("creator", user.id),
         Query.contains("location", user.governorate),
         Query.orderDesc("$createdAt"),
+        Query.lessThan("$createdAt", today),
       ],
     );
     console.log(users);

@@ -53,7 +53,7 @@ const GamesNearby = ({
                     <div className="relative">
                       <Avatar className="hover:cursor-pointer ring-2 ring-primary-500/20 hover:ring-primary-500/40 transition-all duration-200">
                         <AvatarImage
-                          className="h-12 w-12 rounded-full"
+                          className="h-10 w-10 rounded-full"
                           src={game.creator?.imageUrl || "/placeholder.svg"}
                         />
                       </Avatar>
