@@ -93,7 +93,7 @@ const Messages = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full mx-auto items-center">
+    <div className="flex flex-col gap-4 w-full md:w-1/3 mx-auto items-center">
       <Helmet>
         <title>Messages</title>
       </Helmet>
