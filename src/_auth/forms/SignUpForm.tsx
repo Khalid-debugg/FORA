@@ -101,14 +101,14 @@ const SignUpForm: React.FC = () => {
 
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col justify-center gap-3"
+          className="flex flex-col justify-center gap-3 w-10/12 md:w-1/2"
         >
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3 w-full">
             <FormField
               control={form.control}
               name="firstName"
               render={({ field }) => (
-                <FormItem className="w-1/2">
+                <FormItem className="flex-1">
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
                     <Input
@@ -126,7 +126,7 @@ const SignUpForm: React.FC = () => {
               control={form.control}
               name="lastName"
               render={({ field }) => (
-                <FormItem className="w-1/2">
+                <FormItem className="flex-1">
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
                     <Input
@@ -207,12 +207,12 @@ const SignUpForm: React.FC = () => {
               </FormItem>
             )}
           />
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <FormField
               control={form.control}
               name="governorate"
               render={() => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel>Governorate</FormLabel>
                   <Select
                     value={form.watch("governorate")}
@@ -250,7 +250,7 @@ const SignUpForm: React.FC = () => {
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel>City</FormLabel>
                   <Select
                     value={form.watch("city")}

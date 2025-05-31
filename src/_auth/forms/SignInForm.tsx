@@ -72,7 +72,7 @@ const SignInForm = () => {
         />
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col justify-center gap-5 w-1/2"
+          className="flex flex-col justify-center gap-5 w-10/12 md:w-1/2"
         >
           <FormField
             control={form.control}
