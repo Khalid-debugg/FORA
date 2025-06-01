@@ -11,13 +11,16 @@ import { IoCamera } from "react-icons/io5";
 import ReactCrop from "react-image-crop";
 import { Button } from "@/components/ui/button";
 import "react-image-crop/dist/ReactCrop.css";
+import MediaCarouselDialog from "../MediaCarouselDialog";
+import { useState } from "react";
 
 const ProfilePicture = ({ user, currentUser }) => {
   const {
     mutateAsync: changeProfilePicture,
     isPending: isChangingProfilePicture,
   } = useChangeProfilePicture();
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [initialIndex, setInitialIndex] = useState(0);
   const {
     image,
     tempImage,
@@ -32,16 +35,21 @@ const ProfilePicture = ({ user, currentUser }) => {
     async (file) => changeProfilePicture({ file, userId: user?.$id }),
     user?.imageUrl || "",
   );
+  const openMediaDialog = (index: number) => {
+    setInitialIndex(index);
+    setDialogOpen(true);
+  };
 
   return (
     <div className="absolute -top-16 left-2">
       <div className="relative">
         <img
+          onClick={() => openMediaDialog(0)}
           src={image}
           alt="Profile Picture"
           width={80}
           height={80}
-          className="absolute right-5 top-1/2 -translate-y-1/2 !bg-transparent"
+          className="absolute right-5 top-1/2 -translate-y-1/2 !bg-transparent cursor-pointer"
           loading="lazy"
         />
         <p
@@ -56,6 +64,12 @@ const ProfilePicture = ({ user, currentUser }) => {
           loading="lazy"
         />
       </div>
+      <MediaCarouselDialog
+        mediaFiles={[{ mimeType: "image/png", ref: user?.imageUrl }]}
+        isOpen={dialogOpen}
+        onOpenChange={setDialogOpen}
+        initialIndex={initialIndex}
+      />
       {currentUser?.id === user?.$id && (
         <>
           <input

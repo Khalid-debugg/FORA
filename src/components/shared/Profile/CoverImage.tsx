@@ -11,11 +11,18 @@ import ReactCrop from "react-image-crop";
 import { Button } from "@/components/ui/button";
 import "react-image-crop/dist/ReactCrop.css";
 import { IoCamera } from "react-icons/io5";
+import MediaCarouselDialog from "../MediaCarouselDialog";
+import { useState } from "react";
 
 const CoverImage = ({ user, currentUser }) => {
   const { mutateAsync: changeCoverImage, isPending: isChangingCoverImage } =
     useChangeCoverImage();
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [initialIndex, setInitialIndex] = useState(0);
+  const openMediaDialog = (index: number) => {
+    setInitialIndex(index);
+    setDialogOpen(true);
+  };
   const {
     image,
     tempImage,
@@ -34,11 +41,18 @@ const CoverImage = ({ user, currentUser }) => {
   return (
     <div className="relative w-full h-48 bg-gray-200">
       <img
+        onClick={() => openMediaDialog(0)}
         src={image}
         alt="Cover Image"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover hover:cursor-pointer"
         loading="lazy"
       />
+      <MediaCarouselDialog
+        mediaFiles={[{ mimeType: "image/png", ref: user?.coverUrl }]}
+        isOpen={dialogOpen}
+        onOpenChange={setDialogOpen}
+        initialIndex={initialIndex}
+      />{" "}
       {currentUser?.id === user?.$id && (
         <>
           <input

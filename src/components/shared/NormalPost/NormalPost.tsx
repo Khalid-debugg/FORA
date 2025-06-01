@@ -34,12 +34,15 @@ import { Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { GoHeartFill, GoHeart } from "react-icons/go";
+import MediaCarouselDialog from "../MediaCarouselDialog";
 
 const CommentSection = lazy(() => import("./CommentSection/CommentSection"));
 
 const NormalPost = ({ post, isOne }) => {
   const { user } = useUserContext();
   const { data: mediaFiles } = useMediaFiles(post?.mediaIds || []);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [initialIndex, setInitialIndex] = useState(0);
   const { mutateAsync: createLike, isPending: isLiking } = useLikePost(post);
   const { mutateAsync: deleteLike, isPending: isDisliking } =
     useUnlikePost(post);
@@ -87,6 +90,10 @@ const NormalPost = ({ post, isOne }) => {
       setIsAnimating(false);
     }
   };
+  const openMediaDialog = (index: number) => {
+    setInitialIndex(index);
+    setDialogOpen(true);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -102,7 +109,13 @@ const NormalPost = ({ post, isOne }) => {
     if (!mediaFiles || mediaFiles?.length === 0) return null;
 
     return mediaFiles.map((media, i) => (
-      <CarouselItem key={i}>
+      <CarouselItem
+        key={i}
+        onClick={() => {
+          if (!media.mimeType.startsWith("video/")) return openMediaDialog(i);
+        }}
+        className="hover:cursor-pointer"
+      >
         {media.mimeType.startsWith("image/") ? (
           <img
             className="max-h-[500px] object-cover w-full min-h-[25rem] rounded-md"
@@ -200,7 +213,12 @@ const NormalPost = ({ post, isOne }) => {
           />
         </div>
       </CardContent>
-
+      <MediaCarouselDialog
+        mediaFiles={mediaFiles}
+        isOpen={dialogOpen}
+        onOpenChange={setDialogOpen}
+        initialIndex={initialIndex}
+      />
       <CardFooter className="p-0 flex flex-col">
         <div className="grid grid-cols-2 border-t divide-x w-full">
           <div className="relative">
