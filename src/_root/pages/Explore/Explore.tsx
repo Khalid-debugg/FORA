@@ -20,6 +20,7 @@ const Explore = () => {
     "all" | "posts" | "games" | "users"
   >("all");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   const {
     data: searchResults,
     isLoading,
@@ -55,7 +56,7 @@ const Explore = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 py-2 px-4 md:w-1/3 w-full mx-auto">
+    <div className="flex flex-col gap-2 py-2 px-4 md:w-1/3 md:min-w-1/3 w-full mx-auto">
       <Helmet>
         <title>Explore</title>
       </Helmet>
@@ -81,33 +82,41 @@ const Explore = () => {
         <TabsList className="w-full flex bg-transparent border-b border-gray-200 overflow-x-auto overflow-y-hidden">
           <TabsTrigger
             value="all"
-            className="flex flex-1 items-center gap-2 data-[state=active]:border-b-2 data-[state=active]:border-primary-500"
+            className="flex flex-1 items-center justify-center gap-2 relative p-4 data-[state=active]:text-primary-500"
           >
             <BsGrid3X3 className="text-primary-500" size={20} />
             All
+            <span className="absolute bottom-0 left-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out w-0 data-[state=active]:w-full" />
           </TabsTrigger>
+
           <TabsTrigger
             value="posts"
-            className="flex flex-1 items-center gap-2 data-[state=active]:border-b-2 data-[state=active]:border-primary-500"
+            className="flex flex-1 items-center justify-center gap-2 relative p-4 data-[state=active]:text-primary-500"
           >
             <BsPostcard className="text-primary-500" size={20} />
             Posts
+            <span className="absolute bottom-0 left-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out w-0 data-[state=active]:w-full" />
           </TabsTrigger>
+
           <TabsTrigger
             value="games"
-            className="flex flex-1 items-center gap-2 data-[state=active]:border-b-2 data-[state=active]:border-primary-500"
+            className="flex flex-1 items-center justify-center gap-2 relative p-4 data-[state=active]:text-primary-500"
           >
             <TbPlayFootball className="text-primary-500" size={20} />
             Games
+            <span className="absolute bottom-0 left-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out w-0 data-[state=active]:w-full" />
           </TabsTrigger>
+
           <TabsTrigger
             value="users"
-            className="flex flex-1 items-center gap-2 data-[state=active]:border-b-2 data-[state=active]:border-primary-500"
+            className="flex flex-1 items-center justify-center gap-2 relative p-4 data-[state=active]:text-primary-500"
           >
             <IoPeople className="text-primary-500" size={20} />
             People
+            <span className="absolute bottom-0 left-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out w-0 data-[state=active]:w-full" />
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="all">
           <AllTab
             query={debouncedSearchQuery}
