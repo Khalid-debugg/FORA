@@ -1,12 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/context/useDebounce";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AllTab from "./components/AllTab";
-import PostsTab from "./components/PostsTab";
-import GamesTab from "./components/GamesTab";
-import UsersTab from "./components/UsersTab";
 import { useSearchContent } from "@/lib/react-query/queriesAndMutations/explore";
 import { Models } from "appwrite";
 import { BsGrid3X3 } from "react-icons/bs";
@@ -14,15 +10,16 @@ import { BsPostcard } from "react-icons/bs";
 import { TbPlayFootball } from "react-icons/tb";
 import { IoPeople } from "react-icons/io5";
 import { Helmet } from "react-helmet-async";
-
+const AllTab = lazy(() => import("./components/AllTab"));
+const PostsTab = lazy(() => import("./components/PostsTab"));
+const GamesTab = lazy(() => import("./components/GamesTab"));
+const UsersTab = lazy(() => import("./components/UsersTab"));
 const Explore = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<
     "all" | "posts" | "games" | "users"
   >("all");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
-  // Fetch results based on active tab
   const {
     data: searchResults,
     isLoading,
@@ -31,7 +28,6 @@ const Explore = () => {
     isFetchingNextPage,
   } = useSearchContent(debouncedSearchQuery, activeTab);
 
-  // Memoize the combined results to prevent unnecessary recalculations
   const { allPosts, allGames, allUsers } = useMemo(() => {
     const posts =
       searchResults?.pages.reduce(
