@@ -35,7 +35,7 @@ const CoverImage = ({ user, currentUser }) => {
     handleSave,
   } = useImageUploadAndCrop(
     async (file) => changeCoverImage({ file, userId: user?.$id }),
-    user?.coverUrl || "../public/assets/images/gray-texture.jpg",
+    user?.coverUrl || "/assets/images/gray-texture.jpg",
   );
 
   return (
@@ -82,7 +82,7 @@ const CoverImage = ({ user, currentUser }) => {
             <ReactCrop crop={crop} onChange={(c) => setCrop(c)} aspect={16 / 9}>
               <img
                 ref={imageRef}
-                src={tempImage || "/placeholder.svg"}
+                src={tempImage || "/assets/images/gray-texture.jpg"}
                 alt="Temp"
                 className="w-full h-full object-cover"
               />
