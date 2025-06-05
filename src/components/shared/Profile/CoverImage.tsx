@@ -48,7 +48,12 @@ const CoverImage = ({ user, currentUser }) => {
         loading="lazy"
       />
       <MediaCarouselDialog
-        mediaFiles={[{ mimeType: "image/png", ref: user?.coverUrl }]}
+        mediaFiles={[
+          {
+            mimeType: "image/png",
+            ref: user?.coverUrl || "/assets/images/gray-texture.jpg",
+          },
+        ]}
         isOpen={dialogOpen}
         onOpenChange={setDialogOpen}
         initialIndex={initialIndex}
