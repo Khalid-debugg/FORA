@@ -1,4 +1,4 @@
-import { useState, useMemo, lazy } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/context/useDebounce";
@@ -10,6 +10,7 @@ import { BsPostcard } from "react-icons/bs";
 import { TbPlayFootball } from "react-icons/tb";
 import { IoPeople } from "react-icons/io5";
 import { Helmet } from "react-helmet-async";
+import { LoadingSpinner } from "@/App";
 const AllTab = lazy(() => import("./components/AllTab"));
 const PostsTab = lazy(() => import("./components/PostsTab"));
 const GamesTab = lazy(() => import("./components/GamesTab"));
@@ -118,44 +119,52 @@ const Explore = () => {
         </TabsList>
 
         <TabsContent value="all">
-          <AllTab
-            query={debouncedSearchQuery}
-            onTabChange={handleTabChange}
-            posts={allPosts}
-            games={allGames}
-            users={allUsers}
-            isLoading={isLoading}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <AllTab
+              query={debouncedSearchQuery}
+              onTabChange={handleTabChange}
+              posts={allPosts}
+              games={allGames}
+              users={allUsers}
+              isLoading={isLoading}
+            />
+          </Suspense>
         </TabsContent>
         <TabsContent value="posts">
-          <PostsTab
-            query={debouncedSearchQuery}
-            posts={allPosts}
-            isLoading={isLoading}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <PostsTab
+              query={debouncedSearchQuery}
+              posts={allPosts}
+              isLoading={isLoading}
+              fetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          </Suspense>
         </TabsContent>
         <TabsContent value="games">
-          <GamesTab
-            query={debouncedSearchQuery}
-            games={allGames}
-            isLoading={isLoading}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <GamesTab
+              query={debouncedSearchQuery}
+              games={allGames}
+              isLoading={isLoading}
+              fetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          </Suspense>
         </TabsContent>
         <TabsContent value="users">
-          <UsersTab
-            query={debouncedSearchQuery}
-            users={allUsers}
-            isLoading={isLoading}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <UsersTab
+              query={debouncedSearchQuery}
+              users={allUsers}
+              isLoading={isLoading}
+              fetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>
