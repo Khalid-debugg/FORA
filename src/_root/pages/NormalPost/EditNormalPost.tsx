@@ -80,7 +80,6 @@ const EditNormalPost = ({ post, setIsEditing }) => {
       setNewMediaUrls((newMediaUrls) => [...newMediaUrls, fileUrl]);
       setNewMediaTypes((newMediaTypes) => [...newMediaTypes, file.type]);
     }
-    console.log(newMediaTypes);
   };
   const handleDeleteMedia = (index, isNew) => {
     if (!isNew) {
@@ -154,7 +153,6 @@ const EditNormalPost = ({ post, setIsEditing }) => {
                       <button
                         onClick={() => {
                           handleDeleteMedia(index, false);
-                          console.log(mediaUrls, mediaIds, mediaTypes);
                         }}
                         className="absolute top-0 w-6 h-6 right-0 text-red-500 font-bold bg-white rounded-full"
                       >

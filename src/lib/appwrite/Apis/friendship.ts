@@ -72,7 +72,6 @@ export const getFriends = async (userId: string) => {
   }
 };
 export async function addFriend(user: any, friend: any) {
-  console.log(user, friend);
   try {
     const friendShip = await databases.createDocument(
       appwriteConfig.databaseID,

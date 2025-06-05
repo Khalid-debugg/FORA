@@ -27,8 +27,6 @@ export async function getReplies(commentId: string, pageParam: number) {
   }
 }
 export async function createReply(reply: INewReply) {
-  console.log(reply);
-
   try {
     const uploadedFile = await handleFileOperation(uploadFiles, reply.media);
     const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);

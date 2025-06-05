@@ -20,7 +20,6 @@ const Games = () => {
       setAllGames(games?.pages.flat());
     }
   }, [games]);
-  console.log(games);
 
   const handleScroll = useCallback(() => {
     if (

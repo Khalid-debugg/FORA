@@ -115,7 +115,6 @@ export async function getUsersYouMayKnow(
         Query.orderDesc("$createdAt"),
       ],
     );
-    console.log(users);
 
     if (!users) throw new Error();
     return users.documents.filter((u) => !friends.includes(u.$id));

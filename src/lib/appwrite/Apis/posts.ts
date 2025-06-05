@@ -238,7 +238,6 @@ export async function unlikePost(sender: any, post: ICreatedPost) {
 
 export async function likeReply(sender: any, reply: INewReply, comment: any) {
   const id = reply.$id + "-" + sender.id.slice(0, 10);
-  console.log(id);
 
   try {
     const updatedReply = await databases.createDocument(
@@ -271,7 +270,6 @@ export async function likeReply(sender: any, reply: INewReply, comment: any) {
 }
 export async function unlikeReply(sender: any, reply: INewReply, comment: any) {
   const id = reply.$id + "-" + sender.id.slice(0, 10);
-  console.log(id);
 
   try {
     await databases.deleteDocument(

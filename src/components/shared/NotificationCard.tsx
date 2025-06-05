@@ -120,7 +120,6 @@ const NotificationCard = ({
       </Card>
     );
   }
-  console.log(notification);
 
   return (
     <Card className="w-full hover:shadow-md transition-all duration-200 border-l-4 border-l-primary-500 bg-gradient-to-r from-blue-50/30 to-transparent">

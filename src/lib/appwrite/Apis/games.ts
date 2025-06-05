@@ -365,8 +365,6 @@ export async function getGamesNearby(pageParam: number, user: any) {
         Query.lessThan("$createdAt", today),
       ],
     );
-    console.log(users);
-
     if (!users) throw new Error();
     return users.documents;
   } catch (err) {

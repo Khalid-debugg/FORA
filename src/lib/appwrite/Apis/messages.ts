@@ -50,8 +50,6 @@ export async function getMessages(chatId: string, pageParam: number) {
   }
 }
 export async function createMessage({ chatId, message, userId }) {
-  console.log(chatId, message, userId);
-
   try {
     const uploadedFile = await handleFileOperation(uploadFiles, message.media);
     const fileUrl = await handleFileOperation(getFilePreview, uploadedFile);

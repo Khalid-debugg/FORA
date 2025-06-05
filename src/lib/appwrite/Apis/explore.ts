@@ -13,11 +13,7 @@ export async function searchContent(
     const limit = 10;
     const offset = pageParam * limit;
 
-    // If query is empty, return initial results (most recent items)
     if (!query.trim()) {
-      console.log("Fetching initial results...");
-
-      // Only fetch data for the active tab
       const fetchData = async () => {
         let postsResponse, gamesResponse, usersResponse;
 
@@ -68,7 +64,6 @@ export async function searchContent(
               users: usersResponse.documents,
             };
           default:
-            // For "all" tab, fetch everything
             [postsResponse, gamesResponse, usersResponse] = await Promise.all([
               databases.listDocuments(
                 appwriteConfig.databaseID,
@@ -108,18 +103,10 @@ export async function searchContent(
       };
 
       const results = await fetchData();
-      console.log("Initial results:", {
-        posts: results.posts.length,
-        games: results.games.length,
-        users: results.users.length,
-      });
 
       return results;
     }
 
-    console.log("Searching with query:", query);
-
-    // Search based on active tab
     const searchData = async () => {
       let postsResponse, gamesResponse, usersResponse;
 
@@ -228,11 +215,6 @@ export async function searchContent(
     };
 
     const results = await searchData();
-    console.log("Search results:", {
-      posts: results.posts.length,
-      games: results.games.length,
-      users: results.users.length,
-    });
 
     return results;
   } catch (error) {

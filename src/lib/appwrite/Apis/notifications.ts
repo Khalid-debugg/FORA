@@ -217,8 +217,6 @@ export async function createNotification({
   }
 }
 export async function getNotifications(userId: string) {
-  console.log(userId);
-
   try {
     const notifications = await databases.listDocuments(
       appwriteConfig.databaseID,

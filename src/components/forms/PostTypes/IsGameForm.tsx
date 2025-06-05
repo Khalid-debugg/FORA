@@ -48,8 +48,6 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
     },
   });
   async function onSubmit(values: z.infer<typeof gameValidation>) {
-    console.log(values);
-
     try {
       const postVariables = {
         userId: user.id,
@@ -64,7 +62,6 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
           description: "There was a problem with your request.",
         });
         form.reset();
-        console.log(form.getValues());
       } else {
         toast({
           variant: "default",
