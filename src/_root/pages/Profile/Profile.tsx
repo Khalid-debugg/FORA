@@ -28,6 +28,7 @@ import {
   useGetChatId,
 } from "@/lib/react-query/queriesAndMutations/chats";
 import { Helmet } from "react-helmet-async";
+import { Badge } from "@/components/ui/badge";
 
 const Profile = () => {
   const { id } = useParams();
@@ -187,12 +188,12 @@ const Profile = () => {
               <div className="flex flex-wrap gap-2">
                 {visitedUser?.tags?.length > 0 &&
                   visitedUser?.tags.map((tag, idx) => (
-                    <span
+                    <Badge
                       key={idx}
-                      className="p-2 border border-slate-100 rounded-lg"
+                      className="text-sm border rounded-lg border-slate-500"
                     >
                       {tag}
-                    </span>
+                    </Badge>
                   ))}
               </div>
             </CardContent>

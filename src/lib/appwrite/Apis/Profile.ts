@@ -42,6 +42,7 @@ export async function changeCoverImage(file: File, userId: string) {
   }
 }
 export async function updateProfile(formData, userId) {
+  console.log(formData);
   try {
     const updatedProfile = await databases.updateDocument(
       appwriteConfig.databaseID,
