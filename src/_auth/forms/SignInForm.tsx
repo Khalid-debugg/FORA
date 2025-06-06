@@ -119,7 +119,7 @@ const SignInForm = () => {
             type="submit"
             className="shad-button_primary hover:shad-button_ghost"
           >
-            <p>Sign in</p>
+            <p>Sign in</p>{" "}
             {isLoggingIn && <div className=" animate-spin">⚽</div>}
           </Button>
         </form>

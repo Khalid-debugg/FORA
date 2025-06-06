@@ -6,6 +6,7 @@ const Toaster = lazy(() =>
 );
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
+import Spinner from "./components/ui/loadingSpinner";
 const SignInForm = lazy(() => import("./_auth/forms/SignInForm"));
 const SignUpForm = lazy(() => import("./_auth/forms/SignUpForm"));
 const ResetPassword = lazy(() => import("./_auth/forms/ResetPassword"));
@@ -36,7 +37,13 @@ const App = () => {
           <Route
             path="/signin"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <SignInForm />
               </Suspense>
             }
@@ -44,7 +51,13 @@ const App = () => {
           <Route
             path="/signup"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <SignUpForm />
               </Suspense>
             }
@@ -52,7 +65,13 @@ const App = () => {
           <Route
             path="/reset-password"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <ResetPassword />
               </Suspense>
             }
@@ -60,7 +79,13 @@ const App = () => {
           <Route
             path="/set-new-password/:userId?/:secret?"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <SetNewPassword />
               </Suspense>
             }
@@ -70,7 +95,13 @@ const App = () => {
           <Route
             path="/"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <Home />
               </Suspense>
             }
@@ -78,7 +109,13 @@ const App = () => {
           <Route
             path="/explore"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <Explore />
               </Suspense>
             }
@@ -86,7 +123,13 @@ const App = () => {
           <Route
             path="/normal-post/:id"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <OneNormalPost />
               </Suspense>
             }
@@ -94,7 +137,13 @@ const App = () => {
           <Route
             path="/game-post/:id"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <OneGamePost />
               </Suspense>
             }
@@ -102,7 +151,13 @@ const App = () => {
           <Route
             path="/profile/:id"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <Profile />
               </Suspense>
             }
@@ -110,7 +165,13 @@ const App = () => {
           <Route
             path="/notifications"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <Notifications />
               </Suspense>
             }
@@ -118,7 +179,13 @@ const App = () => {
           <Route
             path="/messages/:chatId?"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center flex-1">
+                    <Spinner />
+                  </div>
+                }
+              >
                 <Messages />
               </Suspense>
             }

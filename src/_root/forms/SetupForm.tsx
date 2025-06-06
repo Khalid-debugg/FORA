@@ -225,8 +225,7 @@ export function SetupForm({ user, setIsSetupOpen }: SetupFormProps) {
           type="submit"
           className="w-1/3 mx-auto shad-button_primary hover:shad-button_ghost transition-all duration-100 ease-in-out"
         >
-          Save Changes
-          {isUpdating && <div className="animate-spin">⚽</div>}
+          Save Changes {isUpdating && <div className="animate-spin"> ⚽</div>}
         </Button>
       </form>
     </Form>

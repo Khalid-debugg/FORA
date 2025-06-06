@@ -1,4 +1,5 @@
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
+import Spinner from "@/components/ui/loadingSpinner";
 import { useGetRecentLikedPosts } from "@/lib/react-query/queriesAndMutations/posts";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -39,7 +40,7 @@ const Likes = () => {
     <div className="w-full">
       {isPending ? (
         <div className="flex w-full h-full items-center justify-center">
-          <div className="animate-spin text-[5rem]">⚽</div>
+          <Spinner />
         </div>
       ) : (
         <div className="flex flex-col gap-2">

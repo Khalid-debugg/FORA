@@ -1,4 +1,5 @@
 import NormalPost from "@/components/shared/NormalPost/NormalPost";
+import Spinner from "@/components/ui/loadingSpinner";
 import { useGetRecentPosts } from "@/lib/react-query/queriesAndMutations/posts";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
@@ -40,7 +41,7 @@ const Posts = () => {
     <div className="w-full">
       {isPending ? (
         <div className="flex w-full h-full items-center justify-center">
-          <div className="animate-spin text-[5rem]">⚽</div>
+          <Spinner />
         </div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -51,7 +52,7 @@ const Posts = () => {
       )}
       {isFetchingNextPage && (
         <div className="flex w-full items-center justify-center p-4">
-          <div className="animate-spin text-[3rem]">⚽</div>
+          <Spinner />
         </div>
       )}
       {!hasNextPage && allPosts.length > 0 && !isFetchingNextPage && (

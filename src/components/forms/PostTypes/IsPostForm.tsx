@@ -301,7 +301,7 @@ const IsPostForm = ({
             className="self-center w-1/2 p-4 my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
           >
             <p>Post</p>
-            {postIsPending && <div className=" animate-spin">⚽</div>}
+            {postIsPending && <div className=" animate-spin"> ⚽</div>}
           </Button>
         </form>
       </Form>

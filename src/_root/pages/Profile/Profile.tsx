@@ -29,6 +29,7 @@ import {
 } from "@/lib/react-query/queriesAndMutations/chats";
 import { Helmet } from "react-helmet-async";
 import { Badge } from "@/components/ui/badge";
+import Spinner from "@/components/ui/loadingSpinner";
 
 const Profile = () => {
   const { id } = useParams();
@@ -69,8 +70,8 @@ const Profile = () => {
   );
   if (isGettingUser || !currentUser)
     return (
-      <div className="flex flex-col gap-2 p-2 md:w-1/3 w-full mx-auto">
-        <p className="text-center animate-spin">⚽</p>
+      <div className="flex flex-col h-screen items-center justify-center gap-2 p-2 md:w-1/3 w-full mx-auto">
+        <Spinner />
       </div>
     );
   return (

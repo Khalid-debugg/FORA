@@ -8,6 +8,7 @@ import { useGetFriends } from "@/lib/react-query/queriesAndMutations/friendship"
 import { useUserContext } from "@/context/AuthContext";
 import { LoadingSpinner } from "@/App";
 import { Helmet } from "react-helmet-async";
+import Spinner from "@/components/ui/loadingSpinner";
 const CreatePost = lazy(() => import("./CreatePost"));
 const VideoHover = lazy(() => import("@/components/ui/video-hover"));
 const Home = () => {
@@ -118,7 +119,13 @@ const Home = () => {
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[1024px]">
-                <Suspense fallback={<LoadingSpinner />}>
+                <Suspense
+                  fallback={
+                    <div className="flex justify-center items-center flex-1">
+                      <Spinner />
+                    </div>
+                  }
+                >
                   <CreatePost
                     type={postType}
                     setType={setPostType}
@@ -131,8 +138,8 @@ const Home = () => {
         )}
 
         {isPending && (
-          <div className="flex w-full h-full items-center justify-center">
-            <div className="animate-spin text-[5rem]">⚽</div>
+          <div className="flex w-full h-screen items-center justify-center">
+            <Spinner />
           </div>
         )}
 

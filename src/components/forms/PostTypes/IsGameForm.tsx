@@ -128,7 +128,7 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
               control={form.control}
               name="governorate"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1 w-1/2">
                   <FormLabel>Governorate</FormLabel>
                   <Select
                     value={form.watch("governorate")}
@@ -170,7 +170,7 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1 w-1/2">
                   <FormLabel>City</FormLabel>
                   <Select
                     value={form.watch("city")}
@@ -201,12 +201,12 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
               )}
             />
           </div>
-          <div className="flex md:justify-start flex-wrap gap-3">
+          <div className="flex md:justify-start flex-wrap gap-3 items-end">
             <FormField
               control={form.control}
               name="playgroundName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1 w-1/2">
                   <FormLabel>Playground's name</FormLabel>
                   <FormControl>
                     <Input
@@ -220,9 +220,9 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
             />
             <FormField
               control={form.control}
-              name="dateTime" // Added new form field for dateTime
+              name="dateTime"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1 w-1/2">
                   <FormLabel>Date and Time</FormLabel>
                   <FormControl>
                     <Input
@@ -242,7 +242,7 @@ const IsGameForm = ({ onPostCreated }: { onPostCreated?: () => void }) => {
             className="self-center w-1/2 p-4 my-3 rounded-2xl font-semibold shad-button_primary hover:shad-button_ghost transition-[background] 0.5s ease-in-out"
           >
             <p>Post</p>
-            {postIsPending && <div className=" animate-spin">⚽</div>}
+            {postIsPending && <div className=" animate-spin"> ⚽</div>}
           </Button>
         </form>
       </Form>

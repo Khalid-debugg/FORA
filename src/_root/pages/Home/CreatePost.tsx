@@ -31,7 +31,7 @@ const CreatePost = ({
 
   return (
     <div className=" bg-black bg-opacity-50 fixed inset-0 flex items-center justify-center border-none z-20 content-wrapper">
-      <div className="bg-white p-8 rounded-lg w-10/12 max-w-2xl flex flex-col gap-5 max-h-[100vh] overflow-x-auto">
+      <div className=" bg-white mt-20 md:mt-0 p-8 rounded-lg w-full max-w-2xl flex flex-col gap-5 max-h-[100vh] overflow-x-auto">
         <div className="flex justify-between">
           <div className="flex justify-between items-center gap-3">
             <Switch

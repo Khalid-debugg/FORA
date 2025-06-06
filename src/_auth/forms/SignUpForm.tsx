@@ -284,7 +284,7 @@ const SignUpForm: React.FC = () => {
             type="submit"
             className="shad-button_primary hover:shad-button_ghost"
           >
-            <p>Sign Up</p>
+            <p>Sign Up</p>{" "}
             {isSigningUp && <div className=" animate-spin">⚽</div>}
           </Button>
           <p className="text-sm text-center mt-2">

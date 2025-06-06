@@ -12,7 +12,7 @@ const NavBar = () => {
         <img
           src={user.imageUrl}
           alt="profile picture"
-          className="h-12 rounded-full border border-black"
+          className="h-12 rounded-full border border-primary-500"
           loading="lazy"
         />
       </Link>

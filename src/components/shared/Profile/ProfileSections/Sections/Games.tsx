@@ -1,4 +1,5 @@
 import GamePost from "@/components/shared/GamePost/GamePost";
+import Spinner from "@/components/ui/loadingSpinner";
 import { useGetRecentGames } from "@/lib/react-query/queriesAndMutations/games";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -40,7 +41,7 @@ const Games = () => {
     <div className="w-full">
       {isPending ? (
         <div className="flex w-full h-full items-center justify-center">
-          <div className="animate-spin text-[5rem]">⚽</div>
+          <Spinner />
         </div>
       ) : (
         <div className="flex flex-col gap-2">
