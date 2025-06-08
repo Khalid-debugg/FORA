@@ -1,27 +1,39 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { BsPostcard } from "react-icons/bs";
 import { TbPlayFootball } from "react-icons/tb";
 import { AiFillLike } from "react-icons/ai";
-import Posts from "./Sections/Posts";
-import Games from "./Sections/Games";
-import Likes from "./Sections/Likes";
+const Posts = lazy(() => import("./Sections/Posts"));
+const Games = lazy(() => import("./Sections/Games"));
+const Likes = lazy(() => import("./Sections/Likes"));
 const Sections = [
   {
     title: "Posts",
     icon: <BsPostcard color="#30cc42" size={20} />,
-    component: <Posts />,
+    component: (
+      <Suspense fallback={<div className="text-center animate-spin">⚽</div>}>
+        <Posts />
+      </Suspense>
+    ),
     id: 1,
   },
   {
     title: "Games",
     icon: <TbPlayFootball color="#30cc42" size={20} />,
-    component: <Games />,
+    component: (
+      <Suspense fallback={<div className="text-center animate-spin">⚽</div>}>
+        <Games />
+      </Suspense>
+    ),
     id: 2,
   },
   {
     title: "Likes",
     icon: <AiFillLike color="#30cc42" size={20} />,
-    component: <Likes />,
+    component: (
+      <Suspense fallback={<div className="text-center animate-spin">⚽</div>}>
+        <Likes />
+      </Suspense>
+    ),
     id: 3,
   },
 ];

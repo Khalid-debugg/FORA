@@ -186,7 +186,7 @@ const Spinner = () => {
         ))}
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%,
           100% {

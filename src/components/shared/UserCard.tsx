@@ -2,7 +2,8 @@ import { Models } from "appwrite";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { Badge } from "../ui/badge";
 
 interface UserCardProps {
   user: Models.Document;
