@@ -31,39 +31,40 @@ const UsersList = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger className="hover:underline flex gap-1 items-center">
-        <p className="text-sm">{allLikes?.length}</p>{" "}
+        <div className="text-sm">{allLikes?.length}</div>{" "}
         <GoHeart size={20} fill="green" />
       </AlertDialogTrigger>
-      <AlertDialogContent className="">
+      <AlertDialogContent className="z-[100]">
         <AlertDialogHeader>
           <AlertDialogTitle>{"Likes"}</AlertDialogTitle>
-          <AlertDialogDescription className="flex flex-col gap-2 pr-2 max-h-[80vh] overflow-auto">
-            {allLikes?.map((like) => (
-              <div
-                key={like?.$id}
-                className="p-4 border border-primary-500 flex gap-4 items-center rounded-lg"
-              >
-                <Avatar className="hover:cursor-pointer">
-                  <AvatarImage
-                    className="h-10 w-10 rounded-full outline outline-slate-200"
-                    src={like?.userImageUrl}
-                  />
-                </Avatar>
-                <Link
-                  to={`/profile/${like?.userId}`}
-                  className="text-lg font-medium hover:underline hover:cursor-pointer"
-                >
-                  {like?.userName}
-                </Link>
-              </div>
-            ))}
-            {hasNextPage && (
-              <Button className="shad_button-Primary hover:shad_button-ghost">
-                {isFetchingNextPage ? "Loading more..." : "Load More"}
-              </Button>
-            )}
-          </AlertDialogDescription>
+          <AlertDialogDescription> </AlertDialogDescription>
         </AlertDialogHeader>
+        <div className="flex flex-col gap-2 pr-2 max-h-[80vh] overflow-auto">
+          {allLikes?.map((like) => (
+            <div
+              key={like?.$id}
+              className="p-4 border border-primary-500 flex gap-4 items-center rounded-lg"
+            >
+              <Avatar className="hover:cursor-pointer">
+                <AvatarImage
+                  className="h-10 w-10 rounded-full outline outline-slate-200"
+                  src={like?.userImageUrl}
+                />
+              </Avatar>
+              <Link
+                to={`/profile/${like?.userId}`}
+                className="text-lg font-medium hover:underline hover:cursor-pointer"
+              >
+                {like?.userName}
+              </Link>
+            </div>
+          ))}
+          {hasNextPage && (
+            <Button className="shad_button-Primary hover:shad_button-ghost">
+              {isFetchingNextPage ? "Loading more..." : "Load More"}
+            </Button>
+          )}
+        </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Close</AlertDialogCancel>
         </AlertDialogFooter>
