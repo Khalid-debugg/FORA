@@ -40,18 +40,28 @@ export const useRemoveFriendRequest = (user: any, friend: any) => {
     },
   });
 };
-export const useCheckIsFriendRequestSent = (user: any, friend: any) => {
+export const useCheckIsFriendRequestSent = (
+  user: any,
+  friend: any,
+  options?: any,
+) => {
   return useQuery({
     queryKey: ["isFriendRequestSent", user?.id, friend?.$id],
     queryFn: () => checkIsFriendRequestSent(user, friend),
     enabled: !!user && !!friend,
+    ...options,
   });
 };
-export const useCheckIsFriendRequestReceived = (user: any, friend: any) => {
+export const useCheckIsFriendRequestReceived = (
+  user: any,
+  friend: any,
+  options?: any,
+) => {
   return useQuery({
     queryKey: ["isFriendRequestReceived", user?.id, friend?.$id],
     queryFn: () => checkIsFriendRequestReceived(user, friend),
     enabled: !!user && !!friend,
+    ...options,
   });
 };
 

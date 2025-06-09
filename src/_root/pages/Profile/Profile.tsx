@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,36 +37,45 @@ const Profile = () => {
   const { user: currentUser } = useUserContext();
   const { data: visitedUser, isPending: isGettingUser } = useGetUser(id!);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
+  const memoizedCurrentUser = useMemo(() => currentUser, [currentUser?.id]);
+  const memoizedVisitedUser = useMemo(() => visitedUser, [visitedUser?.$id]);
+
   const { mutateAsync: addFriendRequest, isPending: isAddingRequest } =
-    useAddFriendRequest(currentUser, visitedUser);
+    useAddFriendRequest(memoizedCurrentUser, memoizedVisitedUser);
   const { mutateAsync: removeFriendRequest, isPending: isRemovingRequest } =
-    useRemoveFriendRequest(currentUser, visitedUser);
+    useRemoveFriendRequest(memoizedCurrentUser, memoizedVisitedUser);
   const { mutateAsync: addFriend, isPending: isAddingFriend } = useAddFriend(
-    currentUser,
-    visitedUser,
+    memoizedCurrentUser,
+    memoizedVisitedUser,
   );
   const { data: chatId } = useGetChatId(
-    currentUser?.id || "",
-    visitedUser?.$id || "",
+    memoizedCurrentUser?.id || "",
+    memoizedVisitedUser?.$id || "",
   );
   const { mutateAsync: createNewChat, isPending: isCreatingChat } =
-    useCreateNewChat(currentUser?.id || "");
+    useCreateNewChat(memoizedCurrentUser?.id || "");
 
   const { mutateAsync: unFriend, isPending: isUnfriending } = useUnfriend(
-    visitedUser?.$id || "",
-    currentUser?.id || "",
+    memoizedVisitedUser?.$id || "",
+    memoizedCurrentUser?.id || "",
   );
   const { data } = useCheckIsFriend(
-    visitedUser?.$id || "",
-    currentUser?.id || "",
+    memoizedVisitedUser?.$id || "",
+    memoizedCurrentUser?.id || "",
   );
   const { data: isFriendRequestSent } = useCheckIsFriendRequestSent(
-    currentUser,
-    visitedUser,
+    memoizedCurrentUser,
+    memoizedVisitedUser,
+    {
+      enabled: !!memoizedCurrentUser?.id && !!memoizedVisitedUser?.$id,
+    },
   );
   const { data: isFriendRequestReceived } = useCheckIsFriendRequestReceived(
-    currentUser,
-    visitedUser,
+    memoizedCurrentUser,
+    memoizedVisitedUser,
+    {
+      enabled: !!memoizedCurrentUser?.id && !!memoizedVisitedUser?.$id,
+    },
   );
   if (isGettingUser || !currentUser)
     return (
