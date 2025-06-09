@@ -77,7 +77,7 @@ export async function getRecentPostsAndGames(
 ) {
   try {
     if (!friends) return [];
-    const userAndFriedsIds = [userId, ...friends];
+    const userAndFriedsIds = [userId, ...friends.map((friend) => friend.id)];
     const posts = await databases.listDocuments(
       appwriteConfig.databaseID,
       appwriteConfig.postsID,

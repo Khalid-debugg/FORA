@@ -111,6 +111,7 @@ function generateNotificationId({
     COMMENT: "CM",
     REPLY: "RP",
     STATUS: "ST",
+    INVITE_GAME: "IG",
   };
 
   const shortType = shortTypeMap[type] || "XX";

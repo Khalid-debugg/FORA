@@ -11,6 +11,7 @@ import {
   getJoinedGame,
   getRecentGames,
   getWaitingGame,
+  inviteFriends,
   joinGame,
   leaveGame,
   rejectPlayer,
@@ -193,5 +194,11 @@ export const useGetGamesNearby = (user) => {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     enabled: !!user.id,
+  });
+};
+export const useInviteFriends = (gameId: string) => {
+  return useMutation({
+    mutationFn: ({ friends, user }: { friends: any[]; user: any }) =>
+      inviteFriends({ gameId, friends, user }),
   });
 };

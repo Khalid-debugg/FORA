@@ -371,3 +371,33 @@ export async function getGamesNearby(pageParam: number, user: any) {
     console.log(err);
   }
 }
+export async function inviteFriends({
+  gameId,
+  friends,
+  user,
+}: {
+  gameId: string;
+  friends: any[];
+  user: any;
+}) {
+  try {
+    console.log(friends);
+
+    const notifications = await Promise.all(
+      friends.map((friend) =>
+        createNotification({
+          type: "INVITE_GAME",
+          senderId: user.id,
+          senderName: user.name,
+          senderImageUrl: user.imageUrl,
+          receiverId: friend.id,
+          gameId: gameId,
+          message: `${user.name} invited you to join their game`,
+        }),
+      ),
+    );
+    return notifications;
+  } catch (err) {
+    console.log(err);
+  }
+}

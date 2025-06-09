@@ -41,7 +41,7 @@ const PeopleYouMayKnow = ({
           {!isGettingUsers &&
             peopleYouMayKnow.map((user) => (
               <div
-                key={user.$id}
+                key={user?.$id}
                 className="group relative p-4 bg-white/50 border-2 border-primary-500/10 hover:border-primary-500/30 rounded-xl transition-all duration-200 hover:shadow-md"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl pointer-events-none" />
@@ -52,18 +52,18 @@ const PeopleYouMayKnow = ({
                       <Avatar className="hover:cursor-pointer ring-2 ring-primary-500/20 hover:ring-primary-500/40 transition-all duration-200">
                         <AvatarImage
                           className="h-10 w-10 rounded-full"
-                          src={user.imageUrl || "/placeholder.svg"}
+                          src={user?.imageUrl || "/placeholder.svg"}
                         />
                       </Avatar>
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div>
                       <p className="text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-200">
-                        {user.name}
+                        {user?.name}
                       </p>
                       <p className="text-sm text-gray-600 flex items-center gap-1">
                         <AtSign size={12} className="text-primary-500" />
-                        {user.username}
+                        {user?.username}
                       </p>
                     </div>
                   </div>
@@ -71,7 +71,7 @@ const PeopleYouMayKnow = ({
                   <Button
                     className="bg-primary-500/10 hover:bg-primary-500 text-primary-600 hover:text-white border-primary-500/20 hover:border-primary-500 shadow-sm hover:shadow-md transition-all duration-200 rounded-xl px-4"
                     onClick={() => {
-                      navigate(`/profile/${user.$id}`);
+                      navigate(`/profile/${user?.$id}`);
                     }}
                     variant="outline"
                     size="sm"

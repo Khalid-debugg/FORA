@@ -5,7 +5,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { Check, Clock, X } from "lucide-react";
+import { Check, Clock, X, UserRoundPlus } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,19 +22,32 @@ import {
   useAcceptPlayer,
 } from "@/lib/react-query/queriesAndMutations/games";
 import { useUserContext } from "@/context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import InviteFriendsOverlay from "./InviteFriendsOverlay";
+import { useState } from "react";
 
 const WaitingList = ({ waitingGame, joinedGame, isLoadingWaiting, post }) => {
   const { user } = useUserContext();
   const { mutateAsync: handleReject } = useRejectPlayer(post?.$id);
   const { mutateAsync: handleAccept } = useAcceptPlayer(post?.$id);
-  const navigate = useNavigate();
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   return (
     <div className="w-1/2">
-      <div className="p-2 bg-slate-100 text-center font-medium border-b">
-        Waiting Room 🪑
-        {waitingGame?.waitingPlayers?.length > 0 &&
-          `(${waitingGame.waitingPlayers.length})`}
+      <div className="flex justify-center gap-4 items-center px-4 py-2 bg-slate-100 text-center font-medium border-b">
+        <p>
+          Waiting Room 🪑
+          {waitingGame?.waitingPlayers?.length > 0 &&
+            `(${waitingGame.waitingPlayers.length})`}
+        </p>
+        {user?.id === post?.creator?.$id && (
+          <Button
+            size="icon"
+            className="h-6 w-6 p-0"
+            onClick={() => setIsInviteOpen(true)}
+          >
+            <UserRoundPlus color="green" />
+          </Button>
+        )}
       </div>
       <div className="h-64 overflow-auto p-4">
         {isLoadingWaiting ? (
@@ -157,6 +170,13 @@ const WaitingList = ({ waitingGame, joinedGame, isLoadingWaiting, post }) => {
             <Clock className="h-12 w-12 mb-2 opacity-50" />
             <p>No players waiting</p>
           </div>
+        )}
+        {isInviteOpen && (
+          <InviteFriendsOverlay
+            isOpen={isInviteOpen}
+            onClose={() => setIsInviteOpen(false)}
+            gameId={post?.$id}
+          />
         )}
       </div>
     </div>

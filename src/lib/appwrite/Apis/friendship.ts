@@ -10,12 +10,12 @@ export const checkIsFriend = async (userId: string, friendId: string) => {
       [
         Query.or([
           Query.and([
-            Query.equal("actor", userId),
-            Query.equal("receiver", friendId),
+            Query.equal("actorId", userId),
+            Query.equal("receiverId", friendId),
           ]),
           Query.and([
-            Query.equal("actor", friendId),
-            Query.equal("receiver", userId),
+            Query.equal("actorId", friendId),
+            Query.equal("receiverId", userId),
           ]),
         ]),
       ],
@@ -50,16 +50,26 @@ export const getFriends = async (userId: string) => {
       appwriteConfig.friendShipID,
       [
         Query.or([
-          Query.equal("actor", userId),
-          Query.equal("receiver", userId),
+          Query.equal("actorId", userId),
+          Query.equal("receiverId", userId),
         ]),
       ],
     );
     const friendsDocs = friendships.documents.map((friendship) => {
-      if (friendship.actor.$id === userId) {
-        return friendship.receiver;
+      if (friendship.actorId === userId) {
+        return {
+          id: friendship.receiverId,
+          name: friendship.receiverName,
+          username: friendship.receiverUserName,
+          imageUrl: friendship.receiverImageUrl,
+        };
       } else {
-        return friendship.actor;
+        return {
+          id: friendship.actorId,
+          name: friendship.actorName,
+          username: friendship.actorUserName,
+          imageUrl: friendship.actorImageUrl,
+        };
       }
     });
     if (!friendsDocs) throw new Error("Something went wrong!!");
@@ -78,8 +88,14 @@ export async function addFriend(user: any, friend: any) {
       appwriteConfig.friendShipID,
       ID.unique(),
       {
-        actor: user.id,
-        receiver: friend.$id,
+        actorId: user.id,
+        actorName: user.name,
+        actorUserName: user.username,
+        actorImageUrl: user.imageUrl,
+        receiverId: friend.$id,
+        receiverName: friend.name,
+        receiverUserName: friend.username,
+        receiverImageUrl: friend.imageUrl,
       },
     );
     if (!friendShip) throw new Error("Something went wrong!!");

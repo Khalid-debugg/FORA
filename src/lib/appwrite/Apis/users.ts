@@ -103,6 +103,7 @@ export async function getUsersYouMayKnow(
   user: any,
   friends: any[],
 ) {
+  const userAndFriendsIds = [user.id, ...friends.map((friend) => friend.id)];
   try {
     const users = await databases.listDocuments(
       appwriteConfig.databaseID,
@@ -111,13 +112,11 @@ export async function getUsersYouMayKnow(
         Query.limit(5),
         Query.offset(pageParam * 5),
         Query.equal("governorate", user.governorate),
-        Query.notEqual("$id", user.id),
         Query.orderDesc("$createdAt"),
       ],
     );
-
     if (!users) throw new Error();
-    return users.documents.filter((u) => !friends.includes(u.$id));
+    return users.documents.filter((u) => !userAndFriendsIds.includes(u.$id));
   } catch (err) {
     console.log(err);
   }
