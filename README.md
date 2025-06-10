@@ -14,7 +14,7 @@ FORA is a social media platform designed specifically for the football community
 
 ## ✨ Features
 
-### Social Features
+### Features
 
 - User authentication and profile management
 - Create and share posts with media support
@@ -22,29 +22,17 @@ FORA is a social media platform designed specifically for the football community
 - Real-time direct messaging system with chat functionality
 - Friendship system and user connections
 - Profile customization with sections for posts, games, and likes
-
-### Football-Specific Features
-
 - Create and join football games
-- Discover games nearby
 - Game post creation and management
-- Player matching and game organization
 - Game status updates and notifications
-
-### Content Discovery
-
 - Explore feed with posts, games, and users
 - Search functionality across all content types
 - Infinite scroll for content loading
 - "People You May Know" suggestions
 - "Games Nearby" feature for local game discovery
-
-### User Experience
-
 - Responsive design for mobile and desktop
 - Real-time updates and notifications
 - Modern UI with smooth animations
-- Dark mode support
 - Loading states and skeleton screens
 - Toast notifications for user feedback
 

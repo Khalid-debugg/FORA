@@ -39,7 +39,7 @@ const CoverImage = ({ user, currentUser }) => {
   );
 
   return (
-    <div className="relative w-full h-48 bg-gray-200">
+    <div className="relative w-full h-56 bg-gray-200">
       <img
         onClick={() => openMediaDialog(0)}
         src={image}
@@ -79,21 +79,30 @@ const CoverImage = ({ user, currentUser }) => {
         </>
       )}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-white p-8">
+        <DialogContent className="bg-white p-8 overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Crop Cover Image</DialogTitle>
           </DialogHeader>
           {tempImage && (
-            <ReactCrop crop={crop} onChange={(c) => setCrop(c)} aspect={16 / 9}>
-              <img
-                ref={imageRef}
-                src={tempImage || "/assets/images/gray-texture.jpg"}
-                alt="Temp"
-                className="w-full h-full object-cover"
-              />
-            </ReactCrop>
+            <div className="w-full overflow-auto">
+              <div className="min-h-full flex items-center justify-center">
+                <ReactCrop
+                  crop={crop}
+                  onChange={(c) => setCrop(c)}
+                  aspect={16 / 9}
+                  className="w-full"
+                >
+                  <img
+                    ref={imageRef}
+                    src={tempImage || "/assets/images/gray-texture.jpg"}
+                    alt="Temp"
+                    className="max-h-[60vh] w-full object-contain"
+                  />
+                </ReactCrop>
+              </div>
+            </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>

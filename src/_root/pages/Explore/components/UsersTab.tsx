@@ -97,27 +97,17 @@ const UsersTab = ({
     );
   }
   return (
-    <div className="space-y-6">
-      {users.map((user, index) => (
-        <UserCard key={index} user={user} />
+    <div className="space-y-4">
+      {users.map((user) => (
+        <UserCard key={user.$id} user={user} />
       ))}
-
-      <div ref={observerRef} className="h-4">
-        {isFetchingNextPage && (
-          <div className="flex justify-center py-8">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-muted border-t-primary"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-            </div>
-          </div>
+      <div ref={observerRef}>
+        {hasNextPage && isFetchingNextPage && (
+          <div className="animate-spin text-center text-3xl">⚽</div>
         )}
         {!hasNextPage && users.length > 0 && (
-          <div className="text-center py-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 text-muted-foreground text-sm">
-              <div className="w-2 h-2 bg-current rounded-full opacity-50"></div>
-              <span>You've reached the end</span>
-              <div className="w-2 h-2 bg-current rounded-full opacity-50"></div>
-            </div>
+          <div className="text-center text-slate-500 py-4 text-muted-foreground">
+            No more users to show
           </div>
         )}
       </div>
