@@ -13,7 +13,11 @@ export const SignupValidation = z
     username: z
       .string()
       .min(2, { message: "Too short" })
-      .max(15, { message: "That's too much, maximum 15 characters" }),
+      .max(15, { message: "That's too much, maximum 15 characters" })
+      .regex(/^[a-zA-Z0-9_]+$/, {
+        message:
+          "Username can only contain letters, numbers, and underscores (no spaces allowed)",
+      }),
     email: z.string().email({ message: "Please enter a valid email" }),
     password: z.string().min(6, { message: "Too short" }),
     confirmPassword: z.string(),
