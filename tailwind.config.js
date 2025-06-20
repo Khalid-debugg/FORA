@@ -38,7 +38,7 @@ export const theme = {
       465: "465px",
     },
     fontFamily: {
-      inter: ["Inter", "sans-serif"],
+      sora: ["Sora", "sans-serif"],
     },
     keyframes: {
       "accordion-down": {
