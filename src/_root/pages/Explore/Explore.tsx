@@ -11,6 +11,7 @@ import { TbPlayFootball } from "react-icons/tb";
 import { IoPeople } from "react-icons/io5";
 import { Helmet } from "react-helmet-async";
 import { LoadingSpinner } from "@/App";
+import { useUserContext } from "@/context/AuthContext";
 const AllTab = lazy(() => import("./components/AllTab"));
 const PostsTab = lazy(() => import("./components/PostsTab"));
 const GamesTab = lazy(() => import("./components/GamesTab"));
@@ -21,14 +22,14 @@ const Explore = () => {
     "all" | "posts" | "games" | "users"
   >("all");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
+  const { user } = useUserContext();
   const {
     data: searchResults,
     isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchContent(debouncedSearchQuery, activeTab);
+  } = useSearchContent(debouncedSearchQuery, activeTab, user.id);
 
   const { allPosts, allGames, allUsers } = useMemo(() => {
     const posts =

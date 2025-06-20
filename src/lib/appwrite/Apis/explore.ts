@@ -8,10 +8,12 @@ export async function searchContent(
   query: string,
   pageParam: number = 0,
   activeTab: TabType = "all",
+  userId: string,
 ): Promise<ISearchResults> {
   try {
     const limit = 10;
     const offset = pageParam * limit;
+    console.log(userId);
 
     if (!query.trim()) {
       const fetchData = async () => {
@@ -26,6 +28,7 @@ export async function searchContent(
                 Query.orderDesc("$createdAt"),
                 Query.limit(limit),
                 Query.offset(offset),
+                Query.notEqual("creator", userId),
               ],
             );
             return {
@@ -41,6 +44,7 @@ export async function searchContent(
                 Query.orderDesc("$createdAt"),
                 Query.limit(limit),
                 Query.offset(offset),
+                Query.notEqual("creator", userId),
               ],
             );
             return {
@@ -56,6 +60,7 @@ export async function searchContent(
                 Query.orderDesc("$createdAt"),
                 Query.limit(limit),
                 Query.offset(offset),
+                Query.notEqual("$id", userId),
               ],
             );
             return {
@@ -72,6 +77,7 @@ export async function searchContent(
                   Query.orderDesc("$createdAt"),
                   Query.limit(limit),
                   Query.offset(offset),
+                  Query.notEqual("creator", userId),
                 ],
               ),
               databases.listDocuments(
@@ -81,6 +87,7 @@ export async function searchContent(
                   Query.orderDesc("$createdAt"),
                   Query.limit(limit),
                   Query.offset(offset),
+                  Query.notEqual("creator", userId),
                 ],
               ),
               databases.listDocuments(
@@ -90,6 +97,7 @@ export async function searchContent(
                   Query.orderDesc("$createdAt"),
                   Query.limit(limit),
                   Query.offset(offset),
+                  Query.notEqual("$id", userId),
                 ],
               ),
             ]);
@@ -120,6 +128,7 @@ export async function searchContent(
               Query.orderDesc("$createdAt"),
               Query.limit(limit),
               Query.offset(offset),
+              Query.notEqual("creator", userId),
             ],
           );
           return {
@@ -139,6 +148,7 @@ export async function searchContent(
               Query.orderDesc("$createdAt"),
               Query.limit(limit),
               Query.offset(offset),
+              Query.notEqual("creator", userId),
             ],
           );
           return {
@@ -158,6 +168,7 @@ export async function searchContent(
               Query.orderDesc("$createdAt"),
               Query.limit(limit),
               Query.offset(offset),
+              Query.notEqual("$id", userId),
             ],
           );
           return {
@@ -176,6 +187,7 @@ export async function searchContent(
                 Query.orderDesc("$createdAt"),
                 Query.limit(limit),
                 Query.offset(offset),
+                Query.notEqual("creator", userId),
               ],
             ),
             databases.listDocuments(
@@ -189,6 +201,7 @@ export async function searchContent(
                 Query.orderDesc("$createdAt"),
                 Query.limit(limit),
                 Query.offset(offset),
+                Query.notEqual("creator", userId),
               ],
             ),
             databases.listDocuments(
@@ -202,6 +215,7 @@ export async function searchContent(
                 Query.orderDesc("$createdAt"),
                 Query.limit(limit),
                 Query.offset(offset),
+                Query.notEqual("$id", userId),
               ],
             ),
           ]);

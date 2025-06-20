@@ -4,11 +4,15 @@ import { ISearchResults } from "@/types";
 
 type TabType = "all" | "posts" | "games" | "users";
 
-export function useSearchContent(query: string, activeTab: TabType = "all") {
+export function useSearchContent(
+  query: string,
+  activeTab: TabType = "all",
+  userId: string,
+) {
   const postsQuery = useInfiniteQuery<ISearchResults>({
     queryKey: ["search-posts", query],
     queryFn: (context) =>
-      searchContent(query, context.pageParam as number, "posts"),
+      searchContent(query, context.pageParam as number, "posts", userId),
     getNextPageParam: (lastPage) => {
       return lastPage.posts.length === 10 ? lastPage.posts.length : undefined;
     },
@@ -19,12 +23,13 @@ export function useSearchContent(query: string, activeTab: TabType = "all") {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchInterval: false,
+    enabled: !!userId,
   });
 
   const gamesQuery = useInfiniteQuery<ISearchResults>({
     queryKey: ["search-games", query],
     queryFn: (context) =>
-      searchContent(query, context.pageParam as number, "games"),
+      searchContent(query, context.pageParam as number, "games", userId),
     getNextPageParam: (lastPage) => {
       return lastPage.games.length === 10 ? lastPage.games.length : undefined;
     },
@@ -35,12 +40,13 @@ export function useSearchContent(query: string, activeTab: TabType = "all") {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchInterval: false,
+    enabled: !!userId,
   });
 
   const usersQuery = useInfiniteQuery<ISearchResults>({
     queryKey: ["search-users", query],
     queryFn: (context) =>
-      searchContent(query, context.pageParam as number, "users"),
+      searchContent(query, context.pageParam as number, "users", userId),
     getNextPageParam: (lastPage) => {
       return lastPage.users.length === 10 ? lastPage.users.length : undefined;
     },
@@ -51,12 +57,13 @@ export function useSearchContent(query: string, activeTab: TabType = "all") {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchInterval: false,
+    enabled: !!userId,
   });
 
   const allQuery = useInfiniteQuery<ISearchResults>({
     queryKey: ["search-all", query],
     queryFn: (context) =>
-      searchContent(query, context.pageParam as number, "all"),
+      searchContent(query, context.pageParam as number, "all", userId),
     getNextPageParam: (lastPage) => {
       const hasMore =
         lastPage.posts.length === 10 ||
@@ -71,6 +78,7 @@ export function useSearchContent(query: string, activeTab: TabType = "all") {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchInterval: false,
+    enabled: !!userId,
   });
 
   // Return the appropriate query based on the active tab
