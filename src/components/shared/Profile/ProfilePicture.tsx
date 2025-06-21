@@ -91,17 +91,23 @@ const ProfilePicture = ({ user, currentUser }) => {
         </>
       )}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-white p-8">
+        <DialogContent className="bg-white p-8 overflow-y-auto flex flex-col">
           <DialogHeader>
             <DialogTitle>Crop Profile Picture</DialogTitle>
           </DialogHeader>
           {tempImage && (
-            <ReactCrop crop={crop} onChange={(c) => setCrop(c)} aspect={1}>
+            <ReactCrop
+              crop={crop}
+              onChange={(c) => setCrop(c)}
+              aspect={1}
+              className="self-center"
+            >
               <img
                 ref={imageRef}
                 src={tempImage || "/placeholder.svg"}
                 alt="Temp"
                 loading="lazy"
+                className="max-h-[60vh] object-contain"
               />
             </ReactCrop>
           )}

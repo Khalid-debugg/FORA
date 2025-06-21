@@ -79,7 +79,7 @@ const CoverImage = ({ user, currentUser }) => {
         </>
       )}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-white p-8 overflow-y-auto">
+        <DialogContent className="bg-white p-8 overflow-y-auto flex flex-col">
           <DialogHeader>
             <DialogTitle>Crop Cover Image</DialogTitle>
           </DialogHeader>
@@ -90,13 +90,13 @@ const CoverImage = ({ user, currentUser }) => {
                   crop={crop}
                   onChange={(c) => setCrop(c)}
                   aspect={16 / 9}
-                  className="w-full"
+                  className="self-center"
                 >
                   <img
                     ref={imageRef}
                     src={tempImage || "/assets/images/gray-texture.jpg"}
                     alt="Temp"
-                    className="max-h-[60vh] w-full object-contain"
+                    className="max-h-[60vh] object-contain"
                   />
                 </ReactCrop>
               </div>
