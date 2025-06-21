@@ -103,7 +103,7 @@ const Profile = () => {
                   <p>Setup</p>
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="flex flex-col items-center">
                 <SetupForm user={visitedUser} setIsSetupOpen={setIsSetupOpen} />
               </DialogContent>
             </Dialog>

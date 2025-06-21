@@ -71,7 +71,7 @@ export function SetupForm({ user, setIsSetupOpen }: SetupFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSetupSubmit)}
-        className="flex p-8 flex-col space-y-6 rounded-md bg-white"
+        className="flex p-8 flex-col space-y-6 rounded-md bg-white w-11/12 max-w-3xl"
       >
         <h1 className="text-3xl font-bold">Edit Profile</h1>
         <FormField
