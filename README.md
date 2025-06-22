@@ -17,32 +17,27 @@ FORA is a social media platform designed specifically for the football community
 ### Features
 
 - User authentication and profile management
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/authentication.svg" alt="Authentication" width="600"/>
 - Create and share posts with media support
-- Real-time notifications for interactions
-- Real-time direct messaging system with chat functionality
-- Friendship system and user connections
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/create-post.svg" alt="post form" width="600"/>
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/post.svg" alt="post" width="600"/>
+- Real-time direct messaging system with chat functionality and notifications for interactions
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/notifications.svg" alt="notifications" width="600"/>
 - Profile customization with sections for posts, games, and likes
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/profile.svg" alt="profile" width="600"/>
 - Create and join football games
-- Game post creation and management
-- Game status updates and notifications
-- Explore feed with posts, games, and users
-- Search functionality across all content types
-- Infinite scroll for content loading
-- "People You May Know" suggestions
-- "Games Nearby" feature for local game discovery
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/create-game.svg" alt="create game" width="600"/>
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/join-game.svg" alt="join game" width="600"/>
+- Explore feed with posts, games, and users and search functionality across all content types
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/explore.svg" alt="explore" width="600"/>
+- "People You May Know" suggestions and "Games Nearby" feature for local game discovery
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/widgets.svg" alt="widgets" width="600"/>
 - Responsive design for mobile and desktop
-- Real-time updates and notifications
-- Modern UI with smooth animations
-- Loading states and skeleton screens
-- Toast notifications for user feedback
+  <img src="https://fora-orpin.vercel.app/assets/screenshots/responsive.svg" alt="responsive" width="600"/>
 
 ## 🚀 Live Demo
 
 Visit our live application at: [fora-orpin.vercel.app](https://fora-orpin.vercel.app)
-
-## 📸 Screenshots
-
-_[Screenshots will be added here]_
 
 ## 🛠️ Built With
 
@@ -97,8 +92,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👥 Authors
 
 - **Khalid** - [Khalid-debugg](https://github.com/Khalid-debugg)
-
-## 🙏 Acknowledgments
-
-- Thanks to all contributors who have helped shape this project
-- Special thanks to the Appwrite team for their amazing backend services
